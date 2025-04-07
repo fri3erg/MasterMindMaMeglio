@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[      7504,        199]
-NotebookOptionsPosition[      6417,        174]
-NotebookOutlinePosition[      6822,        190]
-CellTagsIndexPosition[      6779,        187]
+NotebookDataLength[      1804,         57]
+NotebookOptionsPosition[      1321,         40]
+NotebookOutlinePosition[      1726,         56]
+CellTagsIndexPosition[      1683,         53]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -21,155 +21,21 @@ Notebook[{
 
 Cell[CellGroupData[{
 Cell[BoxData[
- RowBox[{
-  RowBox[{"(*", " ", "CONFIGURATION", " ", "*)"}], "\n", 
-  RowBox[{
-   RowBox[{"NotebookDirectory", "[", "]"}], "\n", 
-   RowBox[{
-    RowBox[{
-    "repoURL", " ", "=", 
-     " ", "\"\<https://github.com/fri3erg/MasterMindMaMeglio.git\>\""}], 
-    ";"}], "  ", 
-   RowBox[{"(*", " ", 
-    RowBox[{"Replace", " ", "with", " ", "your", " ", "repo"}], " ", "*)"}], "\n", 
-   RowBox[{
-    RowBox[{"localPath", " ", "=", " ", 
-     RowBox[{"FileNameJoin", "[", 
-      RowBox[{"{", 
-       RowBox[{
-        RowBox[{"NotebookDirectory", "[", "]"}], ",", 
-        " ", "\"\<my-local-repo\>\""}], "}"}], "]"}]}], ";"}], "  ", 
-   RowBox[{"(*", " ", 
-    RowBox[{"Local", " ", "clone", " ", "directory"}], " ", "*)"}], "\n", 
-   RowBox[{
-    RowBox[{"notebookName", " ", "=", " ", "\"\<MyNotebook.nb\>\""}], ";"}], 
-   "  ", 
-   RowBox[{"(*", " ", 
-    RowBox[{
-    "Name", " ", "of", " ", "the", " ", "notebook", " ", "to", " ", "open"}], 
-    " ", "*)"}], "\n", "\n", 
-   RowBox[{"(*", " ", 
-    RowBox[{"Ensure", " ", "GitLink", " ", "is", " ", "available"}], " ", 
-    "*)"}], "\n", 
-   RowBox[{"Needs", "[", "\"\<GitLink`\>\"", "]"}], "\n", "\n", 
-   RowBox[{"(*", " ", 
-    RowBox[{
-    "Check", " ", "if", " ", "repo", " ", "already", " ", "exists", " ", 
-     "locally"}], " ", "*)"}], "\n", 
-   RowBox[{
-    RowBox[{"If", "[", 
-     RowBox[{
-      RowBox[{"DirectoryQ", "[", "localPath", "]"}], ",", "\n", "  ", 
-      RowBox[{"Module", "[", 
-       RowBox[{
-        RowBox[{"{", "repo", "}"}], ",", "\n", "    ", 
-        RowBox[{
-         RowBox[{
-         "Print", "[", "\"\<Repo exists, pulling latest changes...\>\"", 
-          "]"}], ";", "\n", "    ", 
-         RowBox[{"repo", " ", "=", " ", 
-          RowBox[{"GitOpen", "[", "localPath", "]"}]}], ";", "\n", "    ", 
-         RowBox[{"GitPull", "[", "repo", "]"}], ";", "\n", "    ", 
-         RowBox[{"Print", "[", "\"\<Pull complete.\>\"", "]"}]}]}], "\n", 
-       "  ", "]"}], ",", "\n", "  ", 
-      RowBox[{
-       RowBox[{"Print", "[", "\"\<Cloning repo...\>\"", "]"}], ";", "\n", 
-       "  ", 
-       RowBox[{"GitClone", "[", 
-        RowBox[{"repoURL", ",", " ", "localPath"}], "]"}], ";", "\n", "  ", 
-       RowBox[{"Print", "[", "\"\<Clone complete.\>\"", "]"}]}]}], "\n", 
-     "]"}], ";"}], "\n", "\n", 
-   RowBox[{"(*", " ", 
-    RowBox[{"Construct", " ", "path", " ", "to", " ", "notebook"}], " ", 
-    "*)"}], "\n", 
-   RowBox[{
-    RowBox[{"notebookPath", " ", "=", " ", 
-     RowBox[{"FileNameJoin", "[", 
-      RowBox[{"{", 
-       RowBox[{"localPath", ",", " ", "notebookName"}], "}"}], "]"}]}], ";"}],
-    "\n", "\n", 
-   RowBox[{"(*", " ", 
-    RowBox[{
-    "Open", " ", "the", " ", "notebook", " ", "if", " ", "it", " ", 
-     "exists"}], " ", "*)"}], "\n", 
-   RowBox[{
-    RowBox[{"If", "[", 
-     RowBox[{
-      RowBox[{"FileExistsQ", "[", "notebookPath", "]"}], ",", "\n", "  ", 
-      RowBox[{"NotebookOpen", "[", "notebookPath", "]"}], ",", "\n", "  ", 
-      RowBox[{"Print", "[", 
-       RowBox[{"\"\<Notebook not found: \>\"", ",", " ", "notebookPath"}], 
-       "]"}]}], "\n", "]"}], ";"}], "\n", "\[LineSeparator]"}]}]], "Code",
+ RowBox[{"Print", "[", "\"\<ciao belli\>\"", "]"}]], "Code",
  CellChangeTimes->{{3.953003058022753*^9, 3.953003092409525*^9}, {
    3.95300341392198*^9, 3.9530034141585407`*^9}, 3.9530035007927666`*^9, {
    3.9530036548507843`*^9, 3.9530036602136784`*^9}, {3.9530039355184135`*^9, 
-   3.95300393731769*^9}},
- CellLabel->"In[11]:=",ExpressionUUID->"8bad2158-8fa6-4943-9a10-bfe5ebd77d47"],
+   3.95300393731769*^9}, {3.9530067707796955`*^9, 3.9530067758022423`*^9}},
+ CellLabel->
+  "In[174]:=",ExpressionUUID->"8bad2158-8fa6-4943-9a10-bfe5ebd77d47"],
 
-Cell[BoxData["\<\"C:\\\\Users\\\\Utente\\\\Documents\\\\Wolfram\\\\\"\>"], \
-"Output",
- CellChangeTimes->{{3.953003417824911*^9, 3.9530034183002205`*^9}, 
-   3.953003938919899*^9, 3.9530040146972523`*^9},
- CellLabel->"Out[11]=",ExpressionUUID->"52cbd876-d13f-3d42-a88a-9b07051bb844"],
-
-Cell[BoxData[
- TemplateBox[{
-  "Get", "noopen", 
-   "\"Cannot open \\!\\(\\*RowBox[{\\\"\\\\\\\"GitLink`\\\\\\\"\\\"}]\\).\"", 
-   2, 15, 5, 32676944184981834437, "Local"},
-  "MessageTemplate",
-  BaseStyle->"MSG"]], "Message",
- CellChangeTimes->{3.9530039388478947`*^9, 3.953004014748417*^9},
+Cell[BoxData["\<\"ciao belli\"\>"], "Print",
+ CellChangeTimes->{
+  3.953003939066477*^9, 3.9530040147664127`*^9, {3.9530067798828754`*^9, 
+   3.9530067799468994`*^9}},
  CellLabel->
   "During evaluation of \
-In[11]:=",ExpressionUUID->"30bfc76c-e4d7-f444-81af-7e7afd4d1ba5"],
-
-Cell[BoxData[
- TemplateBox[{
-  "Needs", "nocont", 
-   "\"Context \\!\\(\\*RowBox[{\\\"\\\\\\\"GitLink`\\\\\\\"\\\"}]\\) was not \
-created when Needs was evaluated.\"", 2, 15, 6, 32676944184981834437, "Local"},
-  "MessageTemplate",
-  BaseStyle->"MSG"]], "Message",
- CellChangeTimes->{3.9530039388478947`*^9, 3.953004014757412*^9},
- CellLabel->
-  "During evaluation of \
-In[11]:=",ExpressionUUID->"84ac8a4f-a783-3347-8ed7-9af58fcee129"],
-
-Cell[BoxData["$Failed"], "Output",
- CellChangeTimes->{{3.953003417824911*^9, 3.9530034183002205`*^9}, 
-   3.953003938919899*^9, 3.953004014764414*^9},
- CellLabel->"Out[15]=",ExpressionUUID->"f56ef557-bdd0-7e4e-9fa6-47bdb3d6cb29"],
-
-Cell[CellGroupData[{
-
-Cell[BoxData["\<\"Cloning repo...\"\>"], "Print",
- CellChangeTimes->{3.953003939066477*^9, 3.9530040147664127`*^9},
- CellLabel->
-  "During evaluation of \
-In[11]:=",ExpressionUUID->"0676a2df-30e9-1e4b-a609-e3149dfa6ded"],
-
-Cell[BoxData["\<\"Clone complete.\"\>"], "Print",
- CellChangeTimes->{3.953003939066477*^9, 3.953004014769417*^9},
- CellLabel->
-  "During evaluation of \
-In[11]:=",ExpressionUUID->"7bffa365-434b-6443-9a9d-801bddf311f3"],
-
-Cell[BoxData[
- InterpretationBox[
-  RowBox[{"\<\"Notebook not found: \"\>", 
-   "\[InvisibleSpace]", \
-"\<\"C:\\\\Users\\\\Utente\\\\Documents\\\\Wolfram\\\\my-local-repo\\\\\
-MyNotebook.nb\"\>"}],
-  SequenceForm[
-  "Notebook not found: ", 
-   "C:\\Users\\Utente\\Documents\\Wolfram\\my-local-repo\\MyNotebook.nb"],
-  Editable->False]], "Print",
- CellChangeTimes->{3.953003939066477*^9, 3.9530040147731705`*^9},
- CellLabel->
-  "During evaluation of \
-In[11]:=",ExpressionUUID->"4b061e9f-8f28-a14a-b4e0-278dd39aaafe"]
-}, Open  ]]
+In[174]:=",ExpressionUUID->"eca0a80e-3b20-0147-98f9-9d81b825c3e9"]
 }, Open  ]]
 },
 WindowSize->{1141.2, 568.8},
@@ -190,16 +56,8 @@ CellTagsIndex->{}
 (*NotebookFileOutline
 Notebook[{
 Cell[CellGroupData[{
-Cell[576, 22, 3473, 84, 594, "Code",ExpressionUUID->"8bad2158-8fa6-4943-9a10-bfe5ebd77d47"],
-Cell[4052, 108, 283, 4, 32, "Output",ExpressionUUID->"52cbd876-d13f-3d42-a88a-9b07051bb844"],
-Cell[4338, 114, 397, 10, 26, "Message",ExpressionUUID->"30bfc76c-e4d7-f444-81af-7e7afd4d1ba5"],
-Cell[4738, 126, 434, 10, 26, "Message",ExpressionUUID->"84ac8a4f-a783-3347-8ed7-9af58fcee129"],
-Cell[5175, 138, 229, 3, 32, "Output",ExpressionUUID->"f56ef557-bdd0-7e4e-9fa6-47bdb3d6cb29"],
-Cell[CellGroupData[{
-Cell[5429, 145, 220, 4, 22, "Print",ExpressionUUID->"0676a2df-30e9-1e4b-a609-e3149dfa6ded"],
-Cell[5652, 151, 218, 4, 22, "Print",ExpressionUUID->"7bffa365-434b-6443-9a9d-801bddf311f3"],
-Cell[5873, 157, 516, 13, 22, "Print",ExpressionUUID->"4b061e9f-8f28-a14a-b4e0-278dd39aaafe"]
-}, Open  ]]
+Cell[576, 22, 453, 7, 50, "Code",ExpressionUUID->"8bad2158-8fa6-4943-9a10-bfe5ebd77d47"],
+Cell[1032, 31, 273, 6, 22, "Print",ExpressionUUID->"eca0a80e-3b20-0147-98f9-9d81b825c3e9"]
 }, Open  ]]
 }
 ]
