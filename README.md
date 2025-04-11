@@ -16,6 +16,6 @@ Blocchi di lavoro:
 
 5:input dell'utente
 
-6: pizze
+6: varianti e variabili
 
-7: varianti e variabili
+7: pizze :D
