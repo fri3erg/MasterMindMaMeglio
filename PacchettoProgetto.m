@@ -1,286 +1,405 @@
-(* Content-type: application/vnd.wolfram.mathematica *)
-
-(*** Wolfram Notebook File ***)
-(* http://www.wolfram.com/nb *)
-
-(* CreatedBy='Wolfram 14.2' *)
-
-(*CacheID: 234*)
-(* Internal cache information:
-NotebookFileLineBreakTest
-NotebookFileLineBreakTest
-NotebookDataPosition[       154,          7]
-NotebookDataLength[     12561,        278]
-NotebookOptionsPosition[     11733,        257]
-NotebookOutlinePosition[     12227,        276]
-CellTagsIndexPosition[     12184,        273]
-WindowFrame->Normal*)
-
-(* Beginning of Notebook Content *)
-Notebook[{
-Cell[BoxData[
- RowBox[{
-  RowBox[{"(*", " ", 
-   RowBox[{":", "Title", ":", "NomeProgetto"}], "*)"}], "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{":", "Context", ":", "NomeContesto`"}], "*)"}], "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{":", "Author", ":", 
-    RowBox[{
-     RowBox[{"Gruppo", " ", "X"}], " ", "-", " ", "NomeGruppo"}]}], "*)"}], 
-  "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{
-    RowBox[{":", "Summary", ":", 
-     RowBox[{"Package", " ", "per", " ", "\"\<NomeProgetto\>\""}]}], ",", " ", 
-    RowBox[{"progetto", " ", "su", " ", "aaaaaa"}]}], "*)"}], "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{":", 
-    RowBox[{"Package", " ", "Version"}], ":", "0.1"}], "*)"}], "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{":", "History", ":", 
-    RowBox[{"last", " ", "modified", " ", 
-     RowBox[{
-      RowBox[{"2", "/", "4"}], "/", "2025"}]}]}], "*)"}], "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{":", "Copyright", ":", 
-    RowBox[{
-     RowBox[{"\[Copyright]", " ", "2025", " ", "Gruppo", " ", "X"}], " ", "-",
-      " ", "NomeGruppo"}]}], "*)"}], "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{":", "License", ":", 
-    RowBox[{"MIT", " ", "License"}]}], "*)"}], "\n", 
-  RowBox[{"(*", 
-   RowBox[{
-    RowBox[{
-     RowBox[{" ", 
-      RowBox[{":", "Discussion", ":", 
-       RowBox[{"aaaaaa", "\n", "\t", "Funzionalit\[AGrave]", " ", 
-        RowBox[{"obbligatorie", ":", "\n", "\t", 
-         RowBox[{
-          RowBox[{"-", " ", "Seed"}], " ", "da", " ", "chiedere", " ", 
-          "all"}]}]}]}], "\[CloseCurlyQuote]"}], "utente", " ", "per", " ", 
-     RowBox[{"(", "ri", ")"}], "generare", " ", "un", " ", "esercizio"}], 
-    "\n", "\t", "-", " ", 
-    RowBox[{"Genera", " ", "Esercizio"}], "\n", "\t", "-", " ", 
-    RowBox[{"Verifica", " ", "Risultato"}], "\n", "\t", "-", " ", 
-    RowBox[{"Mostra", " ", "Soluzione"}], "\n", "\t", "-", " ", "Pulisci"}], 
-   "\n", "*)"}], "\n", 
-  RowBox[{"(*", " ", 
-   RowBox[{":", "Warning", ":", 
-    RowBox[{"DOCUMENTATE", " ", "TUTTO", " ", "il", " ", 
-     RowBox[{"codice", "!"}]}]}], "*)"}]}]], "Code",
- CellChangeTimes->{{3.952430943787079*^9, 3.9524309706555767`*^9}, {
-  3.95243102476952*^9, 3.952431126402914*^9}, {3.9524311773127136`*^9, 
-  3.952431192947651*^9}, {3.9524312602691555`*^9, 3.9524313363628387`*^9}, {
-  3.9524313670669403`*^9, 3.952431468764738*^9}, {3.952435382438404*^9, 
-  3.9524354094111385`*^9}, {3.952597541372204*^9, 3.952597643812336*^9}, {
-  3.9525976762666073`*^9, 3.9525978352464848`*^9}},
- CellLabel->"In[1]:=",ExpressionUUID->"54a13669-0a28-0749-ab78-85d9e09ebab3"],
-
-Cell[BoxData[
- RowBox[{
-  RowBox[{"avviaSchermataDiGioco", "[", "]"}], " ", ":=", " ", 
-  RowBox[{"Module", "[", "\n", "  ", 
-   RowBox[{
-    RowBox[{"{", 
-     RowBox[{
-      RowBox[{"screenWidth", " ", "=", " ", "1920"}], ",", " ", 
-      RowBox[{"screenHeight", " ", "=", " ", "1080"}], ",", " ", "mainWindow",
-       ",", " ", "fontScale", ",", " ", "\n", "   ", "content"}], "}"}], ",", 
-    "\n", "  ", "\n", "  ", 
-    RowBox[{"(*", " ", 
-     RowBox[{
-     "1.", " ", "Metodo", " ", "affidabile", " ", "per", " ", "ottenere", " ",
-       "le", " ", "dimensioni", " ", "dello", " ", "schermo"}], " ", "*)"}], 
-    "\n", "  ", 
-    RowBox[{
-     RowBox[{"Quiet", " ", "@", " ", 
-      RowBox[{"Check", "[", "\n", "    ", 
-       RowBox[{
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"screenWidth", ",", " ", "screenHeight"}], "}"}], " ", "=", 
-         " ", "\n", "     ", 
-         RowBox[{"FrontEndExecute", " ", "@", " ", 
-          RowBox[{"FrontEnd`Value", "[", 
-           RowBox[{"FE`getScreenSize", "[", "]"}], "]"}]}]}], ",", "\n", 
-        "    ", 
-        RowBox[{
-         RowBox[{"{", 
-          RowBox[{"screenWidth", ",", " ", "screenHeight"}], "}"}], " ", "=", 
-         " ", 
-         RowBox[{"{", 
-          RowBox[{"1920", ",", " ", "1080"}], "}"}]}]}], "\n", "  ", "]"}]}], 
-     ";", "\n", "  ", "\n", "  ", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-      "2.", " ", "Calcolo", " ", "dimensione", " ", "font", " ", "adattiva"}],
-       " ", "*)"}], "\n", "  ", 
-     RowBox[{"fontScale", " ", "=", " ", 
-      RowBox[{
-       RowBox[{"Min", "[", 
-        RowBox[{"screenWidth", ",", " ", "screenHeight"}], "]"}], "/", 
-       "20"}]}], ";", "\n", "  ", "\n", "  ", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-      "3.", " ", "Creazione", " ", "contenuto", " ", "con", " ", "pulsante", " ",
-        "di", " ", "chiusura"}], " ", "*)"}], "\n", "  ", 
-     RowBox[{"content", " ", "=", " ", 
-      RowBox[{"Column", "[", 
-       RowBox[{
-        RowBox[{"{", "\n", "     ", 
-         RowBox[{
-          RowBox[{"Spacer", "[", "1", "]"}], ",", "\n", "     ", 
-          RowBox[{"Style", "[", 
-           RowBox[{"\"\<MASTERMIND GIOCO\>\"", ",", " ", "\n", "      ", 
-            RowBox[{"FontSize", " ", "->", " ", "fontScale"}], ",", " ", "\n",
-             "      ", 
-            RowBox[{"FontWeight", " ", "->", " ", "Bold"}], ",", " ", "\n", 
-            "      ", 
-            RowBox[{"FontColor", " ", "->", " ", "White"}], ",", "\n", 
-            "      ", 
-            RowBox[{"FontFamily", " ", "->", " ", "\"\<Impact\>\""}]}], "]"}],
-           ",", "\n", "     ", 
-          RowBox[{"Spacer", "[", "1", "]"}], ",", "\n", "     ", 
-          RowBox[{"Button", "[", 
-           RowBox[{"\"\<ESCI\>\"", ",", " ", "\n", "      ", 
-            RowBox[{"NotebookClose", "[", 
-             RowBox[{"EvaluationNotebook", "[", "]"}], "]"}], ",", " ", "\n", 
-            "      ", 
-            RowBox[{"Background", " ", "->", " ", "Red"}], ",", " ", "\n", 
-            "      ", 
-            RowBox[{"BaseStyle", " ", "->", " ", 
-             RowBox[{"{", 
-              RowBox[{
-               RowBox[{"FontSize", " ", "->", " ", 
-                RowBox[{"fontScale", "/", "3"}]}], ",", " ", 
-               RowBox[{"FontColor", " ", "->", " ", "White"}], ",", " ", 
-               "Bold"}], "}"}]}], ",", "\n", "      ", 
-            RowBox[{"ImageSize", " ", "->", " ", 
-             RowBox[{"{", 
-              RowBox[{"Automatic", ",", " ", 
-               RowBox[{"fontScale", "/", "2"}]}], "}"}]}]}], "\n", "     ", 
-           "]"}], ",", "\n", "     ", 
-          RowBox[{"Spacer", "[", "1", "]"}]}], "\n", "  ", "}"}], ",", " ", 
-        "Center"}], "]"}]}], ";", "\n", "  ", "\n", "  ", 
-     RowBox[{"(*", " ", 
-      RowBox[{"4.", " ", "Creazione", " ", "finestra", " ", "principale"}], 
-      " ", "*)"}], "\n", "  ", 
-     RowBox[{"mainWindow", " ", "=", " ", 
-      RowBox[{"NotebookPut", " ", "@", " ", 
-       RowBox[{"Notebook", "[", 
-        RowBox[{
-         RowBox[{"{", "\n", "     ", 
-          RowBox[{"Cell", "[", 
-           RowBox[{"BoxData", " ", "@", " ", 
-            RowBox[{"ToBoxes", " ", "@", " ", 
-             RowBox[{"Panel", "[", "\n", "        ", 
-              RowBox[{"content", ",", "\n", "        ", 
-               RowBox[{"Background", " ", "->", " ", "Black"}], ",", "\n", 
-               "        ", 
-               RowBox[{"ImageSize", " ", "->", " ", 
-                RowBox[{"{", 
-                 RowBox[{"screenWidth", ",", " ", "screenHeight"}], "}"}]}]}],
-               "\n", "     ", "]"}]}]}], "]"}], "\n", "   ", "}"}], ",", "\n",
-          "   ", 
-         RowBox[{"(*", " ", 
-          RowBox[{"Propriet\[AGrave]", " ", "finestra"}], " ", "*)"}], "\n", 
-         "   ", 
-         RowBox[{"WindowSize", " ", "->", " ", "Full"}], ",", "\n", "   ", 
-         RowBox[{"WindowFrame", " ", "->", " ", "\"\<Frameless\>\""}], ",", 
-         "\n", "   ", 
-         RowBox[{"WindowElements", " ", "->", " ", 
-          RowBox[{"{", "}"}]}], ",", "\n", "   ", 
-         RowBox[{"WindowTitle", " ", "->", " ", "None"}], ",", "\n", "   ", 
-         RowBox[{"Background", " ", "->", " ", "Black"}], ",", "\n", "   ", 
-         RowBox[{"Editable", " ", "->", " ", "False"}], ",", "\n", "   ", 
-         "\n", "   ", 
-         RowBox[{"(*", " ", 
-          RowBox[{"Gestione", " ", "eventi"}], " ", "*)"}], "\n", "   ", 
-         RowBox[{"NotebookEventActions", " ", "->", " ", 
-          RowBox[{"{", "\n", "     ", 
-           RowBox[{
-            RowBox[{"{", 
-             RowBox[{"\"\<KeyDown\>\"", ",", " ", "\"\<Escape\>\""}], "}"}], 
-            " ", ":>", " ", 
-            RowBox[{"NotebookClose", "[", 
-             RowBox[{"EvaluationNotebook", "[", "]"}], "]"}]}], "\n", "   ", 
-           "}"}]}]}], "\n", "  ", "]"}]}]}], ";", "\n", "  ", "\n", "  ", 
-     RowBox[{"(*", " ", 
-      RowBox[{
-      "5.", " ", "Forza", " ", "focus", " ", "sulla", " ", "finestra"}], " ", 
-      "*)"}], "\n", "  ", 
-     RowBox[{"SelectionMove", "[", 
-      RowBox[{"mainWindow", ",", " ", "All", ",", " ", "Notebook"}], "]"}], ";",
-      "\n", "  ", 
-     RowBox[{"FrontEndExecute", " ", "@", " ", 
-      RowBox[{"FrontEndToken", "[", 
-       RowBox[{"mainWindow", ",", " ", "\"\<MoveNext\>\""}], "]"}]}], ";", 
-     "\n", "  ", "\n", "  ", "mainWindow"}]}], "\n", "]"}]}]], "Code",
- CellChangeTimes->{{3.9524309881178493`*^9, 3.952430994722597*^9}, {
-   3.9524314860072803`*^9, 3.9524314871068764`*^9}, {3.9524315989477177`*^9, 
-   3.9524315993728943`*^9}, {3.952435168839573*^9, 3.9524351753274345`*^9}, 
-   3.952435215435707*^9, {3.952597056211479*^9, 3.952597094189913*^9}, {
-   3.9525971427990475`*^9, 3.9525972140306053`*^9}, {3.95302932506353*^9, 
-   3.953029326759178*^9}, 3.953033854132044*^9, {3.953034015498358*^9, 
-   3.9530340160679245`*^9}, {3.9530341557690964`*^9, 
-   3.9530341569264736`*^9}, {3.953034547429495*^9, 3.9530345486676044`*^9}, {
-   3.9530346151569653`*^9, 3.9530346245775833`*^9}, {3.9530351766067085`*^9, 
-   3.953035177720009*^9}, {3.9530353166143703`*^9, 3.9530353225987225`*^9}, 
-   3.9530353543367615`*^9, {3.953035389741665*^9, 3.9530353903696537`*^9}, {
-   3.953036171759634*^9, 3.953036173345991*^9}, 3.9530363661578617`*^9, 
-   3.9530364896237984`*^9, {3.953183380289982*^9, 3.953183382338379*^9}, {
-   3.953183824294302*^9, 3.953183848963827*^9}, 3.9531840193617115`*^9, 
-   3.953184508530508*^9, 3.95318468969483*^9, 3.953185224727461*^9, {
-   3.9531914259960003`*^9, 3.953191430520067*^9}, {3.9531915497547417`*^9, 
-   3.953191556908045*^9}, {3.9531918016128902`*^9, 3.953191801904417*^9}, 
-   3.9531923216693*^9, {3.9531924830083466`*^9, 3.9531924907822075`*^9}, {
-   3.953192573624197*^9, 3.9531925888184643`*^9}, 3.9531929210439034`*^9, {
-   3.9531930610498905`*^9, 3.9531930723900604`*^9}, 3.953194884434084*^9, 
-   3.953194948349169*^9, 3.953195119283289*^9, 3.9531951843042107`*^9, {
-   3.953195755687166*^9, 3.9531957720089817`*^9}, 3.953196118913931*^9, 
-   3.9531964417730904`*^9, 3.9531967521258793`*^9},
- CellLabel->"In[3]:=",ExpressionUUID->"1a5d3d6e-9ceb-ad4e-955e-f91ea67f9168"],
-
-Cell[BoxData[""], "Input",
- CellChangeTimes->{{3.95303434394112*^9, 3.953034344992651*^9}},
- CellLabel->"In[5]:=",ExpressionUUID->"a87addd3-e25c-f646-af02-0965616d4aa1"],
-
-Cell[BoxData[""], "Input",
- CellChangeTimes->{{3.9530343373537827`*^9, 3.9530343386530857`*^9}},
- CellLabel->"In[6]:=",ExpressionUUID->"221ab672-534e-1e46-b4bb-1c643486835f"],
-
-Cell[BoxData[""], "Input",
- CellChangeTimes->{{3.9530343333282413`*^9, 3.953034334847044*^9}},
- CellLabel->"In[7]:=",ExpressionUUID->"c738afb7-f3bc-f041-9de5-0bb99e11a23a"]
-},
-WindowSize->{1141.2, 568.8},
-WindowMargins->{{0, Automatic}, {Automatic, 0}},
-DockedCells->{},
-TaggingRules-><|"TryRealOnly" -> False|>,
-Magnification:>1.1 Inherited,
-FrontEndVersion->"14.2 for Microsoft Windows (64-bit) (December 26, 2024)",
-StyleDefinitions->"Default.nb",
-ExpressionUUID->"eb79ee5e-9a6e-df47-9686-4b313a6d70bf"
-]
-(* End of Notebook Content *)
-
-(* Internal cache information *)
-(*CellTagsOutline
-CellTagsIndex->{}
-*)
-(*CellTagsIndex
-CellTagsIndex->{}
-*)
-(*NotebookFileOutline
-Notebook[{
-Cell[554, 20, 2536, 58, 364, "Code",ExpressionUUID->"54a13669-0a28-0749-ab78-85d9e09ebab3"],
-Cell[3093, 80, 8112, 163, 1194, "Code",ExpressionUUID->"1a5d3d6e-9ceb-ad4e-955e-f91ea67f9168"],
-Cell[11208, 245, 169, 2, 31, "Input",ExpressionUUID->"a87addd3-e25c-f646-af02-0965616d4aa1"],
-Cell[11380, 249, 174, 2, 31, "Input",ExpressionUUID->"221ab672-534e-1e46-b4bb-1c643486835f"],
-Cell[11557, 253, 172, 2, 31, "Input",ExpressionUUID->"c738afb7-f3bc-f041-9de5-0bb99e11a23a"]
-}
-]
-*)
-
+(* Created with the Wolfram Language : www.wolfram.com *)
+Notebook[
+ {Cell[CellGroupData[
+    {Cell[BoxData[{RowBox[{RowBox[{"repoURL", " ", "=", " ", 
+            "\"https://github.com/fri3erg/MasterMindMaMeglio.git\""}], ";"}], 
+        "\n", RowBox[{RowBox[{"localPath", " ", "=", " ", 
+            RowBox[{"FileNameJoin", "[", RowBox[{"{", RowBox[
+                 {RowBox[{"NotebookDirectory", "[", "]"}], ",", " ", 
+                  "\"MasterMindMaMeglio\""}], "}"}], "]"}]}], ";"}], "\n", 
+        RowBox[{RowBox[{"gitPath", " ", "=", " ", 
+            "\"C:\\\\Program Files\\\\Git\\\\cmd\\\\git.exe\""}], ";"}], 
+        "\n", RowBox[{RowBox[{RowBox[{"filename", " ", "=", " ", 
+              "\"PacchettoProgetto.m\""}], ";"}], " ", 
+          RowBox[{"(*", RowBox[{"Cambia", " ", "qui", " ", 
+              RowBox[{"Progetto", ".", "nb"}], " ", RowBox[{
+                "PacchettoProgetto", ".", "m"}]}], " ", "*)"}]}], "\n", 
+        RowBox[{RowBox[{RowBox[{"wlFilename", " ", "=", " ", 
+              RowBox[{"StringReplace", "[", RowBox[{"filename", ",", " ", 
+                  RowBox[{"\".nb\"", " ", "->", " ", "\".wl\""}]}], "]"}]}], 
+            ";"}], " ", RowBox[{"(*", " ", RowBox[{RowBox[{"Auto", " ", ".", 
+                "wl"}], " ", "name"}], " ", "*)"}]}], "\n", 
+        RowBox[{RowBox[{RowBox[{"commitMessage", " ", "=", " ", "\"Sistemata \
+sintassi da package. Da testare se serve evaluation a parte.\""}], ";"}], 
+          " ", RowBox[{"(*", RowBox[{"Cambia", " ", "qui"}], "*)"}], "\n"}], 
+        "\n", RowBox[{RowBox[{RowBox[{"PacletInstall", "[", "\"C:\\\\Users\\\
+\\Utente\\\\Downloads\\\\GitLink-2018.07.20.01.paclet\"", "]"}], ";"}], "\n", 
+          "\n", RowBox[{"(*", " ", RowBox[{"Load", " ", "GitLink"}], " ", 
+            "*)"}]}], "\n", RowBox[
+         {RowBox[{RowBox[{"Needs", "[", "\"GitLink`\"", "]"}], ";"}], "\n", 
+          "\n", RowBox[{"(*", " ", RowBox[{"Better", " ", "change", " ", 
+              "detection"}], " ", "*)"}]}], "\n", 
+        RowBox[{RowBox[{RowBox[{RowBox[{"HasLocalChanges", "[", "repo_", 
+                "]"}], " ", ":=", " ", RowBox[{"Module", "[", RowBox[
+                 {RowBox[{"{", "status", "}"}], ",", "\n", "  ", 
+                  RowBox[{RowBox[{"status", " ", "=", " ", RowBox[
+                       {"GitStatus", "[", "repo", "]"}]}], ";", "\n", "  ", 
+                    RowBox[{"(*", " ", RowBox[{"Check", " ", "both", " ", 
+                        "unstaged", " ", "and", " ", "staged", " ", 
+                        "changes"}], " ", "*)"}], "\n", "  ", RowBox[
+                     {RowBox[{RowBox[{"status", "[", "\"Modified\"", "]"}], 
+                        " ", "=!=", " ", RowBox[{"{", "}"}]}], " ", "||", 
+                      " ", RowBox[{RowBox[{"status", "[", 
+                          "\"IndexModified\"", "]"}], " ", "=!=", " ", 
+                        RowBox[{"{", "}"}]}]}]}]}], "\n", "]"}]}], ";"}], 
+          "\n"}], "\n", RowBox[
+         {RowBox[{RowBox[{RowBox[{"GetRemoteChanges", "[", "]"}], " ", ":=", 
+              " ", RowBox[{"Module", "[", RowBox[{RowBox[{"{", RowBox[
+                     {"fetchResult", ",", " ", "diffResult"}], "}"}], ",", 
+                  "\n", "  ", RowBox[{"(*", " ", RowBox[{"First", " ", 
+                      "fetch", " ", "updates", " ", "without", " ", 
+                      "changing", " ", "local", " ", "files"}], " ", "*)"}], 
+                  "\n", "  ", RowBox[{RowBox[{"fetchResult", " ", "=", " ", 
+                      RowBox[{"RunProcess", "[", RowBox[{"{", RowBox[
+                          {"gitPath", ",", " ", "\"-C\"", ",", " ", 
+                          "localPath", ",", " ", "\"fetch\""}], "}"}], 
+                        "]"}]}], ";", "\n", "  ", RowBox[{"If", "[", 
+                      RowBox[{RowBox[{RowBox[{"fetchResult", "[", 
+                          "\"ExitCode\"", "]"}], " ", "=!=", " ", "0"}], ",", 
+                        " ", "\n", "    ", RowBox[{RowBox[{"Print", "[", 
+                          "\"Error fetching remote changes\"", "]"}], ";", 
+                          "\n", "    ", RowBox[{"Return", "[", "True", 
+                          "]"}]}]}], " ", RowBox[{"(*", " ", RowBox[
+                         {"Assume", " ", "changes", " ", "exist", " ", "to", 
+                          " ", "be", " ", "safe"}], " ", "*)"}], "\n", "  ", 
+                      "]"}], ";", "\n", "  ", "\n", "  ", RowBox[{"(*", " ", 
+                      RowBox[{"Compare", " ", "local", " ", "branch", " ", 
+                        "with", " ", "remote"}], " ", "*)"}], "\n", "  ", 
+                    RowBox[{"diffResult", " ", "=", " ", RowBox[
+                       {"RunProcess", "[", RowBox[{"{", RowBox[{"gitPath", 
+                          ",", " ", "\"-C\"", ",", " ", "localPath", ",", 
+                          " ", "\"diff\"", ",", " ", "\"--name-only\"", ",", 
+                          " ", "\"HEAD..origin/main\""}], "}"}], "]"}]}], 
+                    ";", "\n", "  ", "\n", "  ", RowBox[{"If", "[", 
+                      RowBox[{RowBox[{RowBox[{RowBox[{"diffResult", "[", 
+                          "\"ExitCode\"", "]"}], " ", "===", " ", "0"}], " ", 
+                          "&&", " ", RowBox[{RowBox[{"diffResult", "[", 
+                          "\"StandardOutput\"", "]"}], " ", "=!=", " ", 
+                          "\"\""}]}], ",", "\n", "    ", RowBox[{RowBox[
+                          {"Print", "[", 
+                          "\"Remote changes detected in files:\"", "]"}], 
+                          ";", "\n", "    ", RowBox[{"Print", "[", RowBox[
+                          {"diffResult", "[", "\"StandardOutput\"", "]"}], 
+                          "]"}], ";", "\n", "    ", "True"}], ",", "\n", 
+                        "    ", "False"}], "\n", "  ", "]"}]}]}], "\n", 
+                "]"}]}], ";"}], "\n"}], "\n", 
+        RowBox[{RowBox[{RowBox[{RowBox[{"GetUntrackedFiles", "[", "]"}], " ", 
+              ":=", " ", RowBox[{"Module", "[", RowBox[{RowBox[{"{", 
+                    "result", "}"}], ",", "\n", "  ", RowBox[
+                   {RowBox[{"result", " ", "=", " ", RowBox[{"RunProcess", 
+                        "[", RowBox[{"{", RowBox[{"gitPath", ",", " ", 
+                          "\"-C\"", ",", " ", "localPath", ",", " ", 
+                          "\"ls-files\"", ",", " ", "\"--others\"", ",", " ", 
+                          "\"--exclude-standard\""}], "}"}], "]"}]}], ";", 
+                    "\n", "  ", RowBox[{"If", "[", RowBox[{RowBox[
+                         {RowBox[{RowBox[{"result", "[", "\"ExitCode\"", 
+                          "]"}], " ", "===", " ", "0"}], " ", "&&", " ", 
+                          RowBox[{RowBox[{"result", "[", 
+                          "\"StandardOutput\"", "]"}], " ", "=!=", " ", 
+                          "\"\""}]}], ",", "\n", "    ", RowBox[
+                         {"StringSplit", "[", RowBox[{RowBox[{"StringTrim", 
+                          "[", RowBox[{"result", "[", "\"StandardOutput\"", 
+                          "]"}], "]"}], ",", " ", "\"\\n\""}], "]"}], ",", 
+                        "\n", "    ", RowBox[{"{", "}"}]}], "\n", "  ", 
+                      "]"}]}]}], "\n", "]"}]}], ";"}], "\n", 
+          RowBox[{"(*", " ", RowBox[{"Convert", " ", "notebook", " ", 
+              RowBox[{"to", " ", ".", "wl"}], " ", "package"}], " ", 
+            "*)"}]}], "\n", RowBox[
+         {RowBox[{RowBox[{RowBox[{"ExportWLVersion", "[", "]"}], " ", ":=", 
+              " ", RowBox[{"(", "\n", "  ", RowBox[{RowBox[{"Print", "[", 
+                    "\"Creating clean .wl version...\"", "]"}], ";", "\n", 
+                  "  ", RowBox[{"Export", "[", "\n", "    ", RowBox[
+                     {RowBox[{"FileNameJoin", "[", RowBox[{"{", RowBox[
+                          {"localPath", ",", " ", "wlFilename"}], "}"}], 
+                        "]"}], ",", " ", "\n", "    ", RowBox[{"NotebookGet", 
+                        "[", RowBox[{"EvaluationNotebook", "[", "]"}], "]"}], 
+                      ",", " ", "\n", "    ", "\"Package\""}], "\n", "  ", 
+                    "]"}], ";", "\n", "  ", "wlFilename"}], "\n", ")"}]}], 
+            ";"}], "\n", "\n", RowBox[{"(*", " ", RowBox[{"Main", " ", 
+              "workflow"}], " ", "*)"}]}], "\n", 
+        RowBox[{RowBox[{RowBox[{RowBox[{"SynchronizeRepo", "[", "]"}], " ", 
+              ":=", " ", RowBox[{"Module", "[", RowBox[{RowBox[{"{", 
+                    RowBox[{"repo", ",", " ", "untrackedFiles", ",", " ", 
+                      "localChanges", ",", " ", "remoteChanges", ",", " ", 
+                      "commitResult", ",", " ", "pushResult"}], "}"}], ",", 
+                  "\n", "  ", RowBox[{RowBox[{"If", "[", RowBox[
+                       {RowBox[{"!", RowBox[{"DirectoryQ", "[", "localPath", 
+                          "]"}]}], ",", " ", "\n", "    ", RowBox[
+                         {RowBox[{"Print", "[", "\"Cloning repo...\"", "]"}], 
+                          ";", "\n", "    ", RowBox[{"GitClone", "[", RowBox[
+                          {"repoURL", ",", " ", "localPath"}], "]"}], ";", 
+                          "\n", "    ", RowBox[{"Return", "[", 
+                          "\"Clone complete\"", "]"}], ";"}]}], "\n", "  ", 
+                      "]"}], ";", "\n", "\n", "  ", RowBox[{"repo", " ", "=", 
+                      " ", RowBox[{"GitOpen", "[", "localPath", "]"}]}], ";", 
+                    "\n", "  ", "\n", "  ", RowBox[{"(*", " ", RowBox[
+                       {RowBox[{"Check", " ", "for", " ", "untracked", " ", 
+                          "files", " ", "first"}], " ", "-", " ", RowBox[
+                         {"these", " ", "are", " ", "always", " ", 
+                          "dangerous"}]}], " ", "*)"}], "\n", "  ", 
+                    RowBox[{"untrackedFiles", " ", "=", " ", RowBox[
+                       {"GetUntrackedFiles", "[", "]"}]}], ";", "\n", "  ", 
+                    RowBox[{"If", "[", RowBox[{RowBox[{RowBox[{"Length", "[", 
+                          "untrackedFiles", "]"}], " ", ">", " ", "0"}], ",", 
+                        "\n", "    ", RowBox[{RowBox[{"Print", "[", 
+                          "\"Untracked files found:\"", "]"}], ";", "\n", 
+                          "    ", RowBox[{"Print", "[", RowBox[{"Column", 
+                          "[", "untrackedFiles", "]"}], "]"}], ";", "\n", 
+                          "    ", RowBox[{"Return", "[", 
+                          "\"Cannot proceed with untracked files\"", "]"}], 
+                          ";"}]}], "\n", "  ", "]"}], ";", "\n", "  ", "\n", 
+                    "  ", RowBox[{"(*", " ", RowBox[{"Check", " ", "remote", 
+                        " ", "and", " ", "local", " ", "changes"}], " ", 
+                      "*)"}], "\n", "  ", RowBox[{"remoteChanges", " ", "=", 
+                      " ", RowBox[{"GetRemoteChanges", "[", "]"}]}], ";", 
+                    "\n", "  ", RowBox[{"localChanges", " ", "=", " ", 
+                      RowBox[{"HasLocalChanges", "[", "repo", "]"}]}], ";", 
+                    "\n", "  ", "\n", "  ", RowBox[{"(*", " ", RowBox[
+                       {RowBox[{"Decision", " ", "logic"}], " ", "-", " ", 
+                        RowBox[{"each", " ", "condition", " ", "must", " ", 
+                          "have", " ", "matching", " ", RowBox[{"true", "/", 
+                          "false"}], " ", "branches"}]}], " ", "*)"}], "\n", 
+                    RowBox[{"Which", "[", "\n", "  ", RowBox[{"(*", " ", 
+                        RowBox[{RowBox[{"Case", " ", "1"}], ":", " ", 
+                          RowBox[{"No", " ", "changes", " ", "anywhere"}]}], 
+                        " ", "*)"}], "\n", "  ", RowBox[{RowBox[{RowBox[
+                          {"!", "localChanges"}], " ", "&&", " ", RowBox[
+                          {"!", "remoteChanges"}]}], ",", " ", "\n", "  ", 
+                        RowBox[{"Print", "[", 
+                          "\"No local or remote changes - nothing to do\"", 
+                          "]"}], ",", "\n", "  ", "\n", "  ", RowBox[{"(*", 
+                          " ", RowBox[{RowBox[{"Case", " ", "2"}], ":", " ", 
+                          RowBox[{RowBox[{"Remote", " ", "changes", " ", 
+                          "but", " ", "no", " ", "local", " ", "changes"}], 
+                          " ", "-", " ", RowBox[{"safe", " ", "to", " ", 
+                          "pull"}]}]}], " ", "*)"}], "\n", "  ", RowBox[
+                         {RowBox[{"!", "localChanges"}], " ", "&&", " ", 
+                          "remoteChanges"}], ",", " ", "\n", "  ", RowBox[
+                         {"(", RowBox[{RowBox[{"Print", "[", 
+                          "\"Pulling remote changes...\"", "]"}], ";", "\n", 
+                          "   ", RowBox[{"GitPull", "[", "repo", "]"}], ";", 
+                          "\n", "   ", RowBox[{"Print", "[", 
+                          "\"Pull complete\"", "]"}]}], ")"}], ",", "\n", 
+                        "  ", "\n", "  ", RowBox[{"(*", " ", RowBox[
+                          {RowBox[{"Case", " ", "3"}], ":", " ", RowBox[
+                          {RowBox[{"Both", " ", "remote", " ", "and", " ", 
+                          "local", " ", "changes"}], " ", "-", " ", RowBox[
+                          {"need", " ", "manual", " ", "merge"}]}]}], " ", 
+                          "*)"}], "\n", "  ", RowBox[{"localChanges", " ", 
+                          "&&", " ", "remoteChanges"}], ",", " ", "\n", "  ", 
+                        RowBox[{"(", RowBox[{RowBox[{"Print", "[", "\"Both \
+remote changes and local modifications exist.\"", "]"}], ";", "\n", "   ", 
+                          RowBox[{"Print", "[", 
+                          "\"RISOLVI MANUALMENTE VAI A VEDERE\"", "]"}]}], 
+                          ")"}], ",", "\n", "  ", "\n", "  ", RowBox[{"(*", 
+                          " ", RowBox[{RowBox[{"Case", " ", "4"}], ":", " ", 
+                          RowBox[{RowBox[{"Local", " ", "changes", " ", 
+                          "only"}], " ", "-", " ", RowBox[{"safe", " ", "to", 
+                          " ", RowBox[{"commit", "/", "push"}]}]}]}], " ", 
+                          "*)"}], "\n", "  ", RowBox[{"localChanges", " ", 
+                          "&&", " ", RowBox[{"!", "remoteChanges"}]}], ",", 
+                        " ", "\n", "  ", RowBox[{"(", RowBox[{RowBox[
+                          {"Print", "[", 
+                          "\"Staging and committing changes...\"", "]"}], 
+                          ";", "\n", "   ", RowBox[{"RunProcess", "[", 
+                          RowBox[{"{", RowBox[{"gitPath", ",", " ", "\"-C\"", 
+                          ",", " ", "localPath", ",", " ", "\"add\"", ",", 
+                          " ", "filename"}], "}"}], "]"}], ";", "\n", "   ", 
+                          RowBox[{"ExportWLVersion", "[", "]"}], ";", "\n", 
+                          "   ", RowBox[{"RunProcess", "[", RowBox[{"{", 
+                          RowBox[{"gitPath", ",", " ", "\"-C\"", ",", " ", 
+                          "localPath", ",", " ", "\"add\"", ",", " ", 
+                          "filename", ",", " ", "wlFilename"}], "}"}], "]"}], 
+                          ";", "\n", "   ", RowBox[{"commitResult", " ", "=", 
+                          " ", RowBox[{"RunProcess", "[", RowBox[{"{", RowBox[
+                          {"gitPath", ",", " ", "\"-C\"", ",", " ", 
+                          "localPath", ",", " ", "\"commit\"", ",", " ", 
+                          "\"-m\"", ",", " ", "commitMessage"}], "}"}], 
+                          "]"}]}], ";", "\n", "   ", RowBox[{"If", "[", 
+                          RowBox[{RowBox[{RowBox[{"commitResult", "[", 
+                          "\"ExitCode\"", "]"}], " ", "===", " ", "0"}], ",", 
+                          "\n", "     ", RowBox[{"(", RowBox[{RowBox[
+                          {"Print", "[", "\"Pushing changes...\"", "]"}], 
+                          ";", "\n", "      ", RowBox[{"pushResult", " ", 
+                          "=", " ", RowBox[{"RunProcess", "[", RowBox[{"{", 
+                          RowBox[{"gitPath", ",", " ", "\"-C\"", ",", " ", 
+                          "localPath", ",", " ", "\"push\"", ",", " ", 
+                          "\"origin\"", ",", " ", "\"main\""}], "}"}], 
+                          "]"}]}], ";", "\n", "      ", RowBox[{"If", "[", 
+                          RowBox[{RowBox[{RowBox[{"pushResult", "[", 
+                          "\"ExitCode\"", "]"}], " ", "===", " ", "0"}], ",", 
+                          "\n", "        ", RowBox[{"Print", "[", 
+                          "\"Push successful\"", "]"}], ",", "\n", 
+                          "        ", RowBox[{"Print", "[", RowBox[
+                          {"\"Push failed: \"", ",", " ", RowBox[{
+                          "pushResult", "[", "\"StandardError\"", "]"}]}], 
+                          "]"}]}], "\n", "      ", "]"}]}], ")"}], ",", "\n", 
+                          "     ", RowBox[{"Print", "[", RowBox[
+                          {"\"Commit failed: \"", ",", " ", RowBox[
+                          {"commitResult", "[", "\"StandardError\"", "]"}]}], 
+                          "]"}]}], "\n", "   ", "]"}]}], ")"}], ",", "\n", 
+                        "  ", "True", ",", "\n", "  ", RowBox[{"Print", "[", 
+                          "\"Unexpected state\"", "]"}]}], "\n", "  ", 
+                      "]"}]}]}], "\n", "]"}]}], ";"}], "\n", 
+          RowBox[{"(*", " ", "Execute", " ", "*)"}]}], "\n", 
+        RowBox[{"SynchronizeRepo", "[", "]"}]}], "Code", 
+      CellChangeTimes -> {{3.9530066139226265*^9, 3.95300662307757*^9}, 
+        {3.9530066821697655*^9, 3.9530066893524513*^9}, 
+        {3.9530067277627106*^9, 3.953006752342764*^9}, {3.953007040441084*^9, 
+        3.953007078143257*^9}, {3.953007145245676*^9, 3.9530071454182816*^9}, 
+        {3.9530071770886803*^9, 3.9530071986473827*^9}, 
+        3.9530072342007256*^9, {3.953007277088955*^9, 3.9530073321850586*^9}, 
+        3.953007399402519*^9, {3.953007577859762*^9, 3.953007584356695*^9}, 
+        {3.953007826731697*^9, 3.95300783574963*^9}, 3.9530080375737324*^9, 
+        {3.953008080862274*^9, 3.9530080927397766*^9}, 3.953008337043253*^9, 
+        {3.9530084081223965*^9, 3.9530084135756702*^9}, 
+        {3.9530084679255047*^9, 3.9530084912936096*^9}, 3.95300861269293*^9, 
+        3.953009709680729*^9, {3.9530123132558727*^9, 3.9530123305137825*^9}, 
+        3.9530124582068615*^9, 3.9530126931341324*^9, {3.9530128320133095*^9, 
+        3.9530128406387444*^9}, {3.9530128739588966*^9, 
+        3.953012886263336*^9}, 3.9530130332126904*^9, {3.9530130635621433*^9, 
+        3.953013069764368*^9}, {3.953013109476454*^9, 3.9530131150603256*^9}, 
+        {3.9530132354366226*^9, 3.9530132419109116*^9}, 3.953013353599224*^9, 
+        3.9530133914013214*^9, {3.953013452357586*^9, 3.95301346231563*^9}, 
+        3.953013712680952*^9, 3.9530138042842484*^9, 3.953013834759489*^9, 
+        {3.9530140817472095*^9, 3.953014088453329*^9}, 
+        {3.9530141693375797*^9, 3.953014176257427*^9}, {3.953014228294697*^9, 
+        3.953014232524544*^9}, 3.9530145595739784*^9, 3.953014625692589*^9, 
+        3.953014673644472*^9, {3.9530149770960045*^9, 3.9530149992678795*^9}, 
+        {3.953015060197365*^9, 3.953015113659834*^9}, {3.953015163774645*^9, 
+        3.9530151652071095*^9}, 3.953015374795414*^9, {3.9530154087151833*^9, 
+        3.953015409994009*^9}, {3.9530365372429867*^9, 
+        3.9530365635689335*^9}, 3.9530366024807987*^9, {3.953036729986025*^9, 
+        3.953036756193592*^9}, 3.9530368210423603*^9, {3.953038934704979*^9, 
+        3.9530389400496807*^9}, 3.95303899826383*^9, {3.953039194324501*^9, 
+        3.953039246816885*^9}, 3.953039353571972*^9, {3.953039410484436*^9, 
+        3.9530394616263676*^9}, {3.9530410044414616*^9, 
+        3.9530410079733696*^9}, {3.953041188668312*^9, 
+        3.9530411891520233*^9}, 3.953044555259676*^9, {3.953044592385578*^9, 
+        3.9530446180566845*^9}, {3.9530446582816696*^9, 
+        3.953044658805586*^9}, {3.953044727492199*^9, 3.9530447594125195*^9}, 
+        {3.9530456604923553*^9, 3.9530456615618515*^9}, 
+        {3.953045816897402*^9, 3.953045825463768*^9}, {3.953045872434141*^9, 
+        3.953045872748602*^9}, 3.9530462134352055*^9, {3.953046253103283*^9, 
+        3.953046289969404*^9}, 3.9530465581978855*^9, 3.953046604490877*^9, 
+        {3.9530468053153915*^9, 3.9530468205241814*^9}, 
+        3.9530469044219456*^9, {3.953046976785948*^9, 3.9530469895536537*^9}, 
+        {3.9530470425964375*^9, 3.9530470820831337*^9}, 3.953047160847927*^9, 
+        3.9530472310387936*^9, {3.9530473366960373*^9, 3.953047365440094*^9}, 
+        {3.95334816489435*^9, 3.953348198815037*^9}, {3.953350543143202*^9, 
+        3.953350561438076*^9}, {3.95335059630274*^9, 3.9533506440975113*^9}}, 
+      CellLabel -> "In[133]:="], 
+     Cell[BoxData[TemplateBox[{"PacletInstall", "fnotfound", "\"-- Message \
+text not found -- \
+(\\!\\(\\*RowBox[{\\\"\\\\\\\"C:\\\\\\\\\\\\\\\\Users\\\\\\\\\\\\\\\\Utente\\\
+\\\\\\\\\\\\\\Downloads\\\\\\\\\\\\\\\\GitLink-2018.07.20.01.paclet\\\\\\\"\\\
+\"}]\\))\"", 2, 139, 14, 28026162770354469354, "Local"}, "MessageTemplate", 
+        BaseStyle -> "MSG"]], "Message", CellChangeTimes -> 
+       {3.95301384072246*^9, 3.9530138874541492*^9, 3.9530139369633446*^9, 
+        3.953014090353031*^9, 3.953014191211569*^9, 3.953014234577469*^9, 
+        {3.953014653330969*^9, 3.953014681605543*^9}, 3.953014986334654*^9, 
+        3.9530153777101383*^9, 3.9530154409972973*^9, 3.953036517283287*^9, 
+        3.9530365660409546*^9, 3.953036610356373*^9, 3.9530368287404137*^9, 
+        3.9530387337162914*^9, 3.9530388143470306*^9, 3.9530390054917965*^9, 
+        {3.953039082783432*^9, 3.953039095113991*^9}, 3.953039130184347*^9, 
+        3.9530394152661705*^9, {3.9530410152090664*^9, 
+        3.9530410294142475*^9}, {3.9530410774851017*^9, 
+        3.9530411033015976*^9}, 3.953041193242296*^9, 3.953041250242752*^9, 
+        3.9530414078399315*^9, {3.953041704512848*^9, 3.9530417236631413*^9}, 
+        {3.95304183111174*^9, 3.95304185325494*^9}, 3.953042969644314*^9, 
+        3.9530445556361446*^9, 3.9530446899017696*^9, {3.9530447512120743*^9, 
+        3.9530447598468056*^9}, {3.953045954799423*^9, 3.953045977686369*^9}, 
+        3.953046028185774*^9, 3.953046315021055*^9, {3.9530464232843475*^9, 
+        3.9530464493478584*^9}, {3.9530465837909946*^9, 
+        3.953046626846485*^9}, 3.953046823351427*^9, 3.9530472363963737*^9, 
+        {3.953047337946102*^9, 3.9530473678082943*^9}, 
+        {3.9533505838505764*^9, 3.953350587989622*^9}, 
+        3.9533506490889015*^9}, CellLabel -> 
+       "During evaluation of In[133]:="], 
+     Cell[CellGroupData[
+       {Cell[BoxData["\"Staging and committing changes...\""], "Print", 
+         CellChangeTimes -> {{3.953006675007118*^9, 3.9530066948890038*^9}, 
+           3.9530067461113987*^9, 3.9530067872206573*^9, 
+           3.9530068231572647*^9, 3.953007413910578*^9, 
+           {3.9530078315999184*^9, 3.9530078368171825*^9}, 
+           3.953008041320942*^9, {3.9530080847858505*^9, 
+           3.9530080956454887*^9}, {3.95300834008844*^9, 
+           3.9530083533180294*^9}, 3.9530084165049114*^9, 
+           3.953008636251131*^9, 3.953009713173073*^9, {3.953012316408949*^9, 
+           3.9530123324032326*^9}, 3.9530126972647038*^9, 
+           3.9530128427851696*^9, 3.9530128888153152*^9, 
+           3.9530130362966156*^9, 3.953013072218115*^9, 
+           {3.953013218630192*^9, 3.953013246126482*^9}, 
+           3.9530133632656555*^9, {3.953013398313257*^9, 
+           3.9530134224948635*^9}, 3.9530134649058285*^9, 
+           {3.953013819876772*^9, 3.9530138414652023*^9}, 
+           3.9530138884425488*^9, 3.9530139376776276*^9, 
+           3.953014090449215*^9, 3.953014191657034*^9, 3.953014234645561*^9, 
+           {3.9530146541562233*^9, 3.953014682246113*^9}, 
+           3.953014986346987*^9, 3.9530153777227497*^9, 3.9530154410063*^9, 
+           3.9530365172957993*^9, 3.953036566048956*^9, 
+           3.9530366105157223*^9, 3.9530368287805862*^9, 
+           3.9530387337376366*^9, 3.9530388143623276*^9, 
+           3.9530390054987926*^9, {3.953039082796627*^9, 
+           3.953039095125635*^9}, 3.953039130201351*^9, 3.953039415275854*^9, 
+           {3.9530410152180977*^9, 3.953041029423376*^9}, 
+           {3.9530410774930058*^9, 3.9530411033105927*^9}, 
+           3.953041193249296*^9, 3.9530412502558327*^9, 
+           3.9530414078479385*^9, {3.9530417045218525*^9, 
+           3.953041723671152*^9}, {3.9530418311217422*^9, 
+           3.953041853264929*^9}, 3.953042969653757*^9, 
+           3.9530445556461525*^9, 3.953044689911129*^9, 
+           {3.9530447512267036*^9, 3.9530447607013645*^9}, 
+           {3.95304595487817*^9, 3.9530459784845753*^9}, 3.95304602902993*^9, 
+           3.9530463160135403*^9, {3.9530464245337715*^9, 
+           3.9530464506451874*^9}, {3.953046585132181*^9, 
+           3.953046627968796*^9}, 3.9530468245371895*^9, 
+           3.953047237588318*^9, {3.953047338953966*^9, 
+           3.9530473688685894*^9}, {3.9533505846925335*^9, 
+           3.9533505885940094*^9}, 3.953350649688591*^9}, 
+         CellLabel -> "During evaluation of In[133]:="], 
+        Cell[BoxData["\"Creating clean .wl version...\""], "Print", 
+         CellChangeTimes -> {{3.953006675007118*^9, 3.9530066948890038*^9}, 
+           3.9530067461113987*^9, 3.9530067872206573*^9, 
+           3.9530068231572647*^9, 3.953007413910578*^9, 
+           {3.9530078315999184*^9, 3.9530078368171825*^9}, 
+           3.953008041320942*^9, {3.9530080847858505*^9, 
+           3.9530080956454887*^9}, {3.95300834008844*^9, 
+           3.9530083533180294*^9}, 3.9530084165049114*^9, 
+           3.953008636251131*^9, 3.953009713173073*^9, {3.953012316408949*^9, 
+           3.9530123324032326*^9}, 3.9530126972647038*^9, 
+           3.9530128427851696*^9, 3.9530128888153152*^9, 
+           3.9530130362966156*^9, 3.953013072218115*^9, 
+           {3.953013218630192*^9, 3.953013246126482*^9}, 
+           3.9530133632656555*^9, {3.953013398313257*^9, 
+           3.9530134224948635*^9}, 3.9530134649058285*^9, 
+           {3.953013819876772*^9, 3.9530138414652023*^9}, 
+           3.9530138884425488*^9, 3.9530139376776276*^9, 
+           3.953014090449215*^9, 3.953014191657034*^9, 3.953014234645561*^9, 
+           {3.9530146541562233*^9, 3.953014682246113*^9}, 
+           3.953014986346987*^9, 3.9530153777227497*^9, 3.9530154410063*^9, 
+           3.9530365172957993*^9, 3.953036566048956*^9, 
+           3.9530366105157223*^9, 3.9530368287805862*^9, 
+           3.9530387337376366*^9, 3.9530388143623276*^9, 
+           3.9530390054987926*^9, {3.953039082796627*^9, 
+           3.953039095125635*^9}, 3.953039130201351*^9, 3.953039415275854*^9, 
+           {3.9530410152180977*^9, 3.953041029423376*^9}, 
+           {3.9530410774930058*^9, 3.9530411033105927*^9}, 
+           3.953041193249296*^9, 3.9530412502558327*^9, 
+           3.9530414078479385*^9, {3.9530417045218525*^9, 
+           3.953041723671152*^9}, {3.9530418311217422*^9, 
+           3.953041853264929*^9}, 3.953042969653757*^9, 
+           3.9530445556461525*^9, 3.953044689911129*^9, 
+           {3.9530447512267036*^9, 3.9530447607013645*^9}, 
+           {3.95304595487817*^9, 3.9530459784845753*^9}, 3.95304602902993*^9, 
+           3.9530463160135403*^9, {3.9530464245337715*^9, 
+           3.9530464506451874*^9}, {3.953046585132181*^9, 
+           3.953046627968796*^9}, 3.9530468245371895*^9, 
+           3.953047237588318*^9, {3.953047338953966*^9, 
+           3.9530473688685894*^9}, {3.9533505846925335*^9, 
+           3.9533505885940094*^9}, 3.953350649727703*^9}, 
+         CellLabel -> "During evaluation of In[133]:="]}, Open]]}, Open]]}, 
+ WindowSize -> {1141.2, 568.8}, WindowMargins -> 
+  {{0, Automatic}, {Automatic, 0}}, FrontEndVersion -> 
+  "14.2 for Microsoft Windows (64-bit) (December 26, 2024)", 
+ StyleDefinitions -> "Default.nb"]
