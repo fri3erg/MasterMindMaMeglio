@@ -31,97 +31,157 @@ variabili di input, variabili di lavoro, variabili di output, spiegazione dei si
 
 (* aaaaaa *)
 avviaSchermataDiGioco[] := Module[
-  {screenWidth = 1920, screenHeight = 1080, mainWindow, fontScale, 
-   content},
+  {
+    screenSize, screenWidth, screenHeight,
+    fontScale, content, mainWindow, titleFontScale, subTitleFontScale
+  },
   
-  (* 1. Metodo affidabile per ottenere le dimensioni dello schermo *)
-  Quiet @ Check[
-    {screenWidth, screenHeight} = 
-     FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
+  (* Ottieni dimensioni dello schermo *)
+  screenSize = Quiet @ Check[
+    FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
+    {1920, 1080}
+  ];
+  
+  If[MatchQ[screenSize, {_Integer, _Integer}],
+    {screenWidth, screenHeight} = screenSize,
     {screenWidth, screenHeight} = {1920, 1080}
   ];
   
-  (* 2. Calcolo dimensione font adattiva *)
-  fontScale = Min[screenWidth, screenHeight]/20;
+  titleFontScale = Min[screenWidth, screenHeight] / 15;
   
-  (* 3. Creazione contenuto con pulsante di chiusura *)
-  content = Column[{
-     Spacer[1],
-     Style["MASTERMIND GIOCO", 
-      FontSize -> fontScale, 
-      FontWeight -> Bold, 
-      FontColor -> White,
-      FontFamily -> "Impact"],
-     Spacer[1],
-     Button["ESCI", 
-      NotebookClose[EvaluationNotebook[]], 
-      Background -> Red, 
-      BaseStyle -> {FontSize -> fontScale/3, FontColor -> White, Bold},
-      ImageSize -> {Automatic, fontScale/2}
-     ],
-     Spacer[1],
-     Panel[
-		Column[{
-			Style["Mastermind Game",Bold,18,FontFamily->"Arial"],
-			Spacer[10],
-			Column[{
-				Row[{
-					Style["number of items",10],
-					Spacer[10],
-					RadioButtonBar[Dynamic[numPegs],{2,3,4,5,6},Appearance->"Horizontal"]
-					},
-					Alignment->Center
-				],
-				Spacer[20],
-				Row[{
-					Style["number of colors",10],
-					Spacer[10],
-					RadioButtonBar[Dynamic[numColors],{2,3,4,5,6,7,8},Appearance->"Horizontal"]
-				},
-				Alignment->Center
-				]
-			}],
-Spacer[10],
-Row[{
-Button["replay same game",Null,ImageSize->120],
-Spacer[10],
-Button["new game",Null,ImageSize->120],
-Spacer[10],
-Button["reveal answer",Null,ImageSize->120]
-}]
-}],ImageSize->400, Background->White]
-
-  }, Center];
-  
-  (* 4. Creazione finestra principale *)
-  mainWindow = NotebookPut @ Notebook[{
-     Cell[BoxData @ ToBoxes @ Panel[
-        content,
-        Background -> Black,
-        ImageSize -> {screenWidth, screenHeight}
-     ],
-     CellBracketOptions -> {"ShowCellBracket" -> False}]
-   },
-   (* Propriet\[AGrave] finestra *)
-   WindowSize -> Full,
-   WindowFrame -> "Frameless",
-   WindowElements -> {},
-   WindowTitle -> None,
-   Background -> Black,
-   Editable -> False,
-   
-   (* Gestione eventi *)
-   NotebookEventActions -> {
-     {"KeyDown", "Escape"} :> NotebookClose[EvaluationNotebook[]]
-   }
+  content = Column[
+    {
+      Spacer[30],
+      Style["MASTERMIND MA MEGLIO",
+        FontSize -> titleFontScale,
+        FontWeight -> Bold,
+        FontColor -> Black,
+        FontFamily -> "IBM Plex Mono",
+        TextAlignment -> Center
+      ],
+      
+      Spacer[5],
+      
+      Style["NOME MEMBRI GRUPPO",
+        FontSize -> titleFontScale/4,
+        FontWeight -> Normal,
+        FontColor -> Gray,
+        FontFamily -> "IBM Plex Mono",
+        TextAlignment -> Center
+      ], 
+      
+      Spacer[50],
+      Row[{
+		 ClickPane[
+		  Framed[
+		    Grid[{
+		      {
+		        Graphics[Text[Style["\|01f331", FontSize -> 24]], ImageSize -> 24],
+		        Style["SEED GAME", Black, FontFamily -> "Arial", FontSize -> 24, Bold]
+		      }
+		    },
+		    Alignment -> {Center, Center}, Spacings -> {1.5, 0}
+		    ],
+		    
+		    Background -> LightGray,
+		    FrameStyle -> None,
+		    RoundingRadius -> 10,
+		    FrameMargins -> {{15, 15}, {5, 5}},
+		    ImageSize -> Automatic
+		  ],
+		  
+		  Function[Print["Pulsante cliccato!"]]
+		],
+		Spacer[40],
+		 ClickPane[
+		  Framed[
+		    Grid[{
+		      {
+		         Graphics[Text[Style["\|01f3b2", Red, FontSize -> 24]], ImageSize -> 24],
+		        Style["RANDOM GAME", Black, FontFamily -> "Arial", FontSize -> 24, Bold]
+		      }
+		    },
+		    Alignment -> {Center, Center}, Spacings -> {1.5, 0}
+		    ],
+		    
+		    Background -> LightGray,
+		    FrameStyle -> None,
+		    RoundingRadius -> 10,
+		    FrameMargins -> {{15, 15}, {5, 5}},
+		    ImageSize -> Automatic
+		  ],
+		  
+		  Function[Print["Pulsante cliccato!"]]
+		],
+		Spacer[40],
+		 ClickPane[
+		  Framed[
+		    Grid[{
+		      {
+				Graphics[Text[Style["\|01f6e0\:fe0f", FontSize -> 24]], ImageSize -> 24],
+		        Style["CUSTOM GAME", Black, FontFamily -> "Arial", FontSize -> 24, Bold]
+		      }
+		    },
+		    Alignment -> {Center, Center}, Spacings -> {1.5, 0}
+		    ],
+		    
+		    Background -> LightGray,
+		    FrameStyle -> None,
+		    RoundingRadius -> 10,
+		    FrameMargins -> {{15, 15}, {5, 5}},
+		    ImageSize -> Automatic
+		  ],
+		  
+		  Function[Print["Pulsante cliccato!"]]
+		]
+      }],
+      Spacer[50],
+      
+		ClickPane[
+		  Framed[
+		    Style["ESCI", White, FontFamily -> "Arial", FontSize -> 24, Bold],
+		    Background -> Red,
+		    FrameStyle -> None,
+		    RoundingRadius -> 10,
+		    FrameMargins -> {{15, 15}, {5, 5}},
+		    ImageSize -> Automatic
+		  ],
+		  Function[NotebookClose[EvaluationNotebook[]]]
+		]
+    },
+    Alignment -> Center
   ];
   
-  (* 5. Forza focus sulla finestra *)
-  SelectionMove[mainWindow, All, Notebook];
-  FrontEndExecute @ FrontEndToken[mainWindow, "MoveNext"];
+  mainWindow = CreateDocument[
+    {
+      Cell[
+        BoxData @ ToBoxes[
+          Pane[
+          content,
+		  Full,
+		  Alignment -> {Center, Top}
+          ]
+        ],
+        "Output",
+        ShowCellBracket -> False,
+        CellMargins -> {{0, 0}, {0, 0}}
+      ]
+    },
+    WindowSize -> Full,
+    WindowFrame -> "Frameless",
+    WindowElements -> {},
+    Background -> White,
+    Editable -> False,
+    Deployed -> True,
+    WindowMargins -> {{0, 0}, {0, 0}},
+    NotebookEventActions -> {
+      {"KeyDown", "Escape"} :> NotebookClose[EvaluationNotebook[]]
+    }
+  ];
   
   mainWindow
 ]
+
 
 
 End[];
