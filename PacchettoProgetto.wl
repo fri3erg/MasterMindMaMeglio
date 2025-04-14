@@ -33,7 +33,7 @@ variabili di input, variabili di lavoro, variabili di output, spiegazione dei si
 interfacciaGriglia[] := DynamicModule[{tries=4,lengthCode=9,colors,clickedInfo="", clickedInfoColor,turn = 1},
 
 	clickedInfoColor = Black;(* Colore messaggio di Feedback*)
-	colors=Table[Black,{lengthCode},{tries}];
+	colors=Table[White,{lengthCode},{tries}];
 	Panel[
 		Column[{
 			Dynamic[Style[clickedInfo, clickedInfoColor]],
@@ -47,8 +47,8 @@ interfacciaGriglia[] := DynamicModule[{tries=4,lengthCode=9,colors,clickedInfo="
 									EdgeForm[Black],
 									If[y === turn,colors[[y,x]],Opacity[0.2,Black] ],
 									Circle[{0,0},1],
-									If[y === turn,colors[[y,x]],Opacity[0.2,Black] ],
-									Text[Style[ToString[id],12,Bold],{0,0}]
+									If[y === turn,colors[[y,x]],Opacity[0.2,Black] ]
+									(*Text[Style[ToString[id],12,Bold],{0,0}]*)
 									},
 									ImageSize->{50,50}
 								],
@@ -74,7 +74,10 @@ interfacciaGriglia[] := DynamicModule[{tries=4,lengthCode=9,colors,clickedInfo="
 					tries
 				],
 				Spacings->{0,0}
-			]
+			],
+			Row[{
+				
+			}]
 			}
 		],
 		Background->GrayLevel[0.9]

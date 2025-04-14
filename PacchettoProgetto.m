@@ -30,52 +30,99 @@ variabili di input, variabili di lavoro, variabili di output, spiegazione dei si
 
 
 (* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
-interfacciaGriglia[] := DynamicModule[{tries=4,lengthCode=9,colors,clickedInfo="", clickedInfoColor,turn = 1},
+interfacciaGriglia[] := DynamicModule[
+	{
+		gridRowItems=4,(* Numero di colori da scegliere per tentativo*)
+		gridColumnItems=9,(*Numero di tentativi*)
+		gridItemsColors,(* Tabella di colori degli elementi della griglia*)
+		gameGridFeedbackMsg="",(*Messaggio di feedback da click sulla griglia di gioco*)
+		gameGridFeedbackMsgColor,(*Colore del messaggio di feedback da click sulla griglia di gioco*)
+		turn = 1,(*Numero del tentativo*)
+		colorsList={Red, Green, Blue, Yellow, Orange, Purple, Pink, Cyan},(*Lista di colori della palette di scelta*)
+		colorsListFeedbackMsg=""(**),
+		selectedItem={0,0} (* Elemento selezionato riga,colonna*)
+	},
 
-	clickedInfoColor = Black;(* Colore messaggio di Feedback*)
-	colors=Table[Black,{lengthCode},{tries}];
+	gameGridFeedbackMsgColor = Black;(* Colore messaggio di Feedback*)
+	gridItemsColors=Table[Black,{gridColumnItems},{gridRowItems}];
+	
 	Panel[
 		Column[{
-			Dynamic[Style[clickedInfo, clickedInfoColor]],
+			Dynamic[ToString[selectedItem]],
+			Dynamic[Style[gameGridFeedbackMsg, gameGridFeedbackMsgColor]],
+			Spacer[10],
 			Grid[
 				Partition[
 					Table[
-						With[{x=col,y=row,id=tries*(row-1)+col},
+						With[{x=col,y=row,id=gridRowItems*(row-1)+col},
 							EventHandler[
 								Dynamic@Graphics[
 									{
-									EdgeForm[Black],
-									If[y === turn,colors[[y,x]],Opacity[0.2,Black] ],
-									Circle[{0,0},1],
-									If[y === turn,colors[[y,x]],Opacity[0.2,Black] ],
-									Text[Style[ToString[id],12,Bold],{0,0}]
+									EdgeForm[
+									  If[{y, x} === selectedItem,
+									    Directive[Yellow, AbsoluteThickness[3]],
+									    Directive[Black]
+									   ]
+									  ],
+									If[y === turn,gridItemsColors[[y,x]],Opacity[0.2,Black] ],
+									Disk[{0,0},1]
+									(*If[y === turn,gridItemsColors[[y,x]],Opacity[0.2,Black] ]
+									Text[Style[ToString[id],12,Bold],{0,0}]*)
 									},
 									ImageSize->{50,50}
 								],
 								{
 								"MouseClicked" :> (
 									If[y === turn, {
-										colors=Table[Black,{lengthCode},{tries}];
-										colors[[y,x]]=Red;
-										clickedInfo = StringTemplate["Cliccato cerchio ID: `id`, Posizione: (`x`,`y`)"][<|"id"->id,"x"->x,"y"->y|>];
-										 clickedInfoColor = Darker@Green;
+										selectedItem={y,x};
+										(*gridItemsColors=Table[Black,{gridColumnItems},{gridRowItems}];*)
+										(*gridItemsColors[[y,x]]=Red;*)
+										gameGridFeedbackMsg = StringTemplate["Cliccato cerchio ID: `id`, Posizione: (`x`,`y`)"][<|"id"->id,"x"->x,"y"->y|>];
+										 gameGridFeedbackMsgColor = Darker@Green;
 									}]
 									If[y != turn, {
-										 colors=Table[Black,{lengthCode},{tries}];
-										clickedInfo = StringTemplate["Stai selezionando elementi del turno `y`, completa il turno `turn`"][<|"y"->y,"turn"->turn|>];
-										 clickedInfoColor = Red;
+										 (*gridItemsColors=Table[Black,{gridColumnItems},{gridRowItems}];*)
+										 gameGridFeedbackMsg = StringTemplate["Stai selezionando elementi del turno `y`, completa il turno `turn`"][<|"y"->y,"turn"->turn|>];
+										 gameGridFeedbackMsgColor = Red;
 									}]
 									)
 								}
 							]
 						],
-						{row,1,lengthCode},{col,1,tries}
+						{row,1,gridColumnItems},{col,1,gridRowItems}
 					] // Flatten,
-					tries
+					gridRowItems
 				],
 				Spacings->{0,0}
+			],
+			Spacer[10],
+			(* Color Palette *)
+			Dynamic[Style[colorsListFeedbackMsg, Black]],
+			Row[
+			  Table[
+				  With[{col=colorsCol},
+					  EventHandler[
+					  			Dynamic@Graphics[
+								      {
+								        EdgeForm[Black],
+								        FaceForm[col],
+								        Disk[{0, 0}, 1]
+								      },
+								      ImageSize -> 40
+										],
+										{
+										"MouseClicked" :> (
+												gridItemsColors[[Sequence @@ selectedItem]]=col;
+												colorsListFeedbackMsg = StringTemplate["Stai selezionando il colore `color`"][<|"color"->col|>];
+											)
+										}
+					  ]
+				  ],
+			    {colorsCol, colorsList}
+			  ]
 			]
-			}
+			},
+			 Alignment -> Center
 		],
 		Background->GrayLevel[0.9]
 	]
@@ -90,7 +137,7 @@ CustomPanel[
 		BorderThickness->2,
 		CornerRadius->10,
 		Padding->0.05,
-		Size->{500,Automatic}
+		Size->{1000,Automatic}
 	}]
 	]:=Module[
 	{
@@ -159,7 +206,8 @@ avviaSchermataDiGioco[] := Module[
 	 BorderColor->Black,
 	 BorderThickness->0.005,
 	 CornerRadius->0.05,
-	 Padding->0
+	 Padding->0,
+	 Size -> {screenWidth/3*2, screenHeight/3*2}
 	 ]
 
   }, Center];
