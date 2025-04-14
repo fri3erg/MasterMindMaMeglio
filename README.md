@@ -1,4 +1,4 @@
-# MasterMind Mathematica - Gioco con Quiz Integrato
+# MasterMindMaMeglio Mathematica - Gioco con Quiz Integrato
 
 Un clone del classico gioco **MasterMind** sviluppato in *Wolfram Mathematica*, con meccaniche ispirate a Wordle e un sistema di suggerimenti basato su quiz di cultura generale.
 
