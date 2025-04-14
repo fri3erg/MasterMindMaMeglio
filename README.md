@@ -67,3 +67,12 @@ Un clone del classico gioco **MasterMind** sviluppato in *Wolfram Mathematica*, 
 - [ ] **Pizze 🍕**
 
 ## Contributi
+
+**Team di sviluppo:**
+
+- Frigo (@fri3erg) - _  
+- Matte (@matteraggi ) - _  
+- Francesca (@francesca452) - _  
+- Angelo (@Lasagnos) - _  
+- Gianpiero (@gianpics) - _  
+- Alessandro (@alessandromodelli) - __
