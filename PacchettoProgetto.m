@@ -29,6 +29,94 @@ Begin["`Private`"];
 variabili di input, variabili di lavoro, variabili di output, spiegazione dei singoli passaggi *)
 
 
+(* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
+interfacciaGriglia[] := DynamicModule[{tries=4,lengthCode=9,colors,clickedInfo="", clickedInfoColor,turn = 1},
+
+	clickedInfoColor = Black;(* Colore messaggio di Feedback*)
+	colors=Table[Black,{lengthCode},{tries}];
+	Panel[
+		Column[{
+			Dynamic[Style[clickedInfo, clickedInfoColor]],
+			Grid[
+				Partition[
+					Table[
+						With[{x=col,y=row,id=tries*(row-1)+col},
+							EventHandler[
+								Dynamic@Graphics[
+									{
+									EdgeForm[Black],
+									If[y === turn,colors[[y,x]],Opacity[0.2,Black] ],
+									Circle[{0,0},1],
+									If[y === turn,colors[[y,x]],Opacity[0.2,Black] ],
+									Text[Style[ToString[id],12,Bold],{0,0}]
+									},
+									ImageSize->{50,50}
+								],
+								{
+								"MouseClicked" :> (
+									If[y === turn, {
+										colors=Table[Black,{lengthCode},{tries}];
+										colors[[y,x]]=Red;
+										clickedInfo = StringTemplate["Cliccato cerchio ID: `id`, Posizione: (`x`,`y`)"][<|"id"->id,"x"->x,"y"->y|>];
+										 clickedInfoColor = Darker@Green;
+									}]
+									If[y != turn, {
+										 colors=Table[Black,{lengthCode},{tries}];
+										clickedInfo = StringTemplate["Stai selezionando elementi del turno `y`, completa il turno `turn`"][<|"y"->y,"turn"->turn|>];
+										 clickedInfoColor = Red;
+									}]
+									)
+								}
+							]
+						],
+						{row,1,lengthCode},{col,1,tries}
+					] // Flatten,
+					tries
+				],
+				Spacings->{0,0}
+			]
+			}
+		],
+		Background->GrayLevel[0.9]
+	]
+]
+
+(* Pannello customizzabile *)
+CustomPanel[
+	content_,
+	OptionsPattern[{
+		BackgroundColor->GrayLevel[0.95],
+		BorderColor->GrayLevel[0.4],
+		BorderThickness->2,
+		CornerRadius->10,
+		Padding->0.05,
+		Size->{500,Automatic}
+	}]
+	]:=Module[
+	{
+		bg=OptionValue[BackgroundColor],
+		border=OptionValue[BorderColor],
+		thick=OptionValue[BorderThickness],
+		radius=OptionValue[CornerRadius],
+		pad=OptionValue[Padding],
+		size=OptionValue[Size]
+	},
+	Graphics[
+	{
+		EdgeForm[{Thickness[thick],border}],
+		FaceForm[bg],
+		(*Rettangolo arrotondato con Radius custom*)
+		Rectangle[{0,0},{1,1},RoundingRadius->radius],
+		(*Content*)
+		Inset[Style[content,Background->None],{0.5,0.5},Center,Scaled[{1-2 pad,1-2 pad}]]
+	},
+	PlotRange->{{0,1},{0,1}},
+	PlotRangePadding->None,
+	ImageSize->size,
+	Frame->False,
+	Axes->False]
+]
+
 (* aaaaaa *)
 avviaSchermataDiGioco[] := Module[
   {screenWidth = 1920, screenHeight = 1080, mainWindow, fontScale, 
@@ -60,36 +148,19 @@ avviaSchermataDiGioco[] := Module[
       ImageSize -> {Automatic, fontScale/2}
      ],
      Spacer[1],
-     Panel[
-		Column[{
-			Style["Mastermind Game",Bold,18,FontFamily->"Arial"],
-			Spacer[10],
-			Column[{
-				Row[{
-					Style["number of items",10],
-					Spacer[10],
-					RadioButtonBar[Dynamic[numPegs],{2,3,4,5,6},Appearance->"Horizontal"]
-					},
-					Alignment->Center
-				],
-				Spacer[20],
-				Row[{
-					Style["number of colors",10],
-					Spacer[10],
-					RadioButtonBar[Dynamic[numColors],{2,3,4,5,6,7,8},Appearance->"Horizontal"]
-				},
-				Alignment->Center
-				]
-			}],
-Spacer[10],
-Row[{
-Button["replay same game",Null,ImageSize->120],
-Spacer[10],
-Button["new game",Null,ImageSize->120],
-Spacer[10],
-Button["reveal answer",Null,ImageSize->120]
-}]
-}],ImageSize->400, Background->White]
+	 (* Content*)
+	 CustomPanel[
+		Column[
+			{
+			interfacciaGriglia[]
+			}
+		],
+	 BackgroundColor->GrayLevel[0.9],
+	 BorderColor->Black,
+	 BorderThickness->0.005,
+	 CornerRadius->0.05,
+	 Padding->0
+	 ]
 
   }, Center];
   
@@ -122,6 +193,18 @@ Button["reveal answer",Null,ImageSize->120]
   
   mainWindow
 ]
+
+
+(* ::Input:: *)
+(**)
+
+
+(* ::Input:: *)
+(**)
+
+
+(* ::Input:: *)
+(**)
 
 
 End[];
