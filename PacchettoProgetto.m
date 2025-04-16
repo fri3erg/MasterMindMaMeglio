@@ -183,6 +183,95 @@ avviaSchermataDiGioco[] := Module[
 ]
 
 
+(* Lista dei colori usati da Mastermind *)
+paletteColori = {Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta};
+
+
+(* === Funzione per generare il codice segreto da indovinare ===
+Prende in input la lunghezza del codice da generare come intero, ed un booleano che ammette o meno la presenza di colori duplicati.
+Ritorna tale codice. Esempio: {Red, Purple, Purple, Green} *)
+generaCodiceSegreto[lunghezza_Integer, allowDuplicates_: True] := Module[
+  {},
+  
+  (* Check di sicurezza: Se non accettiamo duplicati, la lunghezza non deve superare il numero di colori disponibili *)
+  If[!allowDuplicates && lunghezza > Length[paletteColori],
+	Return[$Failed, Module]  (* Ritorna $Failed. Da gestire in modo opportuno (ma \[EGrave] meglio evitare che accada del tutto) *)
+  ];
+
+  If[allowDuplicates,
+    RandomChoice[paletteColori, lunghezza],  (* Con duplicati *)
+    RandomSample[paletteColori, lunghezza]   (* Senza duplicati *)
+  ]
+];
+
+
+(* === Funzione di feedback del tentativo === 
+Prende in input il codice soluzione e il codice appena tentato dall'utente.
+Ritorna il feedback ottenuto confrontando tali codici, via simboli 'feedbackEsatto', 'feedbackParziale' e 'feedbackAssente'.
+Esesmpio: {feedbackParziale, feedbackEsatto, feedbackParziale, feedbackAssente} *)
+feedbackTentativo[soluzione_List, tentativo_List] := Module[
+  {
+    feedback,          (* Lista dei feedback per ogni posizione *)
+    marcatiSoluzione,  (* Booleani per segnare se un colore nella soluzione \[EGrave] gi\[AGrave] stato "matchato". Serve nel caso di colori ripetuti *)
+    marcatiTentativo,  (* Booleani per segnare se un colore nel tentativo \[EGrave] gi\[AGrave] stato usato. Utile per non sovrascrivere feedback *)
+    lunghezza          (* Lunghezza del codice da indovinare *)
+  },
+  
+  (* Inizializzazioni *)
+  lunghezza = Length[soluzione];  (* Rende il codice eventualmente scalabile *)
+  feedback = ConstantArray[feedbackAssente, lunghezza];
+  marcatiSoluzione = ConstantArray[False, lunghezza];
+  marcatiTentativo = ConstantArray[False, lunghezza];
+
+  (* === Match esatti === *)
+  Do[
+    If[tentativo[[i]] === soluzione[[i]],
+      feedback[[i]] = feedbackEsatto;  (* Match completo *)
+      marcatiSoluzione[[i]] = True;    (* Marca l'elemento della soluzione come usato *)
+      marcatiTentativo[[i]] = True;    (* Marca l'elemento del tentativo come usato *)
+    ],
+    {i, lunghezza}
+  ];
+
+  (* === Match parziali === *)
+  Do[
+    If[!marcatiTentativo[[i]],               (* Solo se il colore non \[EGrave] stato gi\[AGrave] marcato come "Esatto" *)
+      Do[
+        If[!marcatiSoluzione[[j]] && tentativo[[i]] === soluzione[[j]],
+          feedback[[i]] = feedbackParziale;  (* Match parziale *)
+          marcatiSoluzione[[j]] = True;      (* Marca colore nella soluzione come usato *)
+          marcatiTentativo[[i]] = True;      (* Marca colore del tentativo come usato *)
+          Break[];                         (* Interrompe il ciclo interno per evitare doppi match *)
+        ],
+        {j, lunghezza}
+      ];
+    ],
+    {i, lunghezza}
+  ];
+
+  feedback  (* Ritorna la lista dei feedback testuali *)
+];
+
+
+(* === Funzione che valuta un tentativo nella sua interezza === 
+Prende in input il codice soluzione e il codice appena tentato dall'utente, nonch\[EGrave] le informazioni sui tentativi.
+Chiama feedbackTentativo[], ed esegue il confronto tra soluzione e tentativo per dare la valutazione.
+Ritorna la valutazione simbolica ('mastermindVittoria', 'mastermindSconfitta' o 'mastermindProsegui') assieme al feedback.
+Esempio: {mastermindProsegui, {feedbackParziale, feedbackEsatto, feedbackParziale, feedbackAssente}} *)
+valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:10, tentativoCorrente_:1] := Module[
+  {feedback = feedbackTentativo[soluzione, tentativo]},  (* Calcola immediatamente il feedback per il tentativo *)
+  
+  If[tentativo === soluzione,
+    {mastermindVittoria, feedback},                      (* Caso vincita *)
+    
+    If[tentativoCorrente >= maxTentativi,
+      {mastermindSconfitta, feedback},                   (* Caso sconfitta *)
+      {mastermindProsegui, feedback}                     (* Caso intermedio, si continua *)
+    ]
+  ]
+];
+
+
  (* Schermata di gioco random - perfettamente centrata *)
   creaSchermataGioco[] := Column[
     {
