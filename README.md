@@ -40,13 +40,13 @@ Un clone del classico gioco **MasterMind** sviluppato in *Wolfram Mathematica*, 
 
 ### 4. Logica MasterMind
 
-- [ ] Generare sequenze segrete casuali.
-- [ ] Implementare il sistema di confronto tentativo/segreta.
-- [ ] Gestire il conteggio dei tentativi e la vittoria/sconfitta.
+- [x] Generare sequenze segrete casuali.
+- [x] Implementare il sistema di confronto tentativo/segreta.
+- [x] Gestire il conteggio dei tentativi e la vittoria/sconfitta.
 
 ### 4.5. Gestione Colori
 
-- [ ] Definire la palette di colori giocabili.
+- [x] Definire la palette di colori giocabili.
 - [ ] Assegnare simboli/icone per i feedback (✅/🔄/❌).
 
 ### 5. Input Utente
