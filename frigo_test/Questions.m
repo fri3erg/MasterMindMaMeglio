@@ -7,25 +7,38 @@
 (* :Author: Gruppo 10 - I Ludopatici *)
 (* :Summary: Package for handling trivia questions in Mastermind game *)
 (* :Package Version: 0.3 *)
-(* :History: last modified 11/4/2025 *)
+(* :History: last modified 16/4/2025 *)
 (* :Copyright: \[Copyright] 2025 Gruppo 10 - Trivia Mastermind *)
 (* :License: MIT License *)
 
 BeginPackage["Questions`"];
 
-MostraDomandaTrivia::usage = "MostraDomandaTrivia[seed] displays a trivia question window using the specified seed";
-CaricaDomandeDaCSV::usage = "CaricaDomandeDaCSV[path] loads questions from CSV file";
+DisplayTriviaQuestion::usage = "Displays a trivia question dialog with options. Returns True if correct answer is selected, False otherwise. Parameters: seed (Integer), questionsDataset (Dataset)";
+LoadQuestionsFromCSV::usage = "Loads questions from CSV file into a Dataset. Parameter: path (String)";
+InitializeQuestionInterface::usage = "Creates the main question interface window. Parameter: seed (Integer)";
+ProvideHintFeedback::usage = "Provides feedback based on answer correctness. Parameter: guessedCorrectly (True|False)";
+PrepareQuestionData::usage = "Selects and prepares question data. Returns {question, options, correctIndex}. Parameters: seed (Integer), questionsDataset (Dataset)";
+
+(* Global variables that need to be shared across functions *)
 
 Begin["`Private`"]
+timeToWait = 1.0;
+paneSize={500,80};
+imageSize= {200, 40};
+windowSize= {600, Automatic};
 
-(* Default empty question database *)
-domandeTrivia = {};
-resultList={};
-questionCounter = 0;
 
-CaricaDomandeDaCSV[path_String] := Module[
+
+
+(*
+  Loads trivia questions from a CSV file into a dataset
+  @param path: String path to the CSV file
+  @return: Dataset containing the questions or $Failed if error occurs
+*)
+LoadQuestionsFromCSV[path_String] := Module[
   {csvText, data, headers, rows, dataset},
-
+  
+  (* Attempt to import the CSV file *)
   csvText = Quiet@Check[
     Import[path, "Text"],
     Print["\:274c Failed to import CSV text."];
@@ -34,41 +47,44 @@ CaricaDomandeDaCSV[path_String] := Module[
 
   Print["\:2705 CSV text imported successfully."];
 
+  (* Parse the CSV content *)
   data = Quiet@Check[
     ImportString[csvText, "CSV"],
     Print["\:274c Failed to parse CSV content."];
     Return[$Failed]
   ];
 
-  Print["\:2705 CSV parsed successfully. Rows loaded: ", Length[data]];
-
-  If[!ListQ[data] || Length[data] < 2,
-    Print["\:274c CSV structure invalid: should have at least a header and one row."];
-    Return[$Failed];
-  ];
-
+  (* Convert to dataset format *)
   headers = data[[1]];
   rows = data[[2 ;;]];
-
   dataset = Dataset[AssociationThread[headers, #] & /@ rows];
-  domandeTrivia = dataset;
-
+  
+  Print["\:2705 Questions loaded: ", Length[dataset]];
+  dataset
 ];
-MostraDomandaTrivia[seed_Integer] := Module[
-  {questionWindow, result = $Failed, dialogOpen = True},
+
+
+
+
+(*
+  Displays a trivia question dialog with multiple choice options
+  @param seed: Integer used to select and shuffle the question
+  @param questionsDataset: Dataset containing all trivia questions
+  @return: True if correct answer selected, False otherwise
+*)
+DisplayTriviaQuestion[seed_Integer, questionsDataset_] := Module[
+  {questionWindow, result = $Failed, dialogOpen = True, 
+   currentQuestion, questionOptions, correctAnswerIndex},
   
-  If[Length[domandeTrivia] == 0,
-    Print["\:274c No questions loaded. Use CaricaDomandeDaCSV first."];
-    Return[$Failed]
-  ];
+  (* Get shuffled question and options *)
+  {currentQuestion, questionOptions, correctAnswerIndex} = PrepareQuestionData[seed, questionsDataset];
   
-  {currentQuestion, validOptions, correctIndex} = ShuffleQuestion[seed];
-  
+  (* Create the question dialog *)
   questionWindow = CreateDialog[
     Column[{
       Pane[
         Style[currentQuestion["Question"], 16, Bold, TextAlignment -> Center],
-        ImageSize -> {500, 80},
+        ImageSize -> {500,80},
         Scrollbars -> False,
         Alignment -> Center
       ],
@@ -76,17 +92,13 @@ MostraDomandaTrivia[seed_Integer] := Module[
       Grid[
         Partition[
           MapIndexed[
-            Function[{text, idx},
-              DynamicModule[{clicked = False, isCorrect = Null, pos = First[idx]},
+            Function[{optionText, optionIndex},
+              DynamicModule[{clicked = False, isCorrect = Null, position = First[optionIndex]},
                 Button[
-                  text,
-                  isCorrect = (pos == correctIndex);
+                  optionText,
+                  isCorrect = (position == correctAnswerIndex);
                   clicked = True;
                   result = isCorrect;
-                  If[isCorrect, 
-                    questionCounter++;
-                    {currentQuestion, validOptions, correctIndex} = ShuffleQuestion[seed + questionCounter];
-                  ];
                   (* Add delay before closing *)
                   RunScheduledTask[
                     NotebookClose[questionWindow];
@@ -101,27 +113,13 @@ MostraDomandaTrivia[seed_Integer] := Module[
                     FontFamily -> "Arial",
                     FontSize -> 14
                   },
-                  Appearance -> {
-                    "Default" -> {
-                      FrameMargins -> 10,
-                      FrameStyle -> Directive[Thickness[0.015], GrayLevel[0.5]] (* Thicker border *)
-                    },
-                    "Hover" -> {
-                      Background -> Lighter[Gray, 0.95],
-                      FrameStyle -> Directive[Thickness[0.008], GrayLevel[0.3]] (* Even thicker on hover *)
-                    },
-                    "Pressed" -> {
-                      Background -> If[clicked, If[isCorrect, Green, Red], Lighter[Gray, 0.9]],
-                      FrameStyle -> Directive[Thickness[0.008], GrayLevel[0]] (* Thick black border when pressed *)
-                    }
-                  },
-                  FrameMargins -> 12 (* Increased internal padding *)
+                  FrameMargins -> 12
                 ]
               ]
             ],
-            validOptions
+            questionOptions
           ],
-          UpTo[Ceiling[Length[validOptions]/2]]
+          UpTo[Ceiling[Length[questionOptions]/2]]
         ],
         Spacings -> {1, 1}, Alignment -> Center
       ]
@@ -135,40 +133,93 @@ MostraDomandaTrivia[seed_Integer] := Module[
     Background -> White
   ];
   
+  (* Wait for dialog to close *)
   While[dialogOpen, Pause[0.1]];
   result
 ];
-ShuffleQuestion[seed_Integer] := Module[
-  {qIndex, shuffledOptions, correctIndexRaw, currentQuestion, optionKeys, correctText, newCorrectIndex},
-	
-SeedRandom[seed];
-  qIndex = Mod[seed, Length[domandeTrivia], 1];
+
+
+
+
+(*
+  Prepares question data by selecting and shuffling options
+  @param seed: Integer used for random selection
+  @param questionsDataset: Dataset containing all questions
+  @return: {question, options, correctIndex}
+*)
+PrepareQuestionData[seed_Integer, questionsDataset_] := Module[
+  {questionIndex, options, rawCorrectIndex, selectedQuestion, optionKeys, correctIndex},
   
-  currentQuestion = Normal[domandeTrivia[[qIndex]]];
+  SeedRandom[seed];
+  (* Select question based on seed *)
+  questionIndex = Mod[seed, Length[questionsDataset], 1];
+  selectedQuestion = Normal[questionsDataset[[questionIndex]]];
 
-  correctIndexRaw = Lookup[currentQuestion, "Correct Index", Missing["NotAvailable"]];
-  correctIndexRaw = If[NumberQ[correctIndexRaw], Round[correctIndexRaw], 1];
+  (* Get correct answer index *)
+  rawCorrectIndex = Lookup[selectedQuestion, "Correct Index", Missing["NotAvailable"]];
+  rawCorrectIndex = If[NumberQ[rawCorrectIndex], Round[rawCorrectIndex], 1];
 
+  (* Extract all available options *)
   optionKeys = {"Option A", "Option B", "Option C", "Option D"};
-  shuffledOptions = DeleteCases[Lookup[currentQuestion, optionKeys, ""], _Missing | "" | Null];
+  options = DeleteCases[Lookup[selectedQuestion, optionKeys, ""], _Missing | "" | Null];
 
-  correctText = Lookup[currentQuestion, optionKeys[[correctIndexRaw]], ""];
-
-  (* shuffle options *)
-  shuffledOptions = RandomSample[shuffledOptions];
-  newCorrectIndex = FirstPosition[shuffledOptions, correctText][[1]];
-
-  Print["\:2705 Shuffled options: ", shuffledOptions];
-
-  {currentQuestion, shuffledOptions, newCorrectIndex}
+  {selectedQuestion, options, rawCorrectIndex}
 ];
 
-RevealHint[] := Module[
+
+
+
+(*
+  Provides feedback based on whether user guessed correctly
+  @param guessedCorrectly: Boolean indicating if answer was correct
+*)
+ProvideHintFeedback[guessedCorrectly:(True | False)] := Module[
   {},
-  AppendTo[resultList,"guessed"]
-  Print[resultList]
+  If[guessedCorrectly,
+    Print["Correct answer! Here's your hint..."],
+    Print["Incorrect answer. Better luck next time!"]
+  ]
+];
+
+
+
+
+
+(*
+  Initializes the trivia question interface
+  @param seed: Integer seed for question selection
+*)
+InitializeQuestionInterface[seed_Integer] := 
+  CreateDialog[DynamicModule[
+    {questionCounter = 0, result = Null, loadedQuestions = {}},
+    loadedQuestions = LoadQuestionsFromCSV["science-technology.csv"];
+    Column[{
+Button[
+    Style["GET A HINT", FontWeight -> Bold, FontFamily -> "Arial", FontSize -> 14], 
+    ProvideHintFeedback[DisplayTriviaQuestion[seed + questionCounter, loadedQuestions]];
+    questionCounter++,
+    Method -> "Queued",
+    ImageSize -> {200, 40}, 
+    BaseStyle -> {
+        FontColor -> Black, 
+        FontFamily -> "Arial",
+        FontSize -> 14
+    },
+    FrameMargins -> 12,
+    Alignment -> Center
+]}]
+  ],
+  WindowTitle -> "Mastermind Trivia Hints",
+  WindowSize -> {300, 150}
   ];
-  
+
+
+
+
 
 End[];
 EndPackage[];
+
+
+(* ::Input:: *)
+(**)

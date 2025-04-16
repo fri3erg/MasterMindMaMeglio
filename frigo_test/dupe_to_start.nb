@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[      8312,        190]
-NotebookOptionsPosition[      7223,        162]
-NotebookOutlinePosition[      7693,        180]
-CellTagsIndexPosition[      7650,        177]
+NotebookDataLength[      7402,        160]
+NotebookOptionsPosition[      6533,        136]
+NotebookOutlinePosition[      7003,        154]
+CellTagsIndexPosition[      6960,        151]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -41,25 +41,9 @@ Cell[BoxData[{
   RowBox[{
    RowBox[{"Import", "[", 
     RowBox[{"\"\<Questions.m\>\"", ",", "\"\<Package\>\""}], "]"}], ";"}], 
-  "\[IndentingNewLine]", "\[IndentingNewLine]", 
-  RowBox[{"(*", 
-   RowBox[{
-   "Test", " ", "with", " ", "proper", " ", "error", " ", "handling"}], 
-   "*)"}]}], "\n", 
+  "\[IndentingNewLine]", "\[IndentingNewLine]"}], "\n", 
  RowBox[{
-  RowBox[{
-   RowBox[{"CaricaDomandeDaCSV", "[", "\"\<science-technology.csv\>\"", "]"}],
-    ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
- RowBox[{
-  RowBox[{"Button", "[", 
-   RowBox[{"\"\<Test Trivia\>\"", ",", 
-    RowBox[{
-     RowBox[{"result", "=", 
-      RowBox[{"MostraDomandaTrivia", "[", "4", "]"}]}], ";", 
-     "\[IndentingNewLine]", 
-     RowBox[{"Print", "[", 
-      RowBox[{"\"\<User answered correctly: \>\"", ",", "result"}], "]"}]}], ",", 
-    RowBox[{"Method", "->", "\"\<Queued\>\""}]}], "]"}], "\n", "\n", "\n", 
+  RowBox[{"InitializeQuestionInterface", "[", "4", "]"}], "\n", "\n", "\n", 
   "\n", "\n"}], "\n"}], "Input",
  CellChangeTimes->{
   3.952593678977127*^9, {3.9525938039708824`*^9, 3.952593808991577*^9}, {
@@ -99,65 +83,55 @@ Cell[BoxData[{
    3.9537820122230053`*^9, 3.953782016612753*^9}, 3.953782444895252*^9, {
    3.953782651436001*^9, 3.9537826531777706`*^9}, 3.95378302069475*^9, 
    3.9537836027980614`*^9, 3.9537837077191067`*^9, 3.9537837718055573`*^9, 
-   3.9537839680463142`*^9, {3.953784008144581*^9, 3.953784008716751*^9}},
+   3.9537839680463142`*^9, {3.953784008144581*^9, 3.953784008716751*^9}, {
+   3.953800572370941*^9, 3.9538005901235065`*^9}, 3.953801339873764*^9, 
+   3.9538055297892475`*^9},
  CellLabel->"In[1]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"],
 
 Cell[CellGroupData[{
 
 Cell[BoxData["\<\"\:2705 CSV text imported successfully.\"\>"], "Print",
- CellChangeTimes->{3.9537874555245705`*^9, 3.953787578916897*^9, 
-  3.9537876326606407`*^9, 3.9537877713862247`*^9, 3.9537878772076817`*^9},
+ CellChangeTimes->{
+  3.9538055307121944`*^9, 3.953805619398142*^9, 3.9538056829169865`*^9, 
+   3.9538057458321247`*^9, 3.9538057962024994`*^9, {3.9538059772441196`*^9, 
+   3.953806005975153*^9}},
  CellLabel->
   "During evaluation of \
-In[1]:=",ExpressionUUID->"efb0a934-0b2a-af4d-8f9f-414f6bf99e6c"],
+In[1]:=",ExpressionUUID->"e2dc9517-9853-5743-85a3-f7ed5e825870"],
 
 Cell[BoxData[
  InterpretationBox[
-  RowBox[{"\<\"\:2705 CSV parsed successfully. Rows loaded: \"\>", "\[InvisibleSpace]",
-    "2487"}],
-  SequenceForm["\:2705 CSV parsed successfully. Rows loaded: ", 2487],
+  RowBox[{"\<\"\:2705 Questions loaded: \"\>", "\[InvisibleSpace]", "2486"}],
+  SequenceForm["\:2705 Questions loaded: ", 2486],
   Editable->False]], "Print",
- CellChangeTimes->{3.9537874555245705`*^9, 3.953787578916897*^9, 
-  3.9537876326606407`*^9, 3.9537877713862247`*^9, 3.9537878838812695`*^9},
+ CellChangeTimes->{3.9538055307121944`*^9, 3.953805619398142*^9, 
+  3.9538056829169865`*^9, 3.9538057458321247`*^9, 3.9538057962024994`*^9, 
+  3.9538059772441196`*^9, 3.9538060129874115`*^9},
  CellLabel->
   "During evaluation of \
-In[1]:=",ExpressionUUID->"b72d31aa-9c0b-9b4b-9839-f5c12b2b085c"]
+In[1]:=",ExpressionUUID->"ffc232a2-bb34-c24d-88e9-3a359fe2c031"]
 }, Open  ]],
 
 Cell[BoxData[
- ButtonBox["\<\"Test Trivia\"\>",
-  Appearance->Automatic,
-  ButtonFunction:>($CellContext`result = Questions`MostraDomandaTrivia[4]; 
-   Print["User answered correctly: ", $CellContext`result]),
-  Evaluator->Automatic,
-  Method->"Queued"]], "Output",
- CellChangeTimes->{3.9537867624722443`*^9, 3.953787017318138*^9, 
-  3.9537871240438786`*^9, 3.9537874620376453`*^9, 3.9537875854914227`*^9, 
-  3.9537876390013065`*^9, 3.9537877777895412`*^9, 3.9537878839343815`*^9},
- CellLabel->"Out[4]=",ExpressionUUID->"53159d19-232d-bd42-8e42-0c585720af91"],
-
-Cell[CellGroupData[{
-
-Cell[BoxData[
- InterpretationBox[
-  RowBox[{"\<\"\:2705 Shuffled options: \"\>", "\[InvisibleSpace]", 
-   RowBox[{"{", 
-    RowBox[{"\<\"Earthquake\"\>", ",", "\<\"Volcano\"\>", 
-     ",", "\<\"Tsunami\"\>", ",", "\<\"Tide\"\>"}], "}"}]}],
-  SequenceForm[
-  "\:2705 Shuffled options: ", {"Earthquake", "Volcano", "Tsunami", "Tide"}],
-  Editable->False]], "Print",
- CellChangeTimes->{3.953787885464327*^9},
- CellLabel->"",ExpressionUUID->"a2c7743b-150b-8c48-9781-f37421b5951e"],
-
-Cell[BoxData[
- InterpretationBox[
-  RowBox[{"\<\"User answered correctly: \"\>", "\[InvisibleSpace]", "False"}],
-  SequenceForm["User answered correctly: ", False],
-  Editable->False]], "Print",
- CellChangeTimes->{3.9537878881823997`*^9},
- CellLabel->"",ExpressionUUID->"b9abe602-3e6c-9c4a-9dab-ac73821ac68a"]
-}, Open  ]]
+ TemplateBox[<|
+  "obj" -> NotebookObject[
+    "1fc3866e-fdfa-144f-bce6-2db22fde6009", 
+     "48a85582-292d-3f42-8f60-4153a71c3aa4"], "label" -> 
+   "\"Mastermind Trivia Hints\""|>,
+  "NotebookObjectUUIDsUnsaved"]], "Output",
+ CellChangeTimes->{
+  3.9538014340256824`*^9, 3.9538015589577675`*^9, 3.9538016062252693`*^9, 
+   3.9538019691141453`*^9, 3.9538021880018044`*^9, 3.9538024769960976`*^9, 
+   3.9538029754101067`*^9, 3.9538031152241383`*^9, 3.953803224342346*^9, 
+   3.9538038368019733`*^9, {3.9538039967477303`*^9, 3.953804008550167*^9}, {
+   3.953804070861168*^9, 3.9538040892591057`*^9}, 3.953804145663286*^9, 
+   3.953804285755747*^9, 3.953804385461479*^9, 3.9538044499482613`*^9, {
+   3.953805127528509*^9, 3.9538051526240253`*^9}, {3.9538052002876644`*^9, 
+   3.9538052010584793`*^9}, 3.953805280342148*^9, {3.953805514521908*^9, 
+   3.953805532822628*^9}, 3.953805626476965*^9, 3.9538056900373287`*^9, 
+   3.9538057461644135`*^9, 3.9538058034205513`*^9, {3.953805984611471*^9, 
+   3.9538060132864876`*^9}},
+ CellLabel->"Out[3]=",ExpressionUUID->"c5d0367a-0e7e-7f43-b22e-3e4dc7e1893f"]
 }, Open  ]]
 },
 WindowSize->{1152, 579.6},
@@ -181,16 +155,12 @@ CellTagsIndex->{}
 Notebook[{
 Cell[554, 20, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
 Cell[CellGroupData[{
-Cell[1026, 35, 3956, 67, 248, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"],
+Cell[1026, 35, 3475, 53, 196, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"],
 Cell[CellGroupData[{
-Cell[5007, 106, 317, 5, 19, "Print",ExpressionUUID->"efb0a934-0b2a-af4d-8f9f-414f6bf99e6c"],
-Cell[5327, 113, 481, 10, 19, "Print",ExpressionUUID->"b72d31aa-9c0b-9b4b-9839-f5c12b2b085c"]
+Cell[4526, 92, 373, 7, 19, "Print",ExpressionUUID->"e2dc9517-9853-5743-85a3-f7ed5e825870"],
+Cell[4902, 101, 488, 10, 19, "Print",ExpressionUUID->"ffc232a2-bb34-c24d-88e9-3a359fe2c031"]
 }, Open  ]],
-Cell[5823, 126, 559, 10, 34, "Output",ExpressionUUID->"53159d19-232d-bd42-8e42-0c585720af91"],
-Cell[CellGroupData[{
-Cell[6407, 140, 476, 10, 19, "Print",ExpressionUUID->"a2c7743b-150b-8c48-9781-f37421b5951e"],
-Cell[6886, 152, 309, 6, 19, "Print",ExpressionUUID->"b9abe602-3e6c-9c4a-9dab-ac73821ac68a"]
-}, Open  ]]
+Cell[5405, 114, 1112, 19, 40, "Output",ExpressionUUID->"c5d0367a-0e7e-7f43-b22e-3e4dc7e1893f"]
 }, Open  ]]
 }
 ]
