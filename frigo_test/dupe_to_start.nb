@@ -1,0 +1,198 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Wolfram 14.2' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       154,          7]
+NotebookDataLength[      8312,        190]
+NotebookOptionsPosition[      7223,        162]
+NotebookOutlinePosition[      7693,        180]
+CellTagsIndexPosition[      7650,        177]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[BoxData[
+ ButtonBox["\<\"Avvia Programma\"\>",
+  Appearance->Automatic,
+  BaseStyle->{"GenericButton", 16, Bold},
+  ButtonFunction:>FrontEndExecute[
+    FrontEndToken[
+     InputNotebook[], "EvaluateNotebook"]],
+  Evaluator->Automatic,
+  ImageSize->{175, 50},
+  Method->"Preemptive"]], "Output",
+ CellChangeTimes->{{3.9530143382390823`*^9, 3.953014358173971*^9}},
+ CellLabel->"Out[88]=",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"SetDirectory", "[", 
+   RowBox[{"NotebookDirectory", "[", "]"}], "]"}], ";"}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"Import", "[", 
+    RowBox[{"\"\<Questions.m\>\"", ",", "\"\<Package\>\""}], "]"}], ";"}], 
+  "\[IndentingNewLine]", "\[IndentingNewLine]", 
+  RowBox[{"(*", 
+   RowBox[{
+   "Test", " ", "with", " ", "proper", " ", "error", " ", "handling"}], 
+   "*)"}]}], "\n", 
+ RowBox[{
+  RowBox[{
+   RowBox[{"CaricaDomandeDaCSV", "[", "\"\<science-technology.csv\>\"", "]"}],
+    ";"}], "\[IndentingNewLine]"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"Button", "[", 
+   RowBox[{"\"\<Test Trivia\>\"", ",", 
+    RowBox[{
+     RowBox[{"result", "=", 
+      RowBox[{"MostraDomandaTrivia", "[", "4", "]"}]}], ";", 
+     "\[IndentingNewLine]", 
+     RowBox[{"Print", "[", 
+      RowBox[{"\"\<User answered correctly: \>\"", ",", "result"}], "]"}]}], ",", 
+    RowBox[{"Method", "->", "\"\<Queued\>\""}]}], "]"}], "\n", "\n", "\n", 
+  "\n", "\n"}], "\n"}], "Input",
+ CellChangeTimes->{
+  3.952593678977127*^9, {3.9525938039708824`*^9, 3.952593808991577*^9}, {
+   3.9530068114407063`*^9, 3.9530068139708424`*^9}, {3.9530077091131744`*^9, 
+   3.953007712544855*^9}, {3.9530284960761337`*^9, 3.9530285166032505`*^9}, {
+   3.953028662736456*^9, 3.9530287359646473`*^9}, {3.9530290080203*^9, 
+   3.953029019853079*^9}, {3.9530290876726685`*^9, 3.9530291008845406`*^9}, {
+   3.953029188989828*^9, 3.9530292071144676`*^9}, {3.953033979904154*^9, 
+   3.953033980854969*^9}, {3.9530346486441765`*^9, 3.953034654872534*^9}, {
+   3.953034714560404*^9, 3.95303471672633*^9}, {3.9530353305047226`*^9, 
+   3.9530353309464016`*^9}, {3.953035395117647*^9, 3.9530353955433464`*^9}, 
+   3.9531951107824955`*^9, {3.9531952106466656`*^9, 3.953195213180456*^9}, {
+   3.9531957962860355`*^9, 3.9531958220376606`*^9}, {3.9531965057697945`*^9, 
+   3.95319650775815*^9}, 3.953348220579588*^9, 3.9533508699308205`*^9, {
+   3.9533513788487015`*^9, 3.9533514021466446`*^9}, 3.9533514338409348`*^9, {
+   3.9533522304727993`*^9, 3.953352233472637*^9}, 3.953354114512293*^9, 
+   3.9533543851750183`*^9, {3.9535261912166595`*^9, 3.953526194464855*^9}, {
+   3.9535266119109*^9, 3.953526612278414*^9}, {3.9535270267956944`*^9, 
+   3.9535270844759007`*^9}, 3.9535277964185314`*^9, {3.9535280117542515`*^9, 
+   3.9535280144878616`*^9}, 3.9535282678214703`*^9, {3.9535284381681576`*^9, 
+   3.9535284501183834`*^9}, {3.9535284952967453`*^9, 
+   3.9535285365943775`*^9}, {3.953528593420311*^9, 3.953528643652771*^9}, {
+   3.9535291578771553`*^9, 3.9535292133876095`*^9}, {3.953529811126831*^9, 
+   3.9535298573689156`*^9}, 3.9535299027479725`*^9, {3.9535303448612385`*^9, 
+   3.9535303926919975`*^9}, {3.953530479847145*^9, 3.953530480411598*^9}, {
+   3.95360691550082*^9, 3.9536069353494987`*^9}, {3.953607036318157*^9, 
+   3.9536070756235123`*^9}, {3.9536075300002117`*^9, 3.9536075699119453`*^9}, 
+   3.9536077148009224`*^9, 3.9536079587398567`*^9, 3.9536096626881714`*^9, {
+   3.953609830563513*^9, 3.953609839922922*^9}, {3.9536140787301216`*^9, 
+   3.9536141016543255`*^9}, 3.953615091230137*^9, {3.953616479033844*^9, 
+   3.9536164813168983`*^9}, {3.95372729012426*^9, 3.9537273105787067`*^9}, {
+   3.953727811072668*^9, 3.953727825559349*^9}, {3.9537278765940666`*^9, 
+   3.953727980778862*^9}, {3.9537281239986935`*^9, 3.9537281551315765`*^9}, {
+   3.953728244985262*^9, 3.9537282564403057`*^9}, {3.95372848383119*^9, 
+   3.953728499584137*^9}, {3.953728590278452*^9, 3.9537286166485996`*^9}, 
+   3.9537807619688206`*^9, {3.9537812884825726`*^9, 3.9537812920611763`*^9}, {
+   3.9537820122230053`*^9, 3.953782016612753*^9}, 3.953782444895252*^9, {
+   3.953782651436001*^9, 3.9537826531777706`*^9}, 3.95378302069475*^9, 
+   3.9537836027980614`*^9, 3.9537837077191067`*^9, 3.9537837718055573`*^9, 
+   3.9537839680463142`*^9, {3.953784008144581*^9, 3.953784008716751*^9}},
+ CellLabel->"In[1]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData["\<\"\:2705 CSV text imported successfully.\"\>"], "Print",
+ CellChangeTimes->{3.9537874555245705`*^9, 3.953787578916897*^9, 
+  3.9537876326606407`*^9, 3.9537877713862247`*^9, 3.9537878772076817`*^9},
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"efb0a934-0b2a-af4d-8f9f-414f6bf99e6c"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"\:2705 CSV parsed successfully. Rows loaded: \"\>", "\[InvisibleSpace]",
+    "2487"}],
+  SequenceForm["\:2705 CSV parsed successfully. Rows loaded: ", 2487],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9537874555245705`*^9, 3.953787578916897*^9, 
+  3.9537876326606407`*^9, 3.9537877713862247`*^9, 3.9537878838812695`*^9},
+ CellLabel->
+  "During evaluation of \
+In[1]:=",ExpressionUUID->"b72d31aa-9c0b-9b4b-9839-f5c12b2b085c"]
+}, Open  ]],
+
+Cell[BoxData[
+ ButtonBox["\<\"Test Trivia\"\>",
+  Appearance->Automatic,
+  ButtonFunction:>($CellContext`result = Questions`MostraDomandaTrivia[4]; 
+   Print["User answered correctly: ", $CellContext`result]),
+  Evaluator->Automatic,
+  Method->"Queued"]], "Output",
+ CellChangeTimes->{3.9537867624722443`*^9, 3.953787017318138*^9, 
+  3.9537871240438786`*^9, 3.9537874620376453`*^9, 3.9537875854914227`*^9, 
+  3.9537876390013065`*^9, 3.9537877777895412`*^9, 3.9537878839343815`*^9},
+ CellLabel->"Out[4]=",ExpressionUUID->"53159d19-232d-bd42-8e42-0c585720af91"],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"\:2705 Shuffled options: \"\>", "\[InvisibleSpace]", 
+   RowBox[{"{", 
+    RowBox[{"\<\"Earthquake\"\>", ",", "\<\"Volcano\"\>", 
+     ",", "\<\"Tsunami\"\>", ",", "\<\"Tide\"\>"}], "}"}]}],
+  SequenceForm[
+  "\:2705 Shuffled options: ", {"Earthquake", "Volcano", "Tsunami", "Tide"}],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.953787885464327*^9},
+ CellLabel->"",ExpressionUUID->"a2c7743b-150b-8c48-9781-f37421b5951e"],
+
+Cell[BoxData[
+ InterpretationBox[
+  RowBox[{"\<\"User answered correctly: \"\>", "\[InvisibleSpace]", "False"}],
+  SequenceForm["User answered correctly: ", False],
+  Editable->False]], "Print",
+ CellChangeTimes->{3.9537878881823997`*^9},
+ CellLabel->"",ExpressionUUID->"b9abe602-3e6c-9c4a-9dab-ac73821ac68a"]
+}, Open  ]]
+}, Open  ]]
+},
+WindowSize->{1152, 579.6},
+WindowMargins->{{
+  Automatic, -5.399999999999864}, {-5.399999999999977, Automatic}},
+Magnification:>0.9 Inherited,
+FrontEndVersion->"14.2 for Microsoft Windows (64-bit) (December 26, 2024)",
+StyleDefinitions->"Default.nb",
+ExpressionUUID->"f3d60804-c8f6-d94d-8044-faa8435f3bfb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[554, 20, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
+Cell[CellGroupData[{
+Cell[1026, 35, 3956, 67, 248, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"],
+Cell[CellGroupData[{
+Cell[5007, 106, 317, 5, 19, "Print",ExpressionUUID->"efb0a934-0b2a-af4d-8f9f-414f6bf99e6c"],
+Cell[5327, 113, 481, 10, 19, "Print",ExpressionUUID->"b72d31aa-9c0b-9b4b-9839-f5c12b2b085c"]
+}, Open  ]],
+Cell[5823, 126, 559, 10, 34, "Output",ExpressionUUID->"53159d19-232d-bd42-8e42-0c585720af91"],
+Cell[CellGroupData[{
+Cell[6407, 140, 476, 10, 19, "Print",ExpressionUUID->"a2c7743b-150b-8c48-9781-f37421b5951e"],
+Cell[6886, 152, 309, 6, 19, "Print",ExpressionUUID->"b9abe602-3e6c-9c4a-9dab-ac73821ac68a"]
+}, Open  ]]
+}, Open  ]]
+}
+]
+*)
+
