@@ -36,7 +36,7 @@ avviaSchermataDiGioco[] := DynamicModule[
     titleFontScale, currentScreen = "menu",
     modalitaSeed = False, modalitaCustom = False,
     content,
-    customSeed = "", customColori = 6, customColonne = 4, customTurni = 10
+    customSeed, customColori = 6, customColonne = 4, customTurni = 10
   },
 
   (* Ottieni dimensioni schermo *)
@@ -47,7 +47,7 @@ avviaSchermataDiGioco[] := DynamicModule[
   
   colorLetters = {"r" (* red *), "o" (* orange *), "g" (* green *), "b" (* blue *), "v" (* violet *), "w" (* brown *), "a" (* gray *), "y" (* yellow *)};
   
-  seedInserito = "";
+  Int? seedInserito;
   
   Int? numeroColori;
   Int? numeroColonne;
@@ -70,7 +70,7 @@ mostraInserimentoSeed[] := Column[{
     Row[{
         Item[
             Framed[
-                InputField[Dynamic[seedInserito], String, ImageSize -> {250, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
+                InputField[Dynamic[seedInserito], Number, ImageSize -> {250, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
                 Background -> LightGray,
                 FrameStyle -> None, 
                 RoundingRadius -> 10, 
@@ -92,6 +92,7 @@ mostraInserimentoSeed[] := Column[{
             Function[(
 			  customSeed = seedInserito;
 			  seedInserito = "";
+			  SeedRandom[customSeed];  (* Inizializza il generatore pseudorandom *)
 			  cambiaSchermata["gioco"]
 			)]
         ]
@@ -324,7 +325,7 @@ paletteColori = {Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta}
 
 
 (* === Funzione per generare il codice segreto da indovinare ===
-Prende in input la lunghezza del codice da generare come intero, ed un booleano che ammette o meno la presenza di colori duplicati.
+Prende in input la lunghezza del codice da generare come intero, il seed, ed un booleano che ammette o meno la presenza di colori duplicati.
 Ritorna tale codice. Esempio: {Red, Purple, Purple, Green} *)
 generaCodiceSegreto[lunghezza_Integer, allowDuplicates_: True] := Module[
   {},
@@ -333,7 +334,7 @@ generaCodiceSegreto[lunghezza_Integer, allowDuplicates_: True] := Module[
   If[!allowDuplicates && lunghezza > Length[paletteColori],
 	Return[$Failed, Module]  (* Ritorna $Failed. Da gestire in modo opportuno (ma \[EGrave] meglio evitare che accada del tutto) *)
   ];
-
+  
   If[allowDuplicates,
     RandomChoice[paletteColori, lunghezza],  (* Con duplicati *)
     RandomSample[paletteColori, lunghezza]   (* Senza duplicati *)
