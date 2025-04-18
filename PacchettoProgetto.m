@@ -1,8 +1,5 @@
 (* ::Package:: *)
 
-\[AliasDelimiter]\[AliasDelimiter]\[AliasDelimiter]
-
-
 (* :Title:Trivia Mastermind*)
 (* :Context:PacchettoProgetto`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
@@ -37,7 +34,6 @@ avviaSchermataDiGioco[] := DynamicModule[
   {
     mainWindow, screenWidth, screenHeight,
     titleFontScale, currentScreen = "menu",
-    modalitaSeed = False, modalitaCustom = False,
     content,
     customSeed, customColori = 6, customColonne = 4, customTurni = 10
   },
@@ -47,8 +43,6 @@ avviaSchermataDiGioco[] := DynamicModule[
     {screenWidth, screenHeight} = FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
     {screenWidth, screenHeight} = {1920, 1080}
   ];
-  
-  colorLetters = {"r" (* red *), "o" (* orange *), "g" (* green *), "b" (* blue *), "v" (* violet *), "w" (* brown *), "a" (* gray *), "y" (* yellow *)};
   
   Int? seedInserito;
   
@@ -61,64 +55,7 @@ avviaSchermataDiGioco[] := DynamicModule[
   (* Funzione per cambiare schermata *)
   cambiaSchermata[nuovaSchermata_] := (
     currentScreen = nuovaSchermata;
-    modalitaSeed = False;
-    modalitaCustom = False
   );
-
-(* Schermata seed con InputField personalizzato *)
-mostraInserimentoSeed[] := Column[{
-    Spacer[{0, 50}],
-    Style["Inserisci un seed:", FontSize -> 18, FontFamily -> "Consolas"],
-
-    Row[{
-        Item[
-            Framed[
-                InputField[Dynamic[seedInserito], Number, ImageSize -> {250, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
-                Background -> LightGray,
-                FrameStyle -> None, 
-                RoundingRadius -> 10, 
-                FrameMargins -> {{10, 10}, {5, 5}},
-                ImageSize -> Automatic
-            ],
-            ItemSize -> Automatic
-        ],
-        Spacer[15],
-        ClickPane[
-            Framed[
-                Style["\[FilledRightTriangle]", FontSize -> 18, FontColor -> White],
-                Background -> RGBColor[0, 0.5, 0], 
-                FrameStyle -> None, 
-                RoundingRadius -> 5,
-                FrameMargins -> {{10, 10}, {5, 5}}, 
-                ImageSize -> Automatic
-            ],
-            Function[(
-			  customSeed = seedInserito;
-			  seedInserito = "";
-			  SeedRandom[customSeed];  (* Inizializza il generatore pseudorandom *)
-			  cambiaSchermata["gioco"]
-			)]
-        ]
-    }, Alignment -> Center],
-    
-      Spacer[{0, 20}],
-      
-	ClickPane[
-	  Framed[
-	    Row[{
-	      Style["\[LeftArrow]", White, FontSize -> 30, FontFamily -> "Consolas", Bold],
-	      Spacer[10],
-	      Style["MENU", White, FontSize -> 24, FontFamily -> "Consolas", Bold]
-	    }, Alignment -> Center],
-	    Background -> Darker[Blue], FrameStyle -> None, RoundingRadius -> 10,
-	    FrameMargins -> {{15, 15}, {10, 10}}, ImageSize -> Automatic
-	  ],
-	  Function[cambiaSchermata["menu"]]
-	]
-
-}, Spacings -> 2, Alignment -> Center];
-
-
 
   (* Schermata custom *)
   mostraConfigurazioneCustom[] := Column[{
@@ -184,104 +121,116 @@ mostraInserimentoSeed[] := Column[{
 	  ]
 	],
 
-    Spacer[{0, 20}],
-      
-	ClickPane[
-	  Framed[
-	    Row[{
-	      Style["\[LeftArrow]", White, FontSize -> 30, FontFamily -> "Consolas", Bold],
-	      Spacer[10],
-	      Style["MENU", White, FontSize -> 24, FontFamily -> "Consolas", Bold]
-	    }, Alignment -> Center],
-	    Background -> Darker[Blue], FrameStyle -> None, RoundingRadius -> 10,
-	    FrameMargins -> {{15, 15}, {10, 10}}, ImageSize -> Automatic
-	  ],
-	  Function[cambiaSchermata["menu"]]
-	]
-
-
+    Spacer[{0, 20}]
 
   }, Spacings -> 2, Alignment -> Center];
 
   (* Homepage *)
   creaHomepage[] := Column[{
     Spacer[{0, 50}],
+    
     Style["MASTERMIND MA MEGLIO", FontSize -> titleFontScale, FontWeight -> Bold,
       FontColor -> Black, FontFamily -> "Consolas", TextAlignment -> Center],
+    
     Spacer[{0, 20}],
+    
     Style["Made by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
       FontSize -> titleFontScale/5, FontFamily -> "Consolas", FontColor -> Gray, TextAlignment -> Center],
 
-    Dynamic[Which[
-      modalitaSeed, mostraInserimentoSeed[],
-      modalitaCustom, mostraConfigurazioneCustom[],
-      True,
-      Column[{
-      Spacer[{0, 125}], 
-      Row[{
-        ClickPane[
-          Framed[
-            Grid[{{
-              Graphics[Text[Style["\|01f331", FontSize -> 24]], ImageSize -> 24],
-              Style["SEED GAME", Black, FontFamily -> "Consolas", FontSize -> 24, Bold]
-            }}, Alignment -> {Center, Center}, Spacings -> {1.5, 0}],
-            Background -> LightGray, FrameStyle -> None, RoundingRadius -> 10,
-            FrameMargins -> {{15, 15}, {15, 15}}, ImageSize -> Automatic
-          ],
-          Function[(
-            modalitaSeed = True;
-            modalitaCustom = False
-          )]
-        ],
-        Spacer[40],
+    Spacer[{0, 50}],
+    
+    Style["Inserisci un seed:", FontSize -> 18, FontFamily -> "Consolas"],
+	
+	Spacer[{0, 25}],
+	
+	Row[{
 		ClickPane[
 		  Framed[
-		    Grid[{{
-		      Graphics[Text[Style["\|01f3b2", Red, FontSize -> 24]], ImageSize -> 24],
-		      Style["RANDOM GAME", Black, FontFamily -> "Consolas", FontSize -> 24, Bold]
-		    }}, Alignment -> {Center, Center}, Spacings -> {1.5, 0}],
-		    Background -> LightGray, FrameStyle -> None, RoundingRadius -> 10,
-		    FrameMargins -> {{15, 15}, {15, 15}}, ImageSize -> Automatic
+		    Style["\:21bb", FontSize -> 18, FontColor -> White],
+		    Background -> Darker[Blue], 
+		    FrameStyle -> None, 
+		    RoundingRadius -> 5,
+		    FrameMargins -> {{10, 10}, {5, 5}}, 
+		    ImageSize -> Automatic
 		  ],
 		  Function[(
-		    Module[{randomColors, seed},
-		      randomColors = StringJoin[RandomSample[colorLetters, 4]];
-		      seed = StringJoin["04", randomColors, "08"];
-		      customSeed = seed;
-		      cambiaSchermata["gioco"];
-		    ]
+		    seedInserito = RandomInteger[{1, 9999999999}];
 		  )]
 		],
-        Spacer[40],
-        ClickPane[
+        Spacer[15],
+      Item[
           Framed[
-            Grid[{{
-              Graphics[Text[Style["\|01f6e0\:fe0f", FontSize -> 24]], ImageSize -> 24],
-              Style["CUSTOM GAME", Black, FontFamily -> "Consolas", FontSize -> 24, Bold]
-            }}, Alignment -> {Center, Center}, Spacings -> {1.5, 0}],
-            Background -> LightGray, FrameStyle -> None, RoundingRadius -> 10,
-            FrameMargins -> {{15, 15}, {15, 15}}, ImageSize -> Automatic
+                InputField[Dynamic[seedInserito], Number, ImageSize -> {250, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
+                Background -> LightGray,
+                FrameStyle -> None, 
+                RoundingRadius -> 10, 
+                FrameMargins -> {{10, 10}, {5, 5}},
+                ImageSize -> Automatic
+           ],
+           ItemSize -> Automatic
+       ],
+       Spacer[15],
+       ClickPane[
+          Framed[
+              Style["\[FilledRightTriangle]", FontSize -> 18, FontColor -> White],
+              Background -> RGBColor[0, 0.5, 0], 
+              FrameStyle -> None, 
+              RoundingRadius -> 5,
+              FrameMargins -> {{10, 10}, {5, 5}}, 
+              ImageSize -> Automatic
           ],
           Function[(
-            modalitaSeed = False;
-            modalitaCustom = True
-          )]
+			  customSeed = seedInserito;
+			  seedInserito = "";
+			  SeedRandom[customSeed];  (* Inizializza il generatore pseudorandom *)
+			  cambiaSchermata["gioco"]
+		  )]
         ]
-      }, Alignment -> Center],
+    }, Alignment -> Center],
+    
+    Spacer[{0, 25}],
+    
+    Row[{
+      Style["N. turni", FontSize -> 14, FontFamily -> "Consolas", Bold],
+      Spacer[20],
+	  DynamicModule[{val = 10},
+	  SetterBar[
+	    Dynamic[val],
+	    {
+	      1 -> Style["1", FontFamily -> "Consolas", Bold],
+	      2 -> Style["2", FontFamily -> "Consolas", Bold],
+	      3 -> Style["3", FontFamily -> "Consolas", Bold],
+	      4 -> Style["4", FontFamily -> "Consolas", Bold],
+	      5 -> Style["5", FontFamily -> "Consolas", Bold],
+	      6 -> Style["6", FontFamily -> "Consolas", Bold],
+	      7 -> Style["7", FontFamily -> "Consolas", Bold],
+	      8 -> Style["8", FontFamily -> "Consolas", Bold],
+	      9 -> Style["9", FontFamily -> "Consolas", Bold],
+	      10 -> Style["10", FontFamily -> "Consolas", Bold],
+	      11 -> Style["11", FontFamily -> "Consolas", Bold],
+	      12 -> Style["12", FontFamily -> "Consolas", Bold],
+	      13 -> Style["13", FontFamily -> "Consolas", Bold],
+	      14 -> Style["14", FontFamily -> "Consolas", Bold]
+	    },
+	    Appearance -> "Horizontal"
+	  ]
+	]
+    }],
+
+    Spacer[{0, 125}],
       
-      Spacer[{0, 125}],
-      
-      ClickPane[
+     ClickPane[
 	      Framed[
 	        Style["ESCI", White, FontFamily -> "Consolas", FontSize -> 24, Bold],
 	        Background -> Red, FrameStyle -> None, RoundingRadius -> 10,
 	        FrameMargins -> {{15, 15}, {5, 5}}, ImageSize -> Automatic
 	      ],
-	      Function[NotebookClose[EvaluationNotebook[]]]
+	      Function[
+		      seedInserito = Null;
+		      NotebookClose[EvaluationNotebook[]]
+	      ]
 	  ]
-    }, Alignment -> Center]
-    ]]
-  }, Alignment -> Center];
+    }, Alignment -> Center];
 
   (* Contenuto dinamico *)
   content = Pane[
@@ -320,7 +269,6 @@ mostraInserimentoSeed[] := Column[{
 
   mainWindow
 ]
-
 
 
 (* Lista dei colori usati da Mastermind *)
