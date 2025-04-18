@@ -44,6 +44,14 @@ avviaSchermataDiGioco[] := DynamicModule[
     {screenWidth, screenHeight} = FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
     {screenWidth, screenHeight} = {1920, 1080}
   ];
+  
+  colorLetters = {"r" (* red *), "o" (* orange *), "g" (* green *), "b" (* blue *), "v" (* violet *), "w" (* brown *), "a" (* gray *), "y" (* yellow *)};
+  
+  seedInserito = "";
+  
+  Int? numeroColori;
+  Int? numeroColonne;
+  Int? numeroTurni;
 
   titleFontScale = Min[screenWidth, screenHeight]/15;
 
@@ -62,7 +70,7 @@ mostraInserimentoSeed[] := Column[{
     Row[{
         Item[
             Framed[
-                InputField[Dynamic[seedInserito], Number, ImageSize -> {250, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
+                InputField[Dynamic[seedInserito], String, ImageSize -> {250, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
                 Background -> LightGray,
                 FrameStyle -> None, 
                 RoundingRadius -> 10, 
@@ -81,7 +89,11 @@ mostraInserimentoSeed[] := Column[{
                 FrameMargins -> {{10, 10}, {5, 5}}, 
                 ImageSize -> Automatic
             ],
-            Function[cambiaSchermata["gioco"]]
+            Function[(
+			  customSeed = seedInserito;
+			  seedInserito = "";
+			  cambiaSchermata["gioco"]
+			)]
         ]
     }, Alignment -> Center],
     
@@ -111,7 +123,7 @@ mostraInserimentoSeed[] := Column[{
     Column[{
     Item[
             Framed[
-                InputField[Dynamic[seedInserito], Number, FieldHint->"COLORI", FieldHintStyle -> {Bold, FontSlant -> "Plain"}, ImageSize -> {100, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
+                InputField[Dynamic[numeroColori], Number, FieldHint->"COLORI", FieldHintStyle -> {Bold, FontSlant -> "Plain"}, ImageSize -> {100, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
                 Background -> LightGray,
                 FrameStyle -> None, 
                 RoundingRadius -> 10,
@@ -123,7 +135,7 @@ mostraInserimentoSeed[] := Column[{
         Spacer[{0,5}],
         Item[
             Framed[
-                InputField[Dynamic[seedInserito], Number, FieldHint->"COLONNE", FieldHintStyle->{Bold, FontSlant -> "Plain"}, ImageSize -> {100, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
+                InputField[Dynamic[numeroColonne], Number, FieldHint->"COLONNE", FieldHintStyle->{Bold, FontSlant -> "Plain"}, ImageSize -> {100, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
                 Background -> LightGray,
                 FrameStyle -> None, 
                 RoundingRadius -> 10, 
@@ -135,7 +147,7 @@ mostraInserimentoSeed[] := Column[{
         Spacer[{0,5}],
         Item[
             Framed[
-                InputField[Dynamic[seedInserito], Number, FieldHint->"TURNI", FieldHintStyle->{Bold, FontSlant -> "Plain"}, ImageSize -> {100, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
+                InputField[Dynamic[numeroTurni], Number, FieldHint->"TURNI", FieldHintStyle->{Bold, FontSlant -> "Plain"}, ImageSize -> {100, 21},  Appearance -> "Frameless", BaselinePosition-> Center],
                 Background -> LightGray,
                 FrameStyle -> None, 
                 RoundingRadius -> 10, 
@@ -145,22 +157,30 @@ mostraInserimentoSeed[] := Column[{
             ItemSize -> Automatic
         ]
     }],
-ClickPane[
-  Framed[
-    Pane[
-      Style["\[FilledRightTriangle]", FontSize -> 25, FontColor -> White],
-      Alignment -> Center,
-      ImageSize -> {120, 32}
-    ],
-    Background -> RGBColor[0, 0.5, 0], 
-    FrameStyle -> None, 
-    RoundingRadius -> 10,
-    FrameMargins -> 0
-  ],
-  Function[cambiaSchermata["gioco"]]
-],
+	ClickPane[
+	  Framed[
+	    Pane[
+	      Style["\[FilledRightTriangle]", FontSize -> 25, FontColor -> White],
+	      Alignment -> Center,
+	      ImageSize -> {120, 32}
+	    ],
+	    Background -> RGBColor[0, 0.5, 0], 
+	    FrameStyle -> None, 
+	    RoundingRadius -> 10,
+	    FrameMargins -> 0
+	  ],
+	  Function[
+	    customColori = numeroColori;
+	    numeroColori = Null;
+	    customColonne = numeroColonne;
+	    numeroColonne = Null;
+	    customTurni = numeroTurni;
+	    numeroTurni = Null;
+	    cambiaSchermata["gioco"]
+	  ]
+	],
 
-      Spacer[{0, 20}],
+    Spacer[{0, 20}],
       
 	ClickPane[
 	  Framed[
@@ -210,17 +230,24 @@ ClickPane[
           )]
         ],
         Spacer[40],
-        ClickPane[
-          Framed[
-            Grid[{{
-              Graphics[Text[Style["\|01f3b2", Red, FontSize -> 24]], ImageSize -> 24],
-              Style["RANDOM GAME", Black, FontFamily -> "Consolas", FontSize -> 24, Bold]
-            }}, Alignment -> {Center, Center}, Spacings -> {1.5, 0}],
-            Background -> LightGray, FrameStyle -> None, RoundingRadius -> 10,
-            FrameMargins -> {{15, 15}, {15, 15}}, ImageSize -> Automatic
-          ],
-          Function[cambiaSchermata["gioco"]]
-        ],
+		ClickPane[
+		  Framed[
+		    Grid[{{
+		      Graphics[Text[Style["\|01f3b2", Red, FontSize -> 24]], ImageSize -> 24],
+		      Style["RANDOM GAME", Black, FontFamily -> "Consolas", FontSize -> 24, Bold]
+		    }}, Alignment -> {Center, Center}, Spacings -> {1.5, 0}],
+		    Background -> LightGray, FrameStyle -> None, RoundingRadius -> 10,
+		    FrameMargins -> {{15, 15}, {15, 15}}, ImageSize -> Automatic
+		  ],
+		  Function[(
+		    Module[{randomColors, seed},
+		      randomColors = StringJoin[RandomSample[colorLetters, 4]];
+		      seed = StringJoin["04", randomColors, "08"];
+		      customSeed = seed;
+		      cambiaSchermata["gioco"];
+		    ]
+		  )]
+		],
         Spacer[40],
         ClickPane[
           Framed[
@@ -257,7 +284,7 @@ ClickPane[
     Dynamic @ Refresh[
       Switch[currentScreen,
         "menu", creaHomepage[],
-        "gioco", creaSchermataGioco[]
+        "gioco", creaSchermataGioco[customSeed]
       ],
       TrackedSymbols :> {currentScreen, modalitaSeed, modalitaCustom}
     ],
@@ -382,8 +409,7 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:10, tentativoCorre
 
 
  (* Schermata di gioco random - perfettamente centrata *)
-  creaSchermataGioco[] := Column[
-    {
+creaSchermataGioco[seed_] := Column[{
       Spacer[{0, 50}],
       Style["PARTITA",
         FontSize -> 70,
@@ -393,7 +419,11 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:10, tentativoCorre
         TextAlignment -> Center
       ],
       
-      Spacer[{0, 50}],
+      Spacer[{0, 25}],
+      
+      Style["Avvio con seed: " <> ToString[seed], FontSize -> 24],
+      
+      Spacer[{0, 25}],
       
       Button["Torna al menu", cambiaSchermata["menu"],
         Background -> LightGray,
