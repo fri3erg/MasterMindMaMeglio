@@ -29,7 +29,7 @@ Begin["`Private`"];
 variabili di input, variabili di lavoro, variabili di output, spiegazione dei singoli passaggi *)
 
 
-(* aaaaaa *)
+(* Menu di avvio *)
 avviaSchermataDiGioco[] := DynamicModule[
   {
     mainWindow, screenWidth, screenHeight,
@@ -134,7 +134,7 @@ avviaSchermataDiGioco[] := DynamicModule[
     
     Spacer[{0, 20}],
     
-    Style["Made by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
+    Style["Made with \:2665 by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
       FontSize -> titleFontScale/5, FontFamily -> "Consolas", FontColor -> Gray, TextAlignment -> Center],
 
     Spacer[{0, 50}],
@@ -180,6 +180,7 @@ avviaSchermataDiGioco[] := DynamicModule[
               ImageSize -> Automatic
           ],
           Function[(
+              partitaInCorso = True;
 			  customSeed = seedInserito;
 			  seedInserito = "";
 			  SeedRandom[customSeed];  (* Inizializza il generatore pseudorandom *)
@@ -273,6 +274,8 @@ avviaSchermataDiGioco[] := DynamicModule[
 
 (* Lista dei colori usati da Mastermind *)
 paletteColori = {Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta};
+(* Stato della partita *)
+partitaInCorso = True
 
 
 (* === Funzione per generare il codice segreto da indovinare ===
@@ -387,9 +390,15 @@ interfacciaGriglia[lunghezzaCombinazione:4, numeroTentativi: 10] := DynamicModul
 			Dynamic[
 				If[Length[valutazioneTentativo] > 0,
 					 If[valutazioneTentativo[[1]] === mastermindSconfitta, 
-						 Style["Game Over", FontSize -> 24, FontColor -> Red, FontFamily -> "Consolas"],
+						 (
+						 Style["Game Over", FontSize -> 24, FontColor -> Red, FontFamily -> "Consolas"];
+						 partitaInCorso = False
+						 ),
 						 If[valutazioneTentativo[[1]] === mastermindVittoria,
-							  Style["You Won!", FontSize -> 24, FontColor -> Green, FontFamily -> "Consolas"],
+							  (
+							  Style["You Won!", FontSize -> 24, FontColor -> Green, FontFamily -> "Consolas"];
+							  partitaInCorso = False
+							  ),
 							  If[valutazioneTentativo[[1]] === mastermindProsegui,
 							  Style["Try again", FontSize -> 24, FontColor -> Orange, FontFamily -> "Consolas"]]
 						  ]
@@ -503,17 +512,21 @@ interfacciaGriglia[lunghezzaCombinazione:4, numeroTentativi: 10] := DynamicModul
 						                ConstantArray[None, 4]
 						                ]
 						              },
-									Grid[
-									  {
-									    Table[
-									      Graphics[
-									        {EdgeForm[Black], FaceForm[hint], Disk[{0, 0}, 1]}, 
-									        ImageSize -> 20
-									      ],
-									      {hint, feedbackColors}
-									    ]
-									  },
-									  Alignment -> Center
+					                Style[
+										Grid[
+										  {
+										    Table[
+										      Graphics[
+										        {EdgeForm[Black], FaceForm[hint], Disk[{0, 0}, 1]}, 
+										        ImageSize -> 20
+										      ],
+										      {hint, feedbackColors}
+										    ]
+										  },
+										  Alignment -> Center
+										],
+										Selectable -> False,
+                                         Editable -> False					                
 									]
 						            ]
 						           ,
@@ -538,15 +551,17 @@ interfacciaGriglia[lunghezzaCombinazione:4, numeroTentativi: 10] := DynamicModul
 								           
 								          ],
 								           Function[
-											  (
-											   valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
-											   hintFeedbackHistory[[turn]] = valutazioneTentativo[[2]]; (*Set dei feedback*)
-											   If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
-											   selectedItem = {turn, 1}; (*Item successivo*)
-											   (* RESET TENTATIVO*)
-											   tentativoList = ConstantArray[None, lunghezzaCombinazione];
-											   
-											   )
+								               If[partitaInCorso,\[AliasDelimiter]
+												  (
+												   valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
+												   hintFeedbackHistory[[turn]] = valutazioneTentativo[[2]]; (*Set dei feedback*)
+												   If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
+												   selectedItem = {turn, 1}; (*Item successivo*)
+												   (* RESET TENTATIVO*)
+												   tentativoList = ConstantArray[None, lunghezzaCombinazione];
+												   
+												   )
+											   ]
 											]
 								        ],
 								        Spacer[90]
@@ -591,7 +606,7 @@ creaSchermataGioco[seed_] := Column[{
       Spacer[{0, 25}],
       interfacciaGriglia[4,10],
 	  Spacer[{0,25}],
-      Button["Torna al menu", cambiaSchermata["menu"],
+      Button["\:2b05\:fe0f Torna al menu", cambiaSchermata["menu"],
         Background -> LightGray,
         Alignment -> Center
       ]
