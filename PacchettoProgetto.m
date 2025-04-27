@@ -300,7 +300,8 @@ labels=translations = <|
 	"suggerimenti"->"Suggerimenti",
 	"azione"->"Azione",
 	"restart"->"Rigioca",
-	"vai"->"VAI!"
+	"vai"->"VAI!",
+ 	"menu"->"TORNA AL MENU'"
 |>;
 
 (* === Funzione per generare il codice segreto da indovinare ===
