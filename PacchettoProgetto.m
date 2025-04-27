@@ -70,16 +70,16 @@ avviaSchermataDiGioco[] := DynamicModule[
     Spacer[{0, 50}],
     
     (*TITOLO ORIGINALE*)
-    (*Dynamic @ Style[labels["titoloGioco"],
+    Dynamic @ Style[labels["titoloGioco"],
       FontSize->titleFontScale,
       FontWeight->Bold,
       FontColor->Black,
       FontFamily->"Consolas",
       TextAlignment->Center
-    ],*)
+    ],
     
     (*TITOLO COLORATO*)
-    With[
+    (*With[
      {stringa=labels["titoloGioco"]},
      Style[
       Row @ Table[
@@ -97,7 +97,7 @@ avviaSchermataDiGioco[] := DynamicModule[
      FontFamily->"Consolas",
      TextAlignment->Center
      ]
-    ],
+    ],*)
         
     Spacer[{0, 20}],
         
