@@ -306,18 +306,17 @@ labels=translations = <|
 (* === Funzione per generare il codice segreto da indovinare ===
 Prende in input la lunghezza del codice da generare come intero, il seed, ed un booleano che ammette o meno la presenza di colori duplicati.
 Ritorna tale codice. Esempio: {Red, Purple, Purple, Green} *)
-generaCodiceSegreto[lunghezza_Integer, colorsList_, allowDuplicates_:True] := Module[(*CAMBIATO, aggiunto colorsList*)
+generaCodiceSegreto[lunghezza_Integer, allowDuplicates_:True] := Module[
  {},
   
-  
   (* Check di sicurezza: Se non accettiamo duplicati, la lunghezza non deve superare il numero di colori disponibili *)
-  If[!allowDuplicates && lunghezza > Length[colorsList], (*CAMBIATO, paletteColori*)
+  If[!allowDuplicates && lunghezza > Length[paletteColori],
     Return[$Failed, Module]  (* Ritorna $Failed. Da gestire in modo opportuno (ma è meglio evitare che accada del tutto) *)
   ];
   
   If[allowDuplicates,
-    RandomChoice[colorsList, lunghezza],  (* Con duplicati *)(*CAMBIATO, paletteColori*)
-    RandomSample[colorsList, lunghezza]   (* Senza duplicati *)(*CAMBIATO, paletteColori*)
+    RandomChoice[paletteColori, lunghezza],  (* Con duplicati *)
+    RandomSample[paletteColori, lunghezza]   (* Senza duplicati *)
   ]
 ];  
 
