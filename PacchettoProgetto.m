@@ -278,8 +278,30 @@ avviaSchermataDiGioco[] := DynamicModule[
   mainWindow
 ]
 
+(* Lista dei colori usati da Mastermind *)
+paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta};
 (* Stato della partita *)
 partitaInCorso=True
+
+labels=translations = <|
+	"titoloGioco"->TRIVIA MASTERMIND",
+	"fattoDa"->"Made with ♥ by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
+	"inserisciSeed"->"Inserisci un seed: ",
+	"placeholderSeed"->"Scrivi seed prima di iniziare...",
+	"play"->"\[FilledRightTriangle]",
+	"randomSeed"->"↻",
+	"nTurni"->"N. turni",
+	"nCombinazione"->"N. combinazione",
+	"esci"->"ESCI",
+	"partita"->"PARTITA",
+	"seedSelezionato"->"Avvio con seed: ",
+	"colori"->"Colori",
+	"combinazione"->"Combinazione",
+	"suggerimenti"->"Suggerimenti",
+	"azione"->"Azione",
+	"restart"->"Rigioca",
+	"vai"->"VAI!"
+|>;
 
 (* === Funzione per generare il codice segreto da indovinare ===
 Prende in input la lunghezza del codice da generare come intero, il seed, ed un booleano che ammette o meno la presenza di colori duplicati.
