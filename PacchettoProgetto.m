@@ -21,11 +21,11 @@ BeginPackage["PacchettoProgettoFRE`"];
 (* ES. f::usage= "text"; *)
 avviaSchermataDiGioco::usage="aaaaaa";
 
-In[3]:= Begin["`Private`"];
+Begin["`Private`"];
 (* Ricorda di documentare ogni riga di codice: funzionalità,
 variabili di input, variabili di lavoro, variabili di output, spiegazione dei singoli passaggi *)
 
-In[4]:= (* Menu di avvio *)
+(* Menu di avvio *)
 avviaSchermataDiGioco[] := DynamicModule[
  {
   mainWindow,
@@ -40,38 +40,48 @@ avviaSchermataDiGioco[] := DynamicModule[
   customTurni=8,
   seedInserito=""
  },
- 
- 		
+	
+	
   aggiornaDimensioniSchermo[] := ( 
    (* Ottieni dimensioni schermo *)
-   Quiet @ Check[
-     {screenWidth, screenHeight}=FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
-	 {screenWidth, screenHeight}={1920, 1080}
-   ];
-  titleFontScale=Min[screenWidth, screenHeight]/15;
-  );
+	Quiet @ Check[
+	  {screenWidth, screenHeight}=FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
+	  {screenWidth, screenHeight}={1920, 1080}
+	];
+   titleFontScale=Min[screenWidth, screenHeight]/15;
+   );
     
-  aggiornaDimensioniSchermo[];
+   aggiornaDimensioniSchermo[];
     
-  (* Funzione per cambiare schermata *)
-  cambiaSchermata[nuovaSchermata_] := ( 
-    aggiornaDimensioniSchermo[];
-	currentScreen=nuovaSchermata;
-  );
-  
+   (* Funzione per cambiare schermata *)
+   cambiaSchermata[nuovaSchermata_] := ( 
+     aggiornaDimensioniSchermo[];
+	 currentScreen=nuovaSchermata;
+   );
+
   (* Homepage *)
   creaHomepage[] := Column[{
         
     Spacer[{0, 50}],
-        
+    
+    (*TITOLO ORIGINALE*)
+    (*Dynamic @ Style[labels["titoloGioco"],
+      FontSize->titleFontScale,
+      FontWeight->Bold,
+      FontColor->Black,
+      FontFamily->"Consolas",
+      TextAlignment->Center
+    ],*)
+    
+    (*TITOLO COLORATO*)
     With[
-     {stringa="MASTERMIND MA MEGLIO", probabilitaColorazione=0.90},
+     {stringa=labels["titoloGioco"]},
      Style[
       Row @ Table[
        With[
         {
          char=StringTake[stringa, {i}],
-         color=If[RandomReal[] < probabilitaColorazione, RandomColor[], Black]
+         color=RandomColor[]
         },
          Style[char, FontColor->color]
        ],
@@ -83,29 +93,26 @@ avviaSchermataDiGioco[] := DynamicModule[
      TextAlignment->Center
      ]
     ],
-         
+        
     Spacer[{0, 20}],
         
-    Dynamic @ Row[
-     {
-      Style["Made with ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray],
-      Style["♥", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Red],
-      Style[" by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
-      FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray]
-     },
-    Alignment->Center
+    Dynamic @ Style[labels["fattoDa"],
+      FontSize->titleFontScale/5,
+      FontFamily->"Consolas",
+      FontColor->Gray,
+      TextAlignment->Center
     ],
         
     Spacer[{0, 50}],
     
-    Style["Inserisci un seed: ", FontSize->18, FontFamily->"Consolas"],
+    Style[labels["inserisciSeed"], FontSize->18, FontFamily->"Consolas"],
 	
 	Spacer[{0, 25}],
 	
 	Row[{
 	 ClickPane[
 	  Framed[
-	    Style["↻", FontSize->18, FontColor->White],
+	    Style[labels["randomSeed"], FontSize->18, FontColor->White],
 		Background->Darker[Blue], 
 		FrameStyle->None, 
 		RoundingRadius->5,
@@ -116,7 +123,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 	    seedInserito=RandomInteger[{1, 9999999999}];
 	  )]
 	 ],
-	 	    
+		    
 	 Spacer[15],
       
      Item[
@@ -124,7 +131,7 @@ avviaSchermataDiGioco[] := DynamicModule[
        InputField[
          Dynamic[seedInserito],
          Number,
-         FieldHint->"Scrivi seed prima di iniziare...",
+         FieldHint->labels["placeholderSeed"],
          FieldHintStyle->{Italic},
          ImageSize->{250, 21},
          Appearance->"Frameless",
@@ -143,61 +150,63 @@ avviaSchermataDiGioco[] := DynamicModule[
      Spacer[15],
        
      Dynamic[
-       If[IntegerQ[seedInserito] && seedInserito>0,
-         (* seed inserito correttamente -> tasto abilitato *)
-         ClickPane[
-          Framed[
-            Style["\[FilledRightTriangle]", FontSize->18, FontColor->White],
-            Background->RGBColor[0, 0.5, 0],
-            FrameStyle->None,
-            RoundingRadius->5,
-            FrameMargins->{{10, 10}, {5, 5}},
-            ImageSize->Automatic
-          ],
-          Function[( 
-            partitaInCorso=True;
-            customSeed=seedInserito;
-            seedInserito="";
-            SeedRandom[customSeed];
-            cambiaSchermata["gioco"];
-          )]
-         ],
-         
-         (* seed non inserito -> tasto disabilitato  *)
+      If[IntegerQ[seedInserito] && seedInserito > 0,
+        (* seed inserito correttamente -> tasto abilitato *)
+        ClickPane[
          Framed[
-           Style["\[FilledRightTriangle]", FontSize->18, FontColor->GrayLevel[0.8]],
+           Style[labels["play"], FontSize->18, FontColor->White],
            Background->RGBColor[0, 0.5, 0],
            FrameStyle->None,
            RoundingRadius->5,
            FrameMargins->{{10, 10}, {5, 5}},
            ImageSize->Automatic
-         ]
-       ]
-     ]  
-    }, Alignment->Center],
+         ],
+         Function[( 
+           partitaInCorso=True;
+           customSeed=seedInserito;
+           seedInserito="";
+           SeedRandom[customSeed];
+           cambiaSchermata["gioco"];
+         )]
+        ],
+        
+        (* seed non inserito -> tasto disabilitato  *)
+        Framed[
+          Style[labels["play"], FontSize->18, FontColor->GrayLevel[0.8]],
+          Background->RGBColor[0, 0.5, 0],
+          FrameStyle->None,
+          RoundingRadius->5,
+          FrameMargins->{{10, 10}, {5, 5}},
+          ImageSize->Automatic
+        ]
+      ]
+     ]
+    },
+    Alignment->Center
+    ],
     
     Spacer[{0, 25}],
         
     Column[{
      Row[{
-       Style["N. turni", FontSize->14, FontFamily->"Consolas", Bold],
+       Style[labels["nTurni"], FontSize->14, FontFamily->"Consolas", Bold],
         
-       Spacer[28],
+       Spacer[20],
 	    
 	   SetterBar[
 	    Dynamic[customTurni],
 	    Table[
 	      i->Style[ToString[i], FontFamily->"Consolas", Bold],
-	      {i, 4, 12}
+	      {i, 6, 14}
 	    ],
 	   Appearance->"Horizontal"
 	   ]  
      }],
      
      Row[{
-       Style["N. combinazione", FontSize->14, FontFamily->"Consolas", Bold],
+       Style[labels["nCombinazione"], FontSize->14, FontFamily->"Consolas", Bold],
                 
-       Spacer[54],
+       Spacer[60],
                 
        SetterBar[
         Dynamic[customColonne],
@@ -214,7 +223,7 @@ avviaSchermataDiGioco[] := DynamicModule[
       
     ClickPane[
 	 Framed[
-	   Style["ESCI", White, FontFamily->"Consolas", FontSize->24, Bold],
+	   Style[labels["esci"], White, FontFamily->"Consolas", FontSize->24, Bold],
 	   Background->Red,
 	   FrameStyle->None,
 	   RoundingRadius->10,
@@ -227,7 +236,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 	 ]
 	]
   },
-  Alignment -> Center
+  Alignment->Center
   ];
 
   (* Contenuto dinamico *)
@@ -243,9 +252,8 @@ avviaSchermataDiGioco[] := DynamicModule[
   Alignment->{Center, Top}
   ];
     
-    
   (* Finestra principale *)
-  mainWindow = CreateDocument[
+  mainWindow=CreateDocument[
    {
     Cell[
       BoxData @ ToBoxes @ content,
@@ -254,29 +262,26 @@ avviaSchermataDiGioco[] := DynamicModule[
       CellMargins->{{0, 0}, {0, 0}}
     ]
    },
-   
-   
-     WindowSize->Full,
-     WindowFrame->"Frameless",
-     WindowElements->{},
-     Background->White,
-     Editable->False,
-     Deployed->True,
-     WindowMargins->{{0, 0}, {0, 0}},
-     NotebookEventActions->{
-       {"KeyDown", "Escape"}:>NotebookClose[EvaluationNotebook[]]
-     }
-   ];
+    
+    WindowSize->Full,
+    WindowFrame->"Frameless",
+    WindowElements->{},
+    Background->White,
+    Editable->False,
+    Deployed->True,
+    WindowMargins->{{0, 0}, {0, 0}},
+    NotebookEventActions->{
+      {"KeyDown", "Escape"}:>NotebookClose[EvaluationNotebook[]]
+    }
+  ];
+  
+  mainWindow
+]
 
-   mainWindow
-]  
-
-In[5]:= (* Stato della partita *)
+(* Stato della partita *)
 partitaInCorso=True
 
-Out[5]= True
-
-In[6]:= (* === Funzione per generare il codice segreto da indovinare ===
+(* === Funzione per generare il codice segreto da indovinare ===
 Prende in input la lunghezza del codice da generare come intero, il seed, ed un booleano che ammette o meno la presenza di colori duplicati.
 Ritorna tale codice. Esempio: {Red, Purple, Purple, Green} *)
 generaCodiceSegreto[lunghezza_Integer, colorsList_, allowDuplicates_:True] := Module[(*CAMBIATO, aggiunto colorsList*)
@@ -294,7 +299,7 @@ generaCodiceSegreto[lunghezza_Integer, colorsList_, allowDuplicates_:True] := Mo
   ]
 ];  
 
-In[7]:= (* === Funzione di feedback del tentativo === 
+(* === Funzione di feedback del tentativo === 
 Prende in input il codice soluzione e il codice appena tentato dall'utente.
 Ritorna il feedback ottenuto confrontando tali codici, via simboli 'feedbackEsatto', 'feedbackParziale' e 'feedbackAssente'.
 Esesmpio: {feedbackParziale, feedbackEsatto, feedbackParziale, feedbackAssente} *)
@@ -342,7 +347,7 @@ feedbackTentativo[soluzione_List, tentativo_List] := Module[
   feedback  (* Ritorna la lista dei feedback testuali *)
 ];
 
-In[8]:= (* === Funzione che valuta un tentativo nella sua interezza === 
+(* === Funzione che valuta un tentativo nella sua interezza === 
 Prende in input il codice soluzione e il codice appena tentato dall'utente, nonchè le informazioni sui tentativi.
 Chiama feedbackTentativo[], ed esegue il confronto tra soluzione e tentativo per dare la valutazione.
 Ritorna la valutazione simbolica ('mastermindVittoria', 'mastermindSconfitta' o 'mastermindProsegui') assieme al feedback.
@@ -363,7 +368,7 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:8, tentativoCorren
   ]
 ];
 
-In[9]:= (* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
+(* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
 interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, colorsList_] := DynamicModule[
  {
   gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}],(* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacità a 0.2)*)
@@ -652,5 +657,5 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] :=
   ]
 ];
 
-In[11]:= End[];
+End[];
 EndPackage[];
