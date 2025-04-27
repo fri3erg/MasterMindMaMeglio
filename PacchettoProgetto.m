@@ -629,53 +629,55 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, colorsList_] :=
 
 (* Schermata di gioco random - perfettamente centrata *)
 creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] :=
- DynamicModule[{paletteRandom, paletteFissa},
+ DynamicModule[{paletteRandom},
+ 
+ 
+  (*Spacer[{0, 50}],*)
   
   SeedRandom[seed];
   paletteRandom=Table[RandomColor[], {12}];
-  paletteFissa={Purple, Magenta, Pink, Red, Orange, Yellow, Green, Cyan, Blue, Brown, White, Black};
-
+  
   Pane[
    Column[{
      
-    Panel[
-     Column[{
-       Style["PARTITA", FontSize->fontSize/2, FontWeight->Bold, FontFamily->"Consolas"],
-       Style["avvio con seed: " <> ToString[seed], FontSize->12, FontFamily->"Consolas"]
-     },
-     Alignment->Center
+     Panel[
+      Column[{
+        Style[labels["partita"], FontSize->fontSize/2, FontFamily->"Consolas", Bold],
+        Style[labels["seedSelezionato"] <> ToString[seed], FontSize->12, FontFamily->"Consolas"]
+      },
+      Alignment->Center
+      ],
+     Background->White
      ],
-    Background->White
-    ],
-     
-    Dynamic[
-     Pane[
-       interfacciaGriglia[combinazione, tentativi, paletteRandom],
-       {Automatic, Scaled[0.8]},  (* massimo 80% in altezza *)
-       Scrollbars->False,
-       Alignment->Center
-     ]
-    ],
-     
-    ClickPane[
-     Framed[
-       Style["TORNA AL MENU'", White, FontSize->14, FontFamily->"Consolas", Bold],
-       Background->Red,
-       FrameStyle->None,
-       RoundingRadius->10,
-       FrameMargins->{{15, 15}, {5, 5}},
-       ImageSize->Automatic
+      
+     Dynamic[
+      Pane[
+        interfacciaGriglia[combinazione, tentativi, paletteRandom],
+        {Automatic, Scaled[0.8]}, (* massimo 80% in altezza *)
+        Scrollbars->False,
+        Alignment->Center 
+      ]
      ],
-     Function[
-       cambiaSchermata["menu"]
+     
+     ClickPane[
+      Framed[
+        Style[labels["menu"], White, FontSize->14, FontFamily->"Consolas", Bold],
+        Background->Red,
+        FrameStyle->None,
+        RoundingRadius->10,
+        FrameMargins->{{15, 15}, {5, 5}},
+        ImageSize->Automatic
+      ],  
+      Function[
+        cambiaSchermata["menu"]
+      ]
      ]
-    ]
-    
+     
    },
    Alignment->Center
    ],
   Alignment->Center,
-  ImageSize->Scaled[1]  (* prende tutto lo schermo *)
+  ImageSize->Scaled[1] (* prende tutto lo schermo *)
   ]
 ];
 
