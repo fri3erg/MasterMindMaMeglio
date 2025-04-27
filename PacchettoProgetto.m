@@ -30,332 +30,257 @@ variabili di input, variabili di lavoro, variabili di output, spiegazione dei si
 
 
 (* Menu di avvio *)
+(* Menu di avvio *)
 avviaSchermataDiGioco[] := DynamicModule[
-{
-	mainWindow,
-	screenWidth,
-	screenHeight,
-    titleFontScale,
-    currentScreen="menu",
-    content,
-    customSeed,
-    customColori=6,
-    customColonne=4,
-    customTurni=8,
-    seedInserito=""
-},
+ {
+  mainWindow,
+  screenWidth,
+  screenHeight,
+  titleFontScale,
+  currentScreen="menu",
+  content,
+  customSeed,
+  customColori=6,
+  customColonne=4,
+  customTurni=8,
+  seedInserito=""
+ },
 	
 	
-	aggiornaDimensioniSchermo[] := ( 
-	    (* Ottieni dimensioni schermo *)
-	    Quiet @ Check[
-		    {screenWidth, screenHeight}=FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
-		    {screenWidth, screenHeight}={1920, 1080}
-	    ];
-	    titleFontScale=Min[screenWidth, screenHeight]/15;
-    );
+  aggiornaDimensioniSchermo[] := ( 
+   (* Ottieni dimensioni schermo *)
+	Quiet @ Check[
+	  {screenWidth, screenHeight}=FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
+	  {screenWidth, screenHeight}={1920, 1080}
+	];
+   titleFontScale=Min[screenWidth, screenHeight]/15;
+   );
     
-    aggiornaDimensioniSchermo[];
+   aggiornaDimensioniSchermo[];
     
-	(* Funzione per cambiare schermata *)
-	cambiaSchermata[nuovaSchermata_] := ( 
-		aggiornaDimensioniSchermo[];
-		currentScreen=nuovaSchermata;
-	);
+   (* Funzione per cambiare schermata *)
+   cambiaSchermata[nuovaSchermata_] := ( 
+     aggiornaDimensioniSchermo[];
+	 currentScreen=nuovaSchermata;
+   );
 
-	(* Schermata custom *)
-	(*
-	Int? seedInserito;
-	Int? numeroColori;
-	Int? numeroColonne;
-	Int? numeroTurni;
-	
-	mostraConfigurazioneCustom[] := Column[{
-	
-		Spacer[{0, 20}], 
-	
-		Style["Settings", FontSize->18, FontFamily->"Consolas"],
-		Column[{
-			Item[
-				Framed[
-					InputField[
-						Dynamic[numeroColori],
-						Number,
-						FieldHint->"COLORI",
-						FieldHintStyle->{Bold, FontSlant -> "Plain"},
-						ImageSize->{100, 21},
-						Appearance->"Frameless",
-						BaselinePosition->Center
-					],
-				Background->LightGray,
-                FrameStyle->None, 
-                RoundingRadius->10,
-                FrameMargins->{{10, 10}, {5, 5}},
-                ImageSize->Automatic
-            ],
-            ItemSize -> Automatic
-		],
+  (* Homepage *)
+  creaHomepage[] := Column[{
         
-        Spacer[{0,5}],
-        
-        Item[
-            Framed[
-                InputField[
-                    Dynamic[numeroColonne],
-                    Number,
-                    FieldHint->"COLONNE",
-                    FieldHintStyle->{Bold, FontSlant->"Plain"},
-                    ImageSize->{100, 21},
-                    Appearance->"Frameless",
-                    BaselinePosition->Center
-                ],
-                Background->LightGray,
-                FrameStyle->None, 
-                RoundingRadius->10, 
-                FrameMargins->{{10, 10},{5, 5}},
-                ImageSize->Automatic
-            ],
-            ItemSize->Automatic
-        ], 
-         
-        Spacer[{0,5}],
-        
-        Item[
-            Framed[
-                InputField[
-                    Dynamic[numeroTurni],
-                    Number,
-                    FieldHint->"TURNI",
-                    FieldHintStyle->{Bold, FontSlant->"Plain"},
-                    ImageSize->{100, 21},
-                    Appearance->"Frameless",
-                    BaselinePosition->Center
-                ],
-                Background->LightGray,
-                FrameStyle->None, 
-                RoundingRadius->10, 
-                FrameMargins->{{10, 10},{5, 5}},
-                ImageSize->Automatic
-            ],  
-            ItemSize->Automatic
-        ]   
-    }],
-     
-	ClickPane[
-	    Framed[
-	        Pane[
-	            Style["\[FilledRightTriangle]", FontSize->25, FontColor->White],
-	            Alignment->Center,
-	            ImageSize->{120, 32}
-	        ],
-	        Background->RGBColor[0, 0.5, 0], 
-	        FrameStyle->None, 
-	        RoundingRadius->10,
-	        FrameMargins->0
-	    ],
-	    Function[
-	        customColori=numeroColori;
-	        numeroColori=Null;
-	        customColonne=numeroColonne;
-	        numeroColonne=Null;
-	        customTurni=numeroTurni;
-	        numeroTurni=Null;
-	        cambiaSchermata["gioco"]
-	    ]
-	],
-
-    Spacer[{0, 20}]
-
-    }, Spacings->2, Alignment->Center]; *)
-
-    (* Homepage *)
-    creaHomepage[] := Column[{
-        
-        Spacer[{0, 50}],
+    Spacer[{0, 50}],
     
-        Dynamic @ Style[labels["titoloGioco"],
-            FontSize->titleFontScale,
-            FontWeight->Bold,
-            FontColor->Black,
-            FontFamily->"Consolas",
-            TextAlignment->Center
-        ],
-        
-        Spacer[{0, 20}],
-        
-        Dynamic @ Style[labels["fattoDa"],
-            FontSize->titleFontScale/5,
-            FontFamily->"Consolas",
-            FontColor->Gray,
-            TextAlignment->Center
-        ],
-        
-        Spacer[{0, 50}],
+    (*TITOLO ORIGINALE*)
+    (*Dynamic @ Style[labels["titoloGioco"],
+      FontSize->titleFontScale,
+      FontWeight->Bold,
+      FontColor->Black,
+      FontFamily->"Consolas",
+      TextAlignment->Center
+    ],*)
     
-        Style[labels["inserisciSeed"], FontSize->18, FontFamily->"Consolas"],
+    (*TITOLO COLORATO*)
+    With[
+     {stringa=labels["titoloGioco"]},
+     Style[
+      Row @ Table[
+       With[
+        {
+         char=StringTake[stringa, {i}],
+         color=RandomColor[]
+        },
+         Style[char, FontColor->color]
+       ],
+      {i, StringLength[stringa]}
+      ],
+     FontSize->titleFontScale,
+     FontWeight->Bold,
+     FontFamily->"Consolas",
+     TextAlignment->Center
+     ]
+    ],
+        
+    Spacer[{0, 20}],
+        
+    Dynamic @ Style[labels["fattoDa"],
+      FontSize->titleFontScale/5,
+      FontFamily->"Consolas",
+      FontColor->Gray,
+      TextAlignment->Center
+    ],
+        
+    Spacer[{0, 50}],
+    
+    Style[labels["inserisciSeed"], FontSize->18, FontFamily->"Consolas"],
 	
-		Spacer[{0, 25}],
+	Spacer[{0, 25}],
 	
-		Row[{
-	        ClickPane[
-	            Framed[
-		            Style[labels["randomSeed"], FontSize->18, FontColor->White],
-		            Background->Darker[Blue], 
-		            FrameStyle->None, 
-		            RoundingRadius->5,
-		            FrameMargins->{{10, 10}, {5, 5}}, 
-		            ImageSize->Automatic 
-		        ],
-		        Function[( 
-		            seedInserito=RandomInteger[{1, 9999999999}];
-		        )]
-		    ],
+	Row[{
+	 ClickPane[
+	  Framed[
+	    Style[labels["randomSeed"], FontSize->18, FontColor->White],
+		Background->Darker[Blue], 
+		FrameStyle->None, 
+		RoundingRadius->5,
+		FrameMargins->{{10, 10}, {5, 5}}, 
+		ImageSize->Automatic 
+	  ],
+	  Function[( 
+	    seedInserito=RandomInteger[{1, 9999999999}];
+	  )]
+	 ],
 		    
-		    Spacer[15],
+	 Spacer[15],
       
-            Item[
-                Framed[
-                    InputField[
-                        Dynamic[seedInserito],
-                        Number,
-                        FieldHint->labels["placeholderSeed"],
-                        FieldHintStyle->{Italic},
-                        ImageSize->{250, 21},
-                        Appearance->"Frameless",
-                        BaselinePosition->Center,
-                        ContinuousAction->True (* consente controllo costante per dis/abilitare tasto play *)
-                    ],
-                    Background->LightGray,
-                    FrameStyle->None,
-                    RoundingRadius->10,
-                    FrameMargins->{{10, 10}, {5, 5}},
-                    ImageSize->Automatic
-                ],
-                ItemSize -> Automatic 
-            ],
+     Item[
+      Framed[
+       InputField[
+         Dynamic[seedInserito],
+         Number,
+         FieldHint->labels["placeholderSeed"],
+         FieldHintStyle->{Italic},
+         ImageSize->{250, 21},
+         Appearance->"Frameless",
+         BaselinePosition->Center,
+         ContinuousAction->True (* consente controllo costante per dis/abilitare tasto play *)
+       ],
+      Background->LightGray,
+      FrameStyle->None,
+      RoundingRadius->10,
+      FrameMargins->{{10, 10}, {5, 5}},
+      ImageSize->Automatic
+      ],
+     ItemSize->Automatic 
+     ],
        
-            Spacer[15],
+     Spacer[15],
        
-            Dynamic[
-                If[IntegerQ[seedInserito] && seedInserito>0,
-                (* seed inserito correttamente -> tasto abilitato *)
-                ClickPane[
-                    Framed[
-                        Style[labels["play"], FontSize->18, FontColor->White],
-                        Background->RGBColor[0, 0.5, 0],
-                        FrameStyle->None,
-                        RoundingRadius->5,
-                        FrameMargins->{{10, 10}, {5, 5}},
-                        ImageSize->Automatic
-                    ],
-                    Function[( 
-                        partitaInCorso=True;
-                        customSeed=seedInserito;
-                        seedInserito="";
-                        SeedRandom[customSeed];
-                        cambiaSchermata["gioco"];
-                    )]
-                ],
-                (* seed non inserito -> tasto disabilitato  *)
-                Framed[
-                    Style[labels["play"], FontSize->18, FontColor->GrayLevel[0.8]],
-                    Background->RGBColor[0, 0.5, 0],
-                    FrameStyle->None,
-                    RoundingRadius->5,
-                    FrameMargins->{{10, 10}, {5, 5}},
-                    ImageSize->Automatic
-                ]
-                ]
-            ]
-        }, Alignment->Center],
-    
-        Spacer[{0, 25}],
-        
-        Column[{
-            Row[{
-                Style[labels["nTurni"], FontSize->14, FontFamily->"Consolas", Bold],
-        
-                Spacer[20],
-	    
-	            SetterBar[
-	                Dynamic[customTurni],
-	                Table[
-	                    i->Style[ToString[i], FontFamily->"Consolas", Bold],
-	                    {i, 6, 14}
-	                ],
-	                Appearance->"Horizontal"
-	            ]  
-            }],
-            Row[{
-                Style[labels["nCombinazione"], FontSize->14, FontFamily->"Consolas", Bold],
-                
-                Spacer[60],
-                
-                SetterBar[
-                    Dynamic[customColonne],
-                    Table[
-                        j->Style[ToString[j], FontFamily->"Consolas", Bold],
-                        {j, 3, 7} 
-                    ],
-                    Appearance->"Horizontal"
-                ]
-            }]
-        }],
-
-        Spacer[{0, 125}],
-      
+     Dynamic[
+      If[IntegerQ[seedInserito] && seedInserito > 0,
+        (* seed inserito correttamente -> tasto abilitato *)
         ClickPane[
-	        Framed[
-	            Style[labels["esci"], White, FontFamily->"Consolas", FontSize->24, Bold],
-	            Background->Red,
-	            FrameStyle->None,
-	            RoundingRadius->10,
-	            FrameMargins->{{15, 15}, {5, 5}},
-	            ImageSize->Automatic
-	        ],  
-	        Function[
-		        seedInserito=Null;
-		        NotebookClose[EvaluationNotebook[]]
-	        ]
-	    ]
-    }, Alignment -> Center];
-
-    (* Contenuto dinamico *)
-    content=Pane[
-        Dynamic @ Refresh[
-            Switch[currentScreen,
-                "menu", creaHomepage[],
-                "gioco", creaSchermataGioco[customSeed, customTurni, customColonne, titleFontScale]
-            ],
-            TrackedSymbols:>{currentScreen, customTurni, customColonne, titleFontScale}
+         Framed[
+           Style[labels["play"], FontSize->18, FontColor->White],
+           Background->RGBColor[0, 0.5, 0],
+           FrameStyle->None,
+           RoundingRadius->5,
+           FrameMargins->{{10, 10}, {5, 5}},
+           ImageSize->Automatic
+         ],
+         Function[( 
+           partitaInCorso=True;
+           customSeed=seedInserito;
+           seedInserito="";
+           SeedRandom[customSeed];
+           cambiaSchermata["gioco"];
+         )]
         ],
-        Full,
-        Alignment->{Center, Top}
-    ];
-    
-    (* Finestra principale *)
-    mainWindow = CreateDocument[
-    {
-        Cell[
-            BoxData @ ToBoxes @ content,
-            "Output",
-            ShowCellBracket->False,
-            CellMargins->{{0, 0}, {0, 0}}
+        
+        (* seed non inserito -> tasto disabilitato  *)
+        Framed[
+          Style[labels["play"], FontSize->18, FontColor->GrayLevel[0.8]],
+          Background->RGBColor[0, 0.5, 0],
+          FrameStyle->None,
+          RoundingRadius->5,
+          FrameMargins->{{10, 10}, {5, 5}},
+          ImageSize->Automatic
         ]
+      ]
+     ]
     },
-        WindowSize->Full,
-        WindowFrame->"Frameless",
-        WindowElements->{},
-        Background->White,
-        Editable->False,
-        Deployed->True,
-        WindowMargins->{{0, 0}, {0, 0}},
-        NotebookEventActions->{
-            {"KeyDown", "Escape"}:>NotebookClose[EvaluationNotebook[]]
-        }
-    ];
+    Alignment->Center
+    ],
+    
+    Spacer[{0, 25}],
+        
+    Column[{
+     Row[{
+       Style[labels["nTurni"], FontSize->14, FontFamily->"Consolas", Bold],
+        
+       Spacer[20],
+	    
+	   SetterBar[
+	    Dynamic[customTurni],
+	    Table[
+	      i->Style[ToString[i], FontFamily->"Consolas", Bold],
+	      {i, 6, 14}
+	    ],
+	   Appearance->"Horizontal"
+	   ]  
+     }],
+     
+     Row[{
+       Style[labels["nCombinazione"], FontSize->14, FontFamily->"Consolas", Bold],
+                
+       Spacer[60],
+                
+       SetterBar[
+        Dynamic[customColonne],
+        Table[
+          j->Style[ToString[j], FontFamily->"Consolas", Bold],
+          {j, 3, 7} 
+        ],
+       Appearance->"Horizontal"
+       ]
+     }]
+    }],
 
-    mainWindow
+    Spacer[{0, 125}],
+      
+    ClickPane[
+	 Framed[
+	   Style[labels["esci"], White, FontFamily->"Consolas", FontSize->24, Bold],
+	   Background->Red,
+	   FrameStyle->None,
+	   RoundingRadius->10,
+	   FrameMargins->{{15, 15}, {5, 5}},
+	   ImageSize->Automatic
+	 ],  
+	 Function[
+	   seedInserito=Null;
+	   NotebookClose[EvaluationNotebook[]]
+	 ]
+	]
+  },
+  Alignment->Center
+  ];
+
+  (* Contenuto dinamico *)
+  content=Pane[
+   Dynamic @ Refresh[
+    Switch[currentScreen,
+      "menu", creaHomepage[],
+      "gioco", creaSchermataGioco[customSeed, customTurni, customColonne, titleFontScale]
+    ],
+   TrackedSymbols:>{currentScreen, customTurni, customColonne, titleFontScale}
+   ],
+  Full,
+  Alignment->{Center, Top}
+  ];
+    
+  (* Finestra principale *)
+  mainWindow=CreateDocument[
+   {
+    Cell[
+      BoxData @ ToBoxes @ content,
+      "Output",
+      ShowCellBracket->False,
+      CellMargins->{{0, 0}, {0, 0}}
+    ]
+   },
+    
+    WindowSize->Full,
+    WindowFrame->"Frameless",
+    WindowElements->{},
+    Background->White,
+    Editable->False,
+    Deployed->True,
+    WindowMargins->{{0, 0}, {0, 0}},
+    NotebookEventActions->{
+      {"KeyDown", "Escape"}:>NotebookClose[EvaluationNotebook[]]
+    }
+  ];
+  
+  mainWindow
 ]
 
 
