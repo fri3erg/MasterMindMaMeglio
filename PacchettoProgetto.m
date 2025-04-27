@@ -279,7 +279,8 @@ avviaSchermataDiGioco[] := DynamicModule[
 ]
 
 (* Lista dei colori usati da Mastermind *)
-paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta};
+(* AGGIUNTO UN COLORE PER RENDERE ELENCO PARI, EVENTUALMENTE AGGIUNGERNE ALTRI DUE *)
+paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White};
 (* Stato della partita *)
 partitaInCorso=True
 
@@ -633,7 +634,8 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] :=
  
  
   (*Spacer[{0, 50}],*)
-  
+
+  (* PER COLORI RANDOMICI *)
   SeedRandom[seed];
   paletteRandom=Table[RandomColor[], {12}];
   
