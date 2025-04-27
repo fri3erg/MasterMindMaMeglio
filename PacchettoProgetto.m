@@ -1,4 +1,4 @@
-In[1]:= (* :Title:Trivia Mastermind*)
+(* :Title:Trivia Mastermind*)
 (* :Context:PacchettoProgetto`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
