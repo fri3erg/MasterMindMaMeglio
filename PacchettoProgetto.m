@@ -14,7 +14,7 @@
 	- Pulisci
 *)
 
-BeginPackage["PacchettoProgettoFRE`"];
+BeginPackage["PacchettoProgetto`"];
 (*ClearAll["PacchettoProgetto`*"];*)
 
 (* USAGES DI FUNZIONI CHIAMATE ESPLICITAMENTE NEL NOTEBOOK *)
@@ -279,13 +279,12 @@ avviaSchermataDiGioco[] := DynamicModule[
 ]
 
 (* Lista dei colori usati da Mastermind *)
-(* AGGIUNTO UN COLORE PER RENDERE ELENCO PARI, EVENTUALMENTE AGGIUNGERNE ALTRI DUE *)
 paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White};
 (* Stato della partita *)
 partitaInCorso=True
 
 labels=translations = <|
-	"titoloGioco"->TRIVIA MASTERMIND",
+	"titoloGioco"->"TRIVIA MASTERMIND",
 	"fattoDa"->"Made with ♥ by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
 	"inserisciSeed"->"Inserisci un seed: ",
 	"placeholderSeed"->"Scrivi seed prima di iniziare...",
@@ -300,9 +299,12 @@ labels=translations = <|
 	"combinazione"->"Combinazione",
 	"suggerimenti"->"Suggerimenti",
 	"azione"->"Azione",
-	"restart"->"Rigioca",
+	"restart"->"RIGIOCA",
 	"vai"->"VAI!",
- 	"menu"->"TORNA AL MENU'"
+	"menu"->"PAGINA PRINCIPALE",
+	"partitaVinta"->"HAI VINTO!",
+	"partitaPersa"->"HAI PERSO!",
+	"partitaInCorso"->"RIPROVA..."
 |>;
 
 (* === Funzione per generare il codice segreto da indovinare ===
@@ -332,8 +334,7 @@ feedbackTentativo[soluzione_List, tentativo_List] := Module[
   marcatiSoluzione,  (* Booleani per segnare se un colore nella soluzione è già stato "matchato". Serve nel caso di colori ripetuti *)
   marcatiTentativo,  (* Booleani per segnare se un colore nel tentativo è già stato usato. Utile per non sovrascrivere feedback *)
   lunghezza          (* Lunghezza del codice da indovinare *)
-},
-  
+ },
   
   (* Inizializzazioni *)
   lunghezza=Length[soluzione];  (* Rende il codice eventualmente scalabile *)
@@ -350,19 +351,19 @@ feedbackTentativo[soluzione_List, tentativo_List] := Module[
    ],
   {i, lunghezza}
   ];
-
+  
   (* === Match parziali === *)
   Do[
    If[!marcatiTentativo[[i]],               (* Solo se il colore non è stato già marcato come "Esatto" *)
-    Do[
-     If[!marcatiSoluzione[[j]] && tentativo[[i]] === soluzione[[j]],
-       feedback[[i]]=feedbackParziale;  (* Match parziale *)
-       marcatiSoluzione[[j]]=True;      (* Marca colore nella soluzione come usato *)
-       marcatiTentativo[[i]]=True;      (* Marca colore del tentativo come usato *)
-       Break[];                         (* Interrompe il ciclo interno per evitare doppi match *)
-     ],
-    {j, lunghezza}
-    ];  
+     Do[
+      If[!marcatiSoluzione[[j]] && tentativo[[i]] === soluzione[[j]],
+        feedback[[i]]=feedbackParziale;  (* Match parziale *)
+        marcatiSoluzione[[j]]=True;      (* Marca colore nella soluzione come usato *)
+        marcatiTentativo[[i]]=True;      (* Marca colore del tentativo come usato *)
+        Break[];                         (* Interrompe il ciclo interno per evitare doppi match *)
+      ],
+     {j, lunghezza}
+     ];  
    ],  
   {i, lunghezza}
   ];  
@@ -380,7 +381,6 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:8, tentativoCorren
   feedback=feedbackTentativo[soluzione, tentativo] (* Calcola immediatamente il feedback per il tentativo *)
  },  
   
-  
   If[tentativo === soluzione,
     {mastermindVittoria, feedback},                      (* Caso vincita *)
     
@@ -392,250 +392,342 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:8, tentativoCorren
 ];
 
 (* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
-interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, colorsList_] := DynamicModule[
+interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, paletteRandom_] := DynamicModule[
  {
   gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}],(* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacità a 0.2)*)
-  hintFeedbackHistory = ConstantArray[{}, numeroTentativi],
-  gameGridFeedbackMsg="",(*Messaggio di feedback da click sulla griglia di gioco*)
-  gameGridFeedbackMsgColor= Black,(*Colore del messaggio di feedback da click sulla griglia di gioco*)
-  turn = 1,(*Numero del tentativo*)
-  (*colorsList=paletteColori,*)(*Lista di colori della palette di scelta*)
-  colorsListFeedbackMsg=""(**),
+  hintFeedbackHistory=ConstantArray[{}, numeroTentativi],
+  turn=1,(*Numero del tentativo*)
+  colorsList=paletteColori,(*Lista di colori della palette di scelta*)
   selectedItem={1,1}, (* Elemento selezionato riga,colonna*)
-  soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, colorsList, False], (* Combinazione segreta *)(*CAMBIATO, usato colorsList*)
+  soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False], (* Combinazione segreta *)
   tentativoList=ConstantArray[None, lunghezzaCombinazione], (* Tentativo corrente *)
-  valutazioneTentativo={}
+  valutazioneTentativo={},
+  messaggioTemporaneo="",
+  taskMessaggio=Null
  },
- 
- 
-  Panel[
+  
+  
+  Framed[
    Column[{
-   
-     (* DEBUG			
-	 Dynamic[ToString[selectedItem]],
-	 Dynamic[Style[gameGridFeedbackMsg, gameGridFeedbackMsgColor]],
-	 Dynamic[tentativoList], 
-	 *)
-	 
-	 Dynamic[
-	  PaneSelector[
-	   {
-	    "vittoria"->Style["HAI VINTO!!!", FontSize->13, FontColor->Green, FontFamily->"Consolas", Bold],
-	    "sconfitta"->Style["HAI PERSO...", FontSize->13, FontColor->Red, FontFamily->"Consolas", Bold],
-	    "temporaneo"->Style["RIPROVA, CE LA PUOI FARE!", FontSize->13, FontColor->Orange, FontFamily->"Consolas", Bold],
-	    "vuoto"->Style["", FontSize->0]
-	   },
-	    Which[
-	      Length[valutazioneTentativo] > 0 && valutazioneTentativo[[1]] === mastermindVittoria, "vittoria",
-	      Length[valutazioneTentativo] > 0 && valutazioneTentativo[[1]] === mastermindSconfitta, "sconfitta",
-	      Length[valutazioneTentativo] > 0 && valutazioneTentativo[[1]] === mastermindProsegui, "temporaneo",
-	      True, "vuoto"
-	    ],
-	    ImageMargins->0,
-	    Alignment->Center
-	  ],
-	  TrackedSymbols:>{valutazioneTentativo}
-	 ],
-	 
-	 Spacer[3],
-	
-	 (*Header*)
-	 Grid[{
-	  {
-	   (*4 colonne*) (*CAMBIATI, prima 20*)
-	   Style["Colors", FontSize->14, FontColor->Black, FontFamily->"Consolas", Bold],
-	   Style["Combination", FontSize->14, FontColor->Black, FontFamily->"Consolas", Bold],
-	   Style["Hints", FontSize->14, FontColor->Black, FontFamily->"Consolas", Bold],
-	   Style["Action", FontSize->14, FontColor->Black, FontFamily->"Consolas", Bold]
-      }
-	 },
-	 Alignment->{{Left, Center, Fit, Right}}, (* align each column *)
-	 ItemSize->All, (* stretch to full width *)
-	 Spacings->{4, 1}
-	 ],
-			
-	 Spacer[50],
-	 		
-	 (* Content *)
-     Row[{
-	   Spacer[10], (*CAMBIATO, prima 60*)
-	   		
-	   (*Palette colori*)
-	   Grid[
-	    Partition[
-		 Table[
-		  With[{col=colorsCol},
-		    EventHandler[
-			  Dynamic @ Graphics[
-			   {EdgeForm[Black], FaceForm[col],Disk[{0, 0}, 1]},
-			   ImageSize->35
-			  ],
-			  {
-			   "MouseClicked":>(
-			     gridItemsColors[[Sequence @@ selectedItem]]=col;
-			     tentativoList[[selectedItem[[2]]]]=col;
-		         colorsListFeedbackMsg=StringTemplate["Stai selezionando il colore `color`"][<|"color"->col|>];
-			     If[selectedItem[[2]] < lunghezzaCombinazione, selectedItem[[2]]=selectedItem[[2]]+1]
-			   )
-			  }
-			]
-		  ],
-		 {colorsCol, colorsList}
-		 ],
-		2 (*due colonne*)
-		],					
-	   Spacings->{1, 1},
-	   Alignment->Center,
-	   BaselinePosition->Center
-	   ],	
+     
+     (* Debug tentativo*)
+	 Column[{
+	   Spacer[10],
 	   
-	   Spacer[80], (*SPACER TRA ELEMENTI*)
+	   Dynamic[
+	    Which[ 
+		 Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindSconfitta,
+		  (
+		   partitaInCorso=False;
+		   messaggioTemporaneo="";
+		   Row[{
+		     Style[labels["partitaPersa"], FontSize->18, FontColor->Red, FontFamily->"Consolas", Bold],
+			 Spacer[20],
+			 (*Bottone TRY*)
+			 ClickPane[
+			  Framed[
+			   Grid[{{
+			     Graphics[Text[Style[labels["play"], FontSize->14, White]], ImageSize->18],
+			     Style[labels["restart"], White, FontSize->14, FontFamily->"Consolas", Bold]
+			   }},
+			   Alignment->{Center, Center}
+			   ],
+			  Background->RGBColor[0, 0.5, 0],
+			  FrameStyle->None,
+			  RoundingRadius->10,
+			  FrameMargins->{{10, 10}, {5, 5}},
+			  ImageSize->Automatic
+			  ],
+			 Function[			    
+			    gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}];
+				hintFeedbackHistory=ConstantArray[{}, numeroTentativi];
+				turn=1;(*Numero del tentativo*)
+				colorsList=paletteColori;(*Lista di colori della palette di scelta*)
+				selectedItem={1,1}; (* Elemento selezionato riga,colonna*)
+				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
+				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
+				valutazioneTentativo={};
+				messaggioTemporaneo="";
+				taskMessaggio=Null;
+				partitaInCorso=True
+			  ]
+             ]
+		   }]
+		  ),
+		  Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindVittoria,
+		  (
+		   partitaInCorso=False;
+		   messaggioTemporaneo="";
+		   Row[{
+		     Style[labels["partitaVinta"], FontSize->18, FontColor->Darker@Green, FontFamily->"Consolas", Bold],
+			 Spacer[20],
+			 (*Bottone TRY*)
+			 ClickPane[
+			  Framed[
+			   Grid[{{
+				 Graphics[Text[Style[labels["play"], FontSize->14, White]], ImageSize->18],
+				 Style[labels["restart"], White, FontFamily->"Consolas", FontSize->14, Bold]
+			   }},
+			   Alignment->{Center, Center}
+			   ],
+			  Background->RGBColor[0, 0.5, 0],
+			  FrameStyle->None,
+			  RoundingRadius->10,
+			  FrameMargins->{{10, 10}, {5, 5}},
+			  ImageSize->Automatic
+			  ],
+			  Function[
+			    gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}];
+				hintFeedbackHistory=ConstantArray[{}, numeroTentativi];
+				turn=1;(*Numero del tentativo*)
+				colorsList=paletteColori;(*Lista di colori della palette di scelta*)
+				selectedItem={1,1}; (* Elemento selezionato riga,colonna*)
+				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
+				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
+				valutazioneTentativo={};
+				messaggioTemporaneo="";
+				taskMessaggio=Null;
+				partitaInCorso=True
+			  ]
+             ]
+		   }]
+		  ),
+		  Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindProsegui,
+		  (
+		   messaggioTemporaneo="Riprova!";
+		   If[taskMessaggio =!= Null, RemoveScheduledTask[taskMessaggio]];
+		   taskMessaggio=RunScheduledTask[(messaggioTemporaneo=""), 2];
+		   Style["", FontSize->20, FontColor->Orange, FontFamily->"Consolas", Bold]
+		  ),
+		  Length[valutazioneTentativo] === 0,
+		   (
+		    If[messaggioTemporaneo === "",
+			 (
+			  messaggioTemporaneo="Inizia a giocare!";
+			  If[taskMessaggio =!= Null, RemoveScheduledTask[taskMessaggio]];
+			  taskMessaggio=RunScheduledTask[messaggioTemporaneo="", 2.5];
+			 )
+			];
+			Style[" ", FontSize->15, FontColor->Orange, FontFamily->"Consolas", Bold]
+		   )
+		  ],
+		 TrackedSymbols:>{valutazioneTentativo}
+		 ],
+		 
+		 Dynamic[
+		  If[messaggioTemporaneo =!= "",
+		    Style[messaggioTemporaneo, FontSize->15, FontColor->Orange, FontFamily->"Consolas", Bold],
+			""
+		  ]
+		 ]  
+	   }],
+				
+	   Spacer[10],
 	   		
-	   (*Griglia di gioco*)
-       Grid[
-	    Table[
-		 With[{x = row},
-		  Append[ 
-		    Table[
-		     With[{y=col, id=lunghezzaCombinazione*(row-1)+col},
-			   EventHandler[
-			     Dynamic @ Graphics[
-			      {
-			       EdgeForm[
-			         If[{x, y} === selectedItem,
-			           Directive[Black, AbsoluteThickness[1]], None
-			         ]
-			       ],
-			       
-			       If[x<=turn, gridItemsColors[[x, y]], Opacity[0.1, Black]],
-			       Disk[{0, 0}, 1]
-			      },
-			     ImageSize->{35, 35}
-			     ],
-			     
-			     {
+	   (*Header*)
+	   Pane[
+		Grid[{
+		 {
+		  Style[labels["colori"], FontSize->15, FontColor->Black, FontFamily->"Consolas"],
+		  Style[labels["combinazione"], FontSize->15, FontColor->Black, FontFamily->"Consolas"],
+		  Style[labels["suggerimenti"], FontSize->15, FontColor->Black, FontFamily->"Consolas"],
+		  Style[labels["azione"], FontSize->15, FontColor->Black, FontFamily->"Consolas"]
+		 }
+		},
+		Alignment->Center,
+		ItemSize->All,
+		Spacings->{5, 1}
+		],
+	   Alignment->Center
+	   ],
+	   		
+	   Spacer[50],
+       		
+	   (* Content *)
+       Row[{
+		 Spacer[20],
+		 			
+		 (*Palette colori*)
+		 Grid[
+	      Partition[
+		   Table[
+		     With[{col=colorsCol},
+		       EventHandler[
+			    Dynamic @ Graphics[
+			      {EdgeForm[Black], FaceForm[col],Disk[{0, 0}, 1]},
+			      ImageSize->40
+			    ],
+			    {
+			     "MouseClicked":>(
+			       gridItemsColors[[Sequence @@ selectedItem]]=col;
+			       tentativoList[[selectedItem[[2]]]]=col;
+			       If[selectedItem[[2]] < lunghezzaCombinazione, selectedItem[[2]]=selectedItem[[2]]+1]
+			     )
+			    }
+			   ]
+		     ],
+		   {colorsCol, colorsList}
+		   ],
+		  2 (*due colonne*)
+		  ],					
+	     Spacings->{1, 1},
+	     Alignment->Center
+	     ],
+		 			
+		 Spacer[80],
+					
+		 (*Griglia di gioco*)
+		 Grid[
+		  Table[
+		   With[{x = row},
+			Append[
+			  Table[
+			   With[{y=col, id=lunghezzaCombinazione*(row-1)+col},
+				EventHandler[
+				  Dynamic @ Graphics[
+				   {
+				    EdgeForm[
+				     If[{x, y} === selectedItem,
+					   Directive[Black, AbsoluteThickness[1]], None
+					 ]
+					],
+				    If[x<=turn, gridItemsColors[[x, y]], Opacity[0.1, Black]],
+				    Disk[{0, 0}, 1]
+				   },
+				  ImageSize->{35, 35}
+				  ],
+				 {
 				  "MouseClicked":>(
-				    If[x === turn,
-					 (
-					  selectedItem={x, y};
-					  gameGridFeedbackMsg= 
-					   StringTemplate["Cliccato cerchio ID: `id`, Posizione: (`y`,`x`)"][<|"id" -> id, "y" -> y, "x" -> x|>];
-					  gameGridFeedbackMsgColor=Darker@Green;
-					 ),
-					 (
-					  gameGridFeedbackMsg= 
-					   StringTemplate["Stai selezionando elementi del turno `x`, completa il turno `turn`"][<|"x" -> x, "turn" -> turn|>];
-					  gameGridFeedbackMsgColor=Red;
-					 )
-					]
+				    If[x === turn, (selectedItem={x, y};)]
 				  )
 				 }
-			   ]
-			 ],
-			{col, 1, lunghezzaCombinazione}
-			],
-           
-              
-            						      						      						      
-			Row[{
-			  If[row == 1, Spacer[16], Spacer[20]],
-			
-			  (* 2x2 FEEDBACK GRID *)
-			  Dynamic @ Module[
-			   {
-			    (* Sostituisce il feedBack con il colore associato*)
-				feedbackColors=If[hintFeedbackHistory[[x]] =!= {},
-				  (*Length[valutazioneTentativo] > 1(* && row === turn*),*)
-				  hintFeedbackHistory[[x]] /. {
-				    feedbackEsatto->Green,
-					feedbackParziale->Yellow,
-					feedbackAssente->None
-			      },
-				  ConstantArray[None, lunghezzaCombinazione]
 				]
-			   },
-			    
-				Style[
-				 Grid[{
-				  Table[
-				   Graphics[
-				     {EdgeForm[Black], FaceForm[hint], Disk[{0, 0}, 1]}, 
-					 ImageSize->15
-				   ],
-				  {hint, feedbackColors}
+			   ],
+			  {col, 1, lunghezzaCombinazione}
+			  ],
+			
+			  Row[{
+			    Spacer[20],
+							          
+				(* 2x2 FEEDBACK GRID *)
+				Dynamic @ Module[
+				 {
+				  (* Sostituisce il feedBack con il colore associato*)
+				  feedbackColors=If[hintFeedbackHistory[[x]] =!= {},
+				    (*Length[valutazioneTentativo] > 1(* && row === turn*),*)
+				    hintFeedbackHistory[[x]] /. {
+				      feedbackEsatto->Green,
+					  feedbackParziale->Yellow,
+					  feedbackAssente->None
+				    },
+				    ConstantArray[None, lunghezzaCombinazione]
 				  ]
 				 },
-				 Alignment->Center
-				 ],
-				Selectable->False,
-                Editable->False
-			   ]
-			 ],
-			
-			 Spacer[60],
-						          
-			 If[row === turn,
-			   (*Bottone TRY*)
-               ClickPane[
-			    Framed[
-				 Grid[{
-				  {
-				   Graphics[Text[Style["🎮", FontSize->12]], ImageSize->14],
-				   Style["VAI!", White, FontSize->14, FontFamily->"Consolas", Bold]
-				  }
-				 },
-				 Alignment->{Center, Center},
-				 Spacings->{1, 0}
-				 ],
-				Background->Red,
-				FrameStyle->None,
-				RoundingRadius->10,
-				FrameMargins->{{15, 15}, {5, 5}},
-				ImageSize->Automatic
+				  
+				  Style[
+				   Grid[{
+				    Table[
+					  Graphics[
+					    {EdgeForm[Gray], FaceForm[hint], Disk[{0, 0}, 1]}, 
+						ImageSize->15
+				      ],
+					{hint, feedbackColors}
+					]
+				   },
+				   Alignment->Center
+				   ],
+				  Selectable->False,
+				  Editable->False
+				  ]
 				],
-			   
-			   Function[
-				 If[partitaInCorso,
-				  (
-				   valutazioneTentativo=valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
-                   hintFeedbackHistory[[turn]]=valutazioneTentativo[[2]]; (*Set dei feedback*)
-				   If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
-				   selectedItem={turn, 1}; (*Item successivo*)
-				   (* RESET TENTATIVO*)
-				   tentativoList=ConstantArray[None, lunghezzaCombinazione]
-				  )
+				
+				Spacer[50],
+				
+				Dynamic[
+				  If[x === turn,
+				  (*Bottone TRY*)
+				    ClickPane[
+					 Framed[
+					  Grid[{
+					   {
+						Graphics[Text[Style["🎮", FontSize->10]], ImageSize->14],
+						Style[labels["vai"], White, FontFamily->"Consolas", FontSize->14, Bold]
+					   }
+					  },
+					  Alignment->{Center, Center},
+					  Spacings->{1, 0}
+					  ],
+					 Background->Orange,
+					 FrameStyle->None,
+					 RoundingRadius->10,
+					 FrameMargins->{{10, 10}, {10, 10}},
+					 ImageSize->Automatic
+					 ],
+					 Function[
+					   If[partitaInCorso,
+					    (
+						 valutazioneTentativo=valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
+						 hintFeedbackHistory[[turn]]=valutazioneTentativo[[2]]; (*Set dei feedback*)
+						 If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
+						 selectedItem={turn, 1}; (*Item successivo*)
+						 (* RESET TENTATIVO*)
+						 tentativoList=ConstantArray[None, lunghezzaCombinazione];
+						)
+					   ]
+					 ]
+		            ],
+					
+					Framed[
+					 Grid[{
+					  {
+					   Graphics[{Opacity[0],Text[Style["🎮", FontSize->10, FontColor->GrayLevel[0.9]]]}, ImageSize->14],
+					   Style[labels["vai"], FontFamily->"Consolas", FontSize->14, FontColor->GrayLevel[0.9], Bold]
+					  }
+					 },
+					 Alignment->{Center, Center},
+					 Spacings->{1, 0}
+					 ],
+					Background->GrayLevel[0.9],
+					FrameStyle->None,
+					RoundingRadius->10,
+					FrameMargins->{{10, 10}, {10, 10}},
+					ImageSize->Automatic
+					]
+				  ]
 				 ]
-			   ]
-              ],
-                                       
-              Spacer[90]
-		    ]
-            }]
-		  ]
-		 ],
-	    {row, 1, numeroTentativi}
-		]
-       ]
-	 }
-     ] 
+			   }]
+			 ]
+			],
+		   {row, 1, numeroTentativi}
+		   ](*,
+					ItemSize->All,
+					Alignment->Center,
+					Spacings->{2, 1}*)
+	     ]
+	   },
+	   Alignment->{{Left, Center, Center, Right}}(* align each column *)
+       ],
+     
+     Spacer[20]
+   
    },
-   Alignment -> Center
+   Alignment->Center
    ],
   Background->GrayLevel[0.9],
-            
-            FrameMargins->{{15, 15}, {5, 5}},
-            ImageSize->Automatic
+  FrameStyle->None,
+  RoundingRadius->15,
+  FrameMargins->{{15, 15}, {5, 5}},
+  ImageSize->Automatic
   ]
 ]
 
 (* Schermata di gioco random - perfettamente centrata *)
-creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] :=
+creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] := 
  DynamicModule[{paletteRandom},
  
  
   (*Spacer[{0, 50}],*)
-
-  (* PER COLORI RANDOMICI *)
+  
   SeedRandom[seed];
   paletteRandom=Table[RandomColor[], {12}];
   
