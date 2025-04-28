@@ -96,11 +96,13 @@ avviaSchermataDiGioco[] := DynamicModule[
         
     Spacer[{0, 20}],
         
-    Dynamic @ Style[labels["fattoDa"],
-      FontSize->titleFontScale/5,
-      FontFamily->"Consolas",
-      FontColor->Gray,
-      TextAlignment->Center
+    Dynamic @ Row[
+     {
+      Style["Made with ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray],
+      Style["♥ ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Red],
+      Style[labels["fattoDa"], FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray]
+     },
+    Alignment->Center
     ],
         
     Spacer[{0, 50}],
@@ -285,7 +287,7 @@ partitaInCorso=True
 
 labels=translations = <|
 	"titoloGioco"->"TRIVIA MASTERMIND",
-	"fattoDa"->"Made with ♥ by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
+	"fattoDa"->"by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
 	"inserisciSeed"->"Inserisci un seed: ",
 	"placeholderSeed"->"Scrivi seed prima di iniziare...",
 	"play"->"\[FilledRightTriangle]",
