@@ -296,17 +296,17 @@ labels=translations = <|
 	"nCombinazione"->"N. combinazione",
 	"esci"->"ESCI",
 	"partita"->"PARTITA",
-	"seedSelezionato"->"Avvio con seed: ",
+	"seedSelezionato"->"PARTITA AVVIATA CON SEED: ",
 	"colori"->"Colori",
 	"combinazione"->"Combinazione",
 	"suggerimenti"->"Suggerimenti",
 	"azione"->"Azione",
-	"restart"->"RIGIOCA",
+	"restartVinto"->"HAI VINTO!! VUOI RIGIOCARE?",
+	"restartPerso"->"HAI PERSO... VUOI RIGIOCARE?",
 	"vai"->"VAI!",
-	"menu"->"PAGINA PRINCIPALE",
-	"partitaVinta"->"HAI VINTO!",
-	"partitaPersa"->"HAI PERSO!",
-	"partitaInCorso"->"RIPROVA..."
+	"menu"->"TORNA AL MENÙ",
+	"trivia"->"VUOI UN AIUTO?",
+	"idea"->"\[LightBulb]"
 |>;
 
 (* === Funzione per generare il codice segreto da indovinare ===
@@ -403,44 +403,36 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, paletteRandom_]
   selectedItem={1,1}, (* Elemento selezionato riga,colonna*)
   soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False], (* Combinazione segreta *)
   tentativoList=ConstantArray[None, lunghezzaCombinazione], (* Tentativo corrente *)
-  valutazioneTentativo={},
-  messaggioTemporaneo="",
-  taskMessaggio=Null
+  valutazioneTentativo={}
  },
   
   
   Framed[
    Column[{
      
-     (* Debug tentativo*)
-	 Column[{
-	   Spacer[10],
-	   
+     Column[{  
 	   Dynamic[
 	    Which[ 
 		 Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindSconfitta,
 		  (
 		   partitaInCorso=False;
-		   messaggioTemporaneo="";
 		   Row[{
-		     Style[labels["partitaPersa"], FontSize->18, FontColor->Red, FontFamily->"Consolas", Bold],
-			 Spacer[20],
 			 (*Bottone TRY*)
 			 ClickPane[
 			  Framed[
 			   Grid[{{
-			     Graphics[Text[Style[labels["play"], FontSize->14, White]], ImageSize->18],
-			     Style[labels["restart"], White, FontSize->14, FontFamily->"Consolas", Bold]
+			     Style[labels["play"], FontSize->12, White],
+			     Style[labels["restartPerso"], White, FontSize->12, FontFamily->"Consolas"]
 			   }},
 			   Alignment->{Center, Center}
 			   ],
-			  Background->RGBColor[0, 0.5, 0],
+			  Background->Blue,
 			  FrameStyle->None,
 			  RoundingRadius->10,
 			  FrameMargins->{{10, 10}, {5, 5}},
 			  ImageSize->Automatic
 			  ],
-			 Function[			    
+			  Function[			    
 			    gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}];
 				hintFeedbackHistory=ConstantArray[{}, numeroTentativi];
 				turn=1;(*Numero del tentativo*)
@@ -449,26 +441,21 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, paletteRandom_]
 				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
 				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
 				valutazioneTentativo={};
-				messaggioTemporaneo="";
-				taskMessaggio=Null;
 				partitaInCorso=True
 			  ]
              ]
 		   }]
 		  ),
-		  Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindVittoria,
+		 Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindVittoria,
 		  (
 		   partitaInCorso=False;
-		   messaggioTemporaneo="";
 		   Row[{
-		     Style[labels["partitaVinta"], FontSize->18, FontColor->Darker@Green, FontFamily->"Consolas", Bold],
-			 Spacer[20],
-			 (*Bottone TRY*)
+		     (*Bottone TRY*)
 			 ClickPane[
 			  Framed[
 			   Grid[{{
-				 Graphics[Text[Style[labels["play"], FontSize->14, White]], ImageSize->18],
-				 Style[labels["restart"], White, FontFamily->"Consolas", FontSize->14, Bold]
+			     Style[labels["play"], FontSize->12, White],
+				 Style[labels["restartVinto"], White, FontFamily->"Consolas", FontSize->12]
 			   }},
 			   Alignment->{Center, Center}
 			   ],
@@ -487,96 +474,102 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, paletteRandom_]
 				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
 				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
 				valutazioneTentativo={};
-				messaggioTemporaneo="";
-				taskMessaggio=Null;
 				partitaInCorso=True
-			  ]
+			  ] 
              ]
 		   }]
 		  ),
-		  Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindProsegui,
+		 Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindProsegui,
 		  (
-		   messaggioTemporaneo="Riprova!";
-		   If[taskMessaggio =!= Null, RemoveScheduledTask[taskMessaggio]];
-		   taskMessaggio=RunScheduledTask[(messaggioTemporaneo=""), 2];
-		   Style["", FontSize->20, FontColor->Orange, FontFamily->"Consolas", Bold]
+		   Row[{
+		     (*Bottone TRIVIA*)
+		     ClickPane[
+		      Framed[
+		       Grid[{{
+		         Style[labels["idea"], FontSize->12, Yellow],
+				 Style[labels["trivia"], White, FontFamily->"Consolas", FontSize->12]
+		       }},
+		       Alignment->{Center, Center}
+		       ],
+		      Background->Purple,
+			  FrameStyle->None,
+			  RoundingRadius->10,
+			  FrameMargins->{{10, 10}, {5, 5}},
+			  ImageSize->Automatic
+		      ],
+		      Function[ (*DA CAMBIARE*)
+		        gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}];
+				hintFeedbackHistory=ConstantArray[{}, numeroTentativi];
+				turn=1;(*Numero del tentativo*)
+				colorsList=paletteColori;(*Lista di colori della palette di scelta*)
+				selectedItem={1,1}; (* Elemento selezionato riga,colonna*)
+				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
+				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
+				valutazioneTentativo={};
+				partitaInCorso=True
+		      ] 
+		     ]
+		   }]
 		  ),
-		  Length[valutazioneTentativo] === 0,
-		   (
-		    If[messaggioTemporaneo === "",
-			 (
-			  messaggioTemporaneo="Inizia a giocare!";
-			  If[taskMessaggio =!= Null, RemoveScheduledTask[taskMessaggio]];
-			  taskMessaggio=RunScheduledTask[messaggioTemporaneo="", 2.5];
-			 )
-			];
-			Style[" ", FontSize->15, FontColor->Orange, FontFamily->"Consolas", Bold]
-		   )
-		  ],
-		 TrackedSymbols:>{valutazioneTentativo}
-		 ],
-		 
-		 Dynamic[
-		  If[messaggioTemporaneo =!= "",
-		    Style[messaggioTemporaneo, FontSize->15, FontColor->Orange, FontFamily->"Consolas", Bold],
-			""
-		  ]
-		 ]  
-	   }],
-				
-	   Spacer[10],
-	   		
-	   (*Header*)
-	   Pane[
-		Grid[{
-		 {
-		  Style[labels["colori"], FontSize->15, FontColor->Black, FontFamily->"Consolas"],
-		  Style[labels["combinazione"], FontSize->15, FontColor->Black, FontFamily->"Consolas"],
-		  Style[labels["suggerimenti"], FontSize->15, FontColor->Black, FontFamily->"Consolas"],
-		  Style[labels["azione"], FontSize->15, FontColor->Black, FontFamily->"Consolas"]
-		 }
-		},
-		Alignment->Center,
-		ItemSize->All,
-		Spacings->{5, 1}
+		 True, Style["", FontSize->0]
 		],
-	   Alignment->Center
-	   ],
+	   TrackedSymbols:>{valutazioneTentativo}
+	   ]
+	 }],
+	 
+	 Spacer[3],
 	   		
-	   Spacer[50],
+	 (*Header*)
+	 Pane[
+	  Grid[{
+	   {
+	    Style[labels["colori"], FontSize->14, FontColor->Black, FontFamily->"Consolas"],
+		Style[labels["combinazione"], FontSize->14, FontColor->Black, FontFamily->"Consolas"],
+		Style[labels["suggerimenti"], FontSize->14, FontColor->Black, FontFamily->"Consolas"],
+		Style[labels["azione"], FontSize->14, FontColor->Black, FontFamily->"Consolas"]
+	   }
+	  },
+	  Alignment->Center,
+	  ItemSize->All,
+	  Spacings->{lunghezzaCombinazione+1.5, 1}
+	  ],
+	 Alignment->Center
+	 ],
+	 
+	 Spacer[2],
        		
-	   (* Content *)
-       Row[{
-		 Spacer[20],
+	 (* Content *)
+     Row[{
+       Spacer[20],
 		 			
-		 (*Palette colori*)
-		 Grid[
-	      Partition[
-		   Table[
-		     With[{col=colorsCol},
-		       EventHandler[
-			    Dynamic @ Graphics[
-			      {EdgeForm[Black], FaceForm[col],Disk[{0, 0}, 1]},
-			      ImageSize->40
-			    ],
-			    {
-			     "MouseClicked":>(
-			       gridItemsColors[[Sequence @@ selectedItem]]=col;
-			       tentativoList[[selectedItem[[2]]]]=col;
-			       If[selectedItem[[2]] < lunghezzaCombinazione, selectedItem[[2]]=selectedItem[[2]]+1]
-			     )
-			    }
-			   ]
-		     ],
-		   {colorsCol, colorsList}
+	   (*Palette colori*)
+	   Grid[
+	    Partition[
+		 Table[
+		   With[{col=colorsCol},
+		     EventHandler[
+		      Dynamic @ Graphics[
+			    {EdgeForm[Black], FaceForm[col],Disk[{0, 0}, 1]},
+			    ImageSize->40
+			  ],
+			  {
+			   "MouseClicked":>(
+			     gridItemsColors[[Sequence @@ selectedItem]]=col;
+			     tentativoList[[selectedItem[[2]]]]=col;
+			     If[selectedItem[[2]] < lunghezzaCombinazione, selectedItem[[2]]=selectedItem[[2]]+1]
+			   )
+			  }
+		     ]
 		   ],
-		  2 (*due colonne*)
-		  ],					
-	     Spacings->{1, 1},
-	     Alignment->Center
-	     ],
+		  {colorsCol, colorsList}
+		  ],
+		 2 (*due colonne*)
+		 ],					
+	    Spacings->{1, 1},
+	    Alignment->Center
+	    ],
 		 			
-		 Spacer[80],
+        Spacer[80],
 					
 		 (*Griglia di gioco*)
 		 Grid[
@@ -652,8 +645,8 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, paletteRandom_]
 					 Framed[
 					  Grid[{
 					   {
-						Graphics[Text[Style["🎮", FontSize->10]], ImageSize->14],
-						Style[labels["vai"], White, FontFamily->"Consolas", FontSize->14, Bold]
+						Style["🎮", FontSize->10],
+						Style[labels["vai"], White, FontFamily->"Consolas", FontSize->12, Bold]
 					   }
 					  },
 					  Alignment->{Center, Center},
@@ -682,8 +675,8 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8, paletteRandom_]
 					Framed[
 					 Grid[{
 					  {
-					   Graphics[{Opacity[0],Text[Style["🎮", FontSize->10, FontColor->GrayLevel[0.9]]]}, ImageSize->14],
-					   Style[labels["vai"], FontFamily->"Consolas", FontSize->14, FontColor->GrayLevel[0.9], Bold]
+					   Style["🎮", FontSize->10, FontColor->Directive[GrayLevel[0.9], Opacity[0]]],
+					   Style[labels["vai"], FontFamily->"Consolas", FontSize->12, FontColor->GrayLevel[0.9], Bold]
 					  }
 					 },
 					 Alignment->{Center, Center},
@@ -738,8 +731,8 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] :=
      
      Panel[
       Column[{
-        Style[labels["partita"], FontSize->fontSize/2, FontFamily->"Consolas", Bold],
-        Style[labels["seedSelezionato"] <> ToString[seed], FontSize->12, FontFamily->"Consolas"]
+        (*Style[labels["partita"], FontSize->fontSize/2, FontFamily->"Consolas", Bold],*)
+        Style[labels["seedSelezionato"] <> ToString[seed], FontSize->12, FontFamily->"Consolas", FontColor->Red, Bold]
       },
       Alignment->Center
       ],
@@ -749,7 +742,7 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] :=
      Dynamic[
       Pane[
         interfacciaGriglia[combinazione, tentativi, paletteRandom],
-        {Automatic, Scaled[0.8]}, (* massimo 80% in altezza *)
+        {Automatic, Scaled[0.7]}, (* massimo 80% in altezza *)
         Scrollbars->False,
         Alignment->Center 
       ]
@@ -757,7 +750,7 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] :=
      
      ClickPane[
       Framed[
-        Style[labels["menu"], White, FontSize->14, FontFamily->"Consolas", Bold],
+        Style[labels["menu"], White, FontSize->12, FontFamily->"Consolas", Bold],
         Background->Red,
         FrameStyle->None,
         RoundingRadius->10,
