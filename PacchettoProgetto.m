@@ -290,7 +290,7 @@ paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta};
 partitaInCorso=True
 
 labels=translations = <|
-	"titoloGioco" -> "MASTERMIND MA MEGLIO",
+	"titoloGioco" -> "TRIVIA MASTERMIND",
 	"fattoDa" -> "Made with \:2665 by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
 	"inserisciSeed" -> "Inserisci un seed: ",
 	"placeholderSeed" -> "Scrivi seed prima di iniziare...",
@@ -318,7 +318,7 @@ generaCodiceSegreto[lunghezza_Integer, allowDuplicates_:True] := Module[
   
     (* Check di sicurezza: Se non accettiamo duplicati, la lunghezza non deve superare il numero di colori disponibili *)
     If[!allowDuplicates && lunghezza > Length[paletteColori],
-	    Return[$Failed, Module]  (* Ritorna $Failed. Da gestire in modo opportuno (ma \[EGrave] meglio evitare che accada del tutto) *)
+	    Return[$Failed, Module]  (* Ritorna $Failed. Conviene evitare che accada del tutto dalle impostazioni iniziali *)
     ];
   
     If[allowDuplicates,
@@ -395,6 +395,36 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:8, tentativoCorren
         ]
     ]
 ];
+
+
+(* === Funzione che seleziona automaticamente il prossimo piolo con cui interagire === 
+Prende in input il piolo selezionato corrente, la lista dei tentativi e la lunghezza massima del tentativo, e ritorna il nuovo piolo selezionato.
+Normalmente, passa sempre al successivo. Se sono stati rimossi dei colori e il successivo \[EGrave] gi\[AGrave] colorato, passa al primo vuoto successivo.
+In caso non ci siano successivi, non fa nulla. *)
+vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_] := Module[
+	{next, newSelectedItem},
+	
+	(* Cerca il primo piolo vuoto sul lato destro della selezione *)
+	next = SelectFirst[
+		Range[selectedItem[[2]] + 1, lunghezzaCombinazione],  (* Elementi a destra *)
+		(tentativoList[[#]] === None)&,
+		Missing["NotFound"]  (* Se non trova pioli vuoti, ritorna 'Missing["NotFound"]' (default, aggiunto per chiarezza)*)
+	];
+	(* Se ancora non \[EGrave] stato trovato un piolo vuoto, controlla anche alla sinistra *)
+	If[next === Missing["NotFound"],
+		next = SelectFirst[
+			Range[1, selectedItem[[2]] - 1],  (* Elementi a Sinistra *)
+			(tentativoList[[#]] === None)&,
+			Missing["NotFound"]
+		];
+	];
+	
+	newSelectedItem = selectedItem;  (* Inizializza la nuova selezione *)
+	If[next =!= Missing["NotFound"],
+		newSelectedItem[[2]] = next  (* Se si \[EGrave] trovato un vuoto, ritorna la nuova selezione*)
+    ];
+    newSelectedItem  (* Ritorna la nuova selezione *)
+]
 
 
 (* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
@@ -570,7 +600,10 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8] := DynamicModul
 										"MouseClicked":>(
 											gridItemsColors[[Sequence @@ selectedItem]]=col;
 											tentativoList[[selectedItem[[2]]]]=col;
-											If[selectedItem[[2]] < lunghezzaCombinazione, selectedItem[[2]]=selectedItem[[2]]+1]
+											(* Passa la selezione al prossimo pallino indiscriminatamente *)
+											(*If[selectedItem[[2]] < lunghezzaCombinazione, selectedItem[[2]]=selectedItem[[2]]+1]*)
+											(* Passa la selezione al prossimo pallino vuoto *)
+											selectedItem = vaiAlProssimoPallinoVuoto[selectedItem, tentativoList, lunghezzaCombinazione];
 										)
 									}
 								]
@@ -605,11 +638,20 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8] := DynamicModul
 						                          ],
 						                      {
 						                          "MouseClicked":>(
-						                              If[x === turn,
-						                              (
-						                                  selectedItem={x, y};
-						                              )]
-						                          )
+												    If[x === turn,
+												        If[tentativoList[[y]] =!= None,  (* Se clicchi un colore nel tentativo, rimuovilo *)
+												            (
+												                selectedItem = {x, y};
+												                tentativoList[[y]] = None;
+												                gridItemsColors[[x, y]] = Opacity[0.2, Black];
+												            ),
+												            (
+												                (* Altrimenti seleziona il pallino vuoto normalmente *)
+												                selectedItem = {x, y};
+												            )
+												        ]
+												    ]
+												)
 						                      }
 						                      ]
 						                  ],
@@ -627,9 +669,9 @@ interfacciaGriglia[lunghezzaCombinazione_:4, numeroTentativi_:8] := DynamicModul
 							              feedbackColors=If[hintFeedbackHistory[[x]] =!= {},
 							                  (*Length[valutazioneTentativo] > 1(* && row === turn*),*)
 							                  hintFeedbackHistory[[x]] /. {
-							                      feedbackEsatto->Green,
-							                      feedbackParziale->Yellow,
-							                      feedbackAssente->None
+							                      feedbackEsatto->RGBColor[0.57,1,0.05],  (* Un verde chiaro *)
+							                      feedbackParziale->RGBColor[1,0.85,0],   (* Un giallo dorato *)
+							                      feedbackAssente->None                   (* Vuoto *)
 							                  },
 							              ConstantArray[None, lunghezzaCombinazione]
 							              ]
