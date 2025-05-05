@@ -1,12 +1,14 @@
+(* ::Package:: *)
+
 (* :Title:Trivia Mastermind*)
 (* :Context:PacchettoProgetto`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
 (* :Package Version:0.2*)
 (* :History:last modified 11/4/2025*)
-(* :Copyright:© 2025 Gruppo 10 - Trivia Mastermind*)
+(* :Copyright:\[Copyright] 2025 Gruppo 10 - Trivia Mastermind*)
 (* :License:MIT License*)
-(* :Discussion:Funzionalità obbligatorie:
+(* :Discussion:Funzionalit\[AGrave] obbligatorie:
 	- Seed da chiedere all\[CloseCurlyQuote]utente per (ri)generare un esercizio
 	- Genera Esercizio
 	- Verifica Risultato
@@ -21,9 +23,11 @@ BeginPackage["PacchettoProgetto`"];
 (* ES. f::usage= "text"; *)
 avviaSchermataDiGioco::usage="aaaaaa";
 
+
 Begin["`Private`"];
-(* Ricorda di documentare ogni riga di codice: funzionalità,
+(* Ricorda di documentare ogni riga di codice: funzionalit\[AGrave],
 variabili di input, variabili di lavoro, variabili di output, spiegazione dei singoli passaggi *)
+
 
 (* Menu di avvio *)
 (* Menu di avvio *)
@@ -39,6 +43,7 @@ avviaSchermataDiGioco[] := DynamicModule[
   customColori=6,
   customColonne=4,
   customTurni=8,
+  allowDuplicates=True,
   seedInserito=""
  },
 	
@@ -100,7 +105,7 @@ avviaSchermataDiGioco[] := DynamicModule[
     Dynamic @ Row[
      {
       Style["Made with ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray],
-      Style["♥ ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Red],
+      Style["\:2665 ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Red],
       Style[labels["fattoDa"], FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray]
      },
     Alignment->Center
@@ -168,7 +173,7 @@ avviaSchermataDiGioco[] := DynamicModule[
            partitaInCorso=True;
            customSeed=seedInserito;
            seedInserito="";
-           SeedRandom[customSeed];
+           (*SeedRandom[customSeed];*)
            cambiaSchermata["gioco"];
          )]
         ],
@@ -209,7 +214,7 @@ avviaSchermataDiGioco[] := DynamicModule[
      Row[{
        Style[labels["nCombinazione"], FontSize->14, FontFamily->"Consolas", Bold],
                 
-       Spacer[60],
+       Spacer[53],
                 
        SetterBar[
         Dynamic[customColonne],
@@ -219,6 +224,14 @@ avviaSchermataDiGioco[] := DynamicModule[
         ],
        Appearance->"Horizontal"
        ]
+     }],
+     
+     Row[{
+       Style[labels["allowDuplicates"], FontSize->14, FontFamily->"Consolas", Bold],
+                
+       Spacer[93],
+                
+       Checkbox[Dynamic[allowDuplicates]]
      }]
     }],
 
@@ -247,7 +260,7 @@ avviaSchermataDiGioco[] := DynamicModule[
    Dynamic @ Refresh[
     Switch[currentScreen,
       "menu", creaHomepage[],
-      "gioco", creaSchermataGioco[customSeed, customTurni, customColonne, titleFontScale]
+      "gioco", creaSchermataGioco[customSeed, customTurni, customColonne, allowDuplicates, titleFontScale]
     ],
    TrackedSymbols:>{currentScreen, customTurni, customColonne, titleFontScale}
    ],
@@ -281,40 +294,44 @@ avviaSchermataDiGioco[] := DynamicModule[
   mainWindow
 ]
 
+
 (* Lista dei colori usati da Mastermind *)
-paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White};
+paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White, Gray, Black};
 (* Stato della partita *)
 partitaInCorso=True
 
 labels=translations = <|
 	"titoloGioco" -> "TRIVIA MASTERMIND",
 	"fattoDa" -> "by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
-	"inserisciSeed" -> "Inserisci un seed: ",
-	"placeholderSeed" -> "Scrivi seed prima di iniziare...",
+	"inserisciSeed" -> "Insert seed: ",
+	"placeholderSeed" -> "Write a numeric seed...",
 	"play" -> "\[FilledRightTriangle]",
-	"randomSeed" -> "↻",
-	"nTurni" -> "N. turni",
-	"nCombinazione" -> "N. combinazione",
-	"esci" -> "ESCI",
-	"partita" -> "PARTITA",
-	"seedSelezionato" -> "PARTITA AVVIATA CON SEED: ",
-	"colori" -> "Colori",
-	"combinazione" -> "Combinazione",
-	"suggerimenti" -> "Suggerimenti",
-	"azione" -> "Azione",
-	"restartVinto"->"HAI VINTO!! VUOI RIGIOCARE?",
-	"restartPerso"->"HAI PERSO... VUOI RIGIOCARE?",
-	"vai"->"VAI!",
-	"menu"->"TORNA AL MENÙ",
-	"trivia"->"VUOI UN AIUTO?",
+	"randomSeed" -> "\:21bb",
+	"nTurni" -> "Turns",
+	"nCombinazione" -> "Cipher Length",
+	"allowDuplicates"->"Repeating colors",
+	"esci" -> "EXIT",
+	"partita" -> "GAME - DELETE ME",
+	"seedSelezionato" -> "GAME STARTED WITH SEED: ",
+	"colori" -> "Colors",
+	"combinazione" -> "Cipher",
+	"suggerimenti" -> "Feedback",
+	"azione" -> "Actions",
+	"restartVinto"->"YOU WON! Want to crack the same code?",
+	"restartPerso"->"You lost... Want to crack the same code?",
+	"vai"->"CHECK",
+	"menu"->"BACK TO MENU",
+	"trivia"->"NEED A TIP?",
 	"idea"->"\[LightBulb]"
 	|>;
+
 
 (* === Funzione per generare il codice segreto da indovinare ===
 Prende in input la lunghezza del codice da generare come intero, il seed, ed un booleano che ammette o meno la presenza di colori duplicati.
 Ritorna tale codice. Esempio: {Red, Purple, Purple, Green} *)
-generaCodiceSegreto[lunghezza_Integer, allowDuplicates_:True] := Module[
+generaCodiceSegreto[seed_, lunghezza_Integer, allowDuplicates_] := Module[
     {},
+    SeedRandom[seed]  (* Set del generatore pseudorandom *)
   
     (* Check di sicurezza: Se non accettiamo duplicati, la lunghezza non deve superare il numero di colori disponibili *)
     If[!allowDuplicates && lunghezza > Length[paletteColori],
@@ -327,6 +344,7 @@ generaCodiceSegreto[lunghezza_Integer, allowDuplicates_:True] := Module[
     ]
 ];  
 
+
 (* === Funzione di feedback del tentativo === 
 Prende in input il codice soluzione e il codice appena tentato dall'utente.
 Ritorna il feedback ottenuto confrontando tali codici, via simboli 'feedbackEsatto', 'feedbackParziale' e 'feedbackAssente'.
@@ -334,8 +352,8 @@ Esesmpio: {feedbackParziale, feedbackEsatto, feedbackParziale, feedbackAssente} 
 feedbackTentativo[soluzione_List, tentativo_List] := Module[
 {
     feedback,          (* Lista dei feedback per ogni posizione *)
-    marcatiSoluzione,  (* Booleani per segnare se un colore nella soluzione è già stato "matchato". Serve nel caso di colori ripetuti *)
-    marcatiTentativo,  (* Booleani per segnare se un colore nel tentativo è già stato usato. Utile per non sovrascrivere feedback *)
+    marcatiSoluzione,  (* Booleani per segnare se un colore nella soluzione \[EGrave] gi\[AGrave] stato "matchato". Serve nel caso di colori ripetuti *)
+    marcatiTentativo,  (* Booleani per segnare se un colore nel tentativo \[EGrave] gi\[AGrave] stato usato. Utile per non sovrascrivere feedback *)
     lunghezza          (* Lunghezza del codice da indovinare *)
 },
   
@@ -357,7 +375,7 @@ feedbackTentativo[soluzione_List, tentativo_List] := Module[
 
     (* === Match parziali === *)
     Do[
-        If[!marcatiTentativo[[i]],               (* Solo se il colore non è stato già marcato come "Esatto" *)
+        If[!marcatiTentativo[[i]],               (* Solo se il colore non \[EGrave] stato gi\[AGrave] marcato come "Esatto" *)
             Do[
                 If[!marcatiSoluzione[[j]] && tentativo[[i]] === soluzione[[j]],
                     feedback[[i]]=feedbackParziale;  (* Match parziale *)
@@ -374,8 +392,9 @@ feedbackTentativo[soluzione_List, tentativo_List] := Module[
     feedback  (* Ritorna la lista dei feedback testuali *)
 ];
 
+
 (* === Funzione che valuta un tentativo nella sua interezza === 
-Prende in input il codice soluzione e il codice appena tentato dall'utente, nonchè le informazioni sui tentativi.
+Prende in input il codice soluzione e il codice appena tentato dall'utente, nonch\[EGrave] le informazioni sui tentativi.
 Chiama feedbackTentativo[], ed esegue il confronto tra soluzione e tentativo per dare la valutazione.
 Ritorna la valutazione simbolica ('mastermindVittoria', 'mastermindSconfitta' o 'mastermindProsegui') assieme al feedback.
 Esempio: {mastermindProsegui, {feedbackParziale, feedbackEsatto, feedbackParziale, feedbackAssente}} *)
@@ -394,9 +413,10 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:8, tentativoCorren
     ]
 ];
 
+
 (* === Funzione che seleziona automaticamente il prossimo piolo con cui interagire === 
 Prende in input il piolo selezionato corrente, la lista dei tentativi e la lunghezza massima del tentativo, e ritorna il nuovo piolo selezionato.
-Normalmente, passa sempre al successivo. Se sono stati rimossi dei colori e il successivo è già colorato, passa al primo vuoto successivo.
+Normalmente, passa sempre al successivo. Se sono stati rimossi dei colori e il successivo \[EGrave] gi\[AGrave] colorato, passa al primo vuoto successivo.
 In caso non ci siano successivi, non fa nulla. *)
 vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_] := Module[
 	{next, newSelectedItem},
@@ -407,7 +427,7 @@ vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_]
 		(tentativoList[[#]] === None)&,
 		Missing["NotFound"]  (* Se non trova pioli vuoti, ritorna 'Missing["NotFound"]' (default, aggiunto per chiarezza)*)
 	];
-	(* Se ancora non è stato trovato un piolo vuoto, controlla anche alla sinistra *)
+	(* Se ancora non \[EGrave] stato trovato un piolo vuoto, controlla anche alla sinistra *)
 	If[next === Missing["NotFound"],
 		next = SelectFirst[
 			Range[1, selectedItem[[2]] - 1],  (* Elementi a Sinistra *)
@@ -418,20 +438,21 @@ vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_]
 	
 	newSelectedItem = selectedItem;  (* Inizializza la nuova selezione *)
 	If[next =!= Missing["NotFound"],
-		newSelectedItem[[2]] = next  (* Se si è trovato un vuoto, ritorna la nuova selezione*)
+		newSelectedItem[[2]] = next  (* Se si \[EGrave] trovato un vuoto, ritorna la nuova selezione*)
     ];
     newSelectedItem  (* Ritorna la nuova selezione *)
 ]
 
+
 (* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
-interfacciaGriglia[seed_, lunghezzaCombinazione_:4, numeroTentativi_:8] := DynamicModule[
+interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_] := DynamicModule[
 {
-	gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}],(* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacità a 0.2)*)
+	gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}],(* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacit\[AGrave] a 0.2)*)
 	hintFeedbackHistory = ConstantArray[{}, numeroTentativi],
 	turn = 1,(*Numero del tentativo*)
 	colorsList=paletteColori,(*Lista di colori della palette di scelta*)
 	selectedItem={1,1}, (* Elemento selezionato riga,colonna*)
-	soluzioneList=generaCodiceSegreto[lunghezzaCombinazione], (* Combinazione segreta *)
+	soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates], (* Combinazione segreta *)
 	tentativoList=ConstantArray[None, lunghezzaCombinazione], (* Tentativo corrente *)
 	valutazioneTentativo={}
 },
@@ -466,8 +487,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_:4, numeroTentativi_:8] := Dynam
 				turn=1;(*Numero del tentativo*)
 				colorsList=paletteColori;(*Lista di colori della palette di scelta*)
 				selectedItem={1,1}; (* Elemento selezionato riga,colonna*)
-				SeedRandom[seed];
-				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
+				(*SeedRandom[seed];*)
+				soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
 				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
 				valutazioneTentativo={};
 				partitaInCorso=True
@@ -500,8 +521,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_:4, numeroTentativi_:8] := Dynam
 				turn=1;(*Numero del tentativo*)
 				colorsList=paletteColori;(*Lista di colori della palette di scelta*)
 				selectedItem={1,1}; (* Elemento selezionato riga,colonna*)
-				SeedRandom[seed];
-				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
+				(*SeedRandom[seed];*)
+				soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
 				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
 				valutazioneTentativo={};
 				partitaInCorso=True
@@ -533,8 +554,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_:4, numeroTentativi_:8] := Dynam
 				turn=1;(*Numero del tentativo*)
 				colorsList=paletteColori;(*Lista di colori della palette di scelta*)
 				selectedItem={1,1}; (* Elemento selezionato riga,colonna*)
-				SeedRandom[seed];
-				soluzioneList=generaCodiceSegreto[lunghezzaCombinazione, False]; (* Combinazione segreta *)
+				(*SeedRandom[seed];*)
+				soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
 				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
 				valutazioneTentativo={};
 				partitaInCorso=True
@@ -694,7 +715,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_:4, numeroTentativi_:8] := Dynam
 										          Framed[
 										              Grid[{
 										              {
-										                Style["🎮", FontSize -> 10],
+										                Style["\|01f3ae", FontSize -> 10],
 										                Style[labels["vai"], White, FontFamily -> "Consolas", FontSize -> 12, Bold]
 										              }
 										            },
@@ -723,7 +744,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_:4, numeroTentativi_:8] := Dynam
 												Framed[
 										              Grid[{
 										              {
-										                Style["🎮", FontSize -> 10, FontColor->Directive[GrayLevel[0.9], Opacity[0]]],
+										                Style["\|01f3ae", FontSize -> 10, FontColor->Directive[GrayLevel[0.9], Opacity[0]]],
 										                Style[labels["vai"], FontFamily -> "Consolas", FontSize -> 12,FontColor->GrayLevel[0.9], Bold]
 										              }
 										            },
@@ -765,11 +786,11 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_:4, numeroTentativi_:8] := Dynam
 ]
 
 (* Schermata di gioco random - perfettamente centrata *)
-creaSchermataGioco[seed_, tentativi_, combinazione_, fontSize_] := 
+creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, fontSize_] := 
 DynamicModule[{paletteRandom},
     
-    SeedRandom[seed];
-    paletteRandom=Table[RandomColor[], {12}];
+    (*SeedRandom[seed];*)
+    (*paletteRandom=Table[RandomColor[], {12}];*)
     
     Pane[
       Column[{
@@ -786,7 +807,7 @@ DynamicModule[{paletteRandom},
             
      Dynamic[
       Pane[
-        interfacciaGriglia[seed, combinazione, tentativi],
+        interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates],
         {Automatic, Scaled[0.7]}, (* massimo 80% in altezza *)
         Scrollbars->False,
         Alignment->Center 
@@ -814,6 +835,7 @@ Alignment->Center,
 ImageSize->Scaled[1] (* prende tutto lo schermo *)
 ]
 ];
+
 
 End[];
 EndPackage[];

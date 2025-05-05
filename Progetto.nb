@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[   8785372,     144220]
+NotebookDataLength[   8785337,     144219]
 NotebookOptionsPosition[   8781235,     144142]
-NotebookOutlinePosition[   8781883,     144166]
-CellTagsIndexPosition[   8781806,     144161]
+NotebookOutlinePosition[   8781848,     144165]
+CellTagsIndexPosition[   8781771,     144160]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -144017,7 +144017,7 @@ Cell[BoxData[{
    3.9535298573689156`*^9}, 3.9535299027479725`*^9, {3.9535303448612385`*^9, 
    3.9535303926919975`*^9}, {3.953530479847145*^9, 3.953530480411598*^9}, 
    3.9537305887514687`*^9},
- CellLabel->"In[27]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
+ CellLabel->"In[16]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -144140,9 +144140,8 @@ Cell["In questo progetto...", "Text",
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{1152, 579.6},
-WindowMargins->{{
-  Automatic, -5.399999999999864}, {-5.399999999999977, Automatic}},
+WindowSize->{1141.2, 568.8},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
 Magnification:>0.9 Inherited,
 FrontEndVersion->"14.2 for Microsoft Windows (64-bit) (December 26, 2024)",
 StyleDefinitions->"Default.nb",
@@ -144160,7 +144159,7 @@ CellTagsIndex->{
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Wikipedia", 8781656, 144155}
+ {"Wikipedia", 8781621, 144154}
  }
 *)
 (*NotebookFileOutline
