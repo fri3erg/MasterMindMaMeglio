@@ -693,18 +693,20 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 							          
 							          (* 2x2 FEEDBACK GRID *)
 							          Dynamic @ Module[
-							          {
-							              (* Sostituisce il feedBack con il colore associato*)
-							              feedbackColors=If[hintFeedbackHistory[[x]] =!= {},
-							                  (*Length[valutazioneTentativo] > 1(* && row === turn*),*)
-							                  hintFeedbackHistory[[x]] /. {
-							                      feedbackEsatto->RGBColor[0.57,1,0.05],  (* Un verde chiaro *)
-							                      feedbackParziale->RGBColor[1,0.85,0],   (* Un giallo dorato *)
-							                      feedbackAssente->None                   (* Vuoto *)
-							                  },
-							              ConstantArray[None, lunghezzaCombinazione]
-							              ]
-							          },
+							            {
+										    feedbackSymbolsForDisplay,
+										    feedbackColors
+										  },
+										  feedbackSymbolsForDisplay = If[hintFeedbackHistory[[x]] =!= {},
+										      hintFeedbackHistory[[x]][[All, 2]], (* Extract all second elements (feedback symbols) *)
+										      ConstantArray[feedbackAssente, lunghezzaCombinazione] (* Default to all 'feedbackAssente' or 'None' if turn not played *)
+										  ];
+										
+										  feedbackColors = feedbackSymbolsForDisplay /. {
+										      feedbackEsatto -> RGBColor[0.57,1,0.05],  
+										      feedbackParziale -> RGBColor[1,0.85,0],   
+										      feedbackAssente -> None (* Or whatever your 'None' color is for feedback pegs *)                  
+										  };
 						              Style[
 									      Grid[
 										      {Table[
@@ -743,17 +745,25 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										            ImageSize -> Automatic
 										          ],
 										          Function[
-										              If[partitaInCorso,
-														  (
-														   valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
-														   hintFeedbackHistory[[turn]] = valutazioneTentativo[[2]]; (*Set dei feedback*)
-														   If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
-														   selectedItem = {turn, 1}; (*Item successivo*)
-														   (* RESET TENTATIVO*)
-														   tentativoList = ConstantArray[None, lunghezzaCombinazione];
-														   
-														   )
-													   ]
+													If[partitaInCorso,
+													  (
+													    valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
+													    
+													    (* --- New way to populate hintFeedbackHistory --- *)
+													    Module[{currentTurnFeedbackSymbols = valutazioneTentativo[[2]], combinedTurnData},
+													      combinedTurnData = Table[
+													        {tentativoList[[i]], currentTurnFeedbackSymbols[[i]]}, (* {guessedColor, feedbackSymbol} *)
+													        {i, Length[tentativoList]}
+													      ];
+													      hintFeedbackHistory[[turn]] = combinedTurnData; 
+													    ];
+													    (* --- End of new population logic --- *)
+													
+													    If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
+													    selectedItem = {turn, 1}; 
+													    tentativoList = ConstantArray[None, lunghezzaCombinazione];
+													  )
+													]
 													]
 		                                       ],
 												Framed[
@@ -795,6 +805,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 											                ImageSize -> Automatic
 											            ],
 											            Function[ Module[{correct}, (* Hint Action *)
+											            Print[hintFeedbackHistory];
 											                    correct = DisplayTriviaQuestion[seed + questionCounter, triviaData, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList];];
 											                    questionCounter++;
 											                ]
@@ -1113,17 +1124,129 @@ PrepareQuestionData[seed_Integer, questionsDataset_] := Module[
 ];
 
 
-(*
-  Provides feedback based on whether user guessed correctly
-  @param guessedCorrectly: Boolean indicating if answer was correct
-*)
+(* CalcolaHintSemplice adapted for new hintFeedbackHistory structure *)
 
-CalcolaHintSemplice[hintFeedbackHistory_, soluzioneList_]:= Module[
-{},
-];
+CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := Catch[
+  Module[
+    {
+     (* Parameters after validation *)
+     soluzioneList, 
+     hintFeedbackHistory,
+     n, (* Length of the solution *)
+     
+     (* Derived from inputs *)
+     actualTurnsData, (* List of actual played turns, each turn is {{color,feedback},...} *)
+     uniqueSolutionColors,
+     confirmedSolutionColors, (* Association: solutionColor -> True/False *)
 
+     (* Loop/temp variables *)
+     currentTurnData, currentPegData, guessedColor, feedbackSymbol, colorKey,
+     
+     (* For Priority 2 *)
+     lastTurnData, targetPosition, correctColorAtTarget
+    },
 
+    (* --- 1. RIGOROUS INPUT VALIDATION --- *)
+    If[!ListQ[soluzioneListInput],
+      Print["Error: CalcolaHintSemplice - 'soluzioneListInput' is not a list. Received: ", Head[soluzioneListInput]];
+      Throw[Missing["InvalidInputSolutionNotList"]]
+    ];
+    soluzioneList = soluzioneListInput;
+    n = Length[soluzioneList];
 
+    If[!ListQ[hintFeedbackHistoryInput],
+      Print["Error: CalcolaHintSemplice - 'hintFeedbackHistoryInput' is not a list. Received: ", Head[hintFeedbackHistoryInput]];
+      Throw[Missing["InvalidInputHistoryNotList"]]
+    ];
+    If[Length[hintFeedbackHistoryInput] > 0 && !AllTrue[hintFeedbackHistoryInput, ListQ],
+      Print["Error: CalcolaHintSemplice - 'hintFeedbackHistoryInput' is not a list of lists."];
+      Throw[Missing["InvalidInputHistoryNotListOfLists"]]
+    ];
+    hintFeedbackHistory = hintFeedbackHistoryInput;
+
+    (* --- 2. SPECIAL CASE: No Actual Guesses Made Yet --- *)
+    (* This checks if all entries in hintFeedbackHistory are empty lists {} *)
+    If[AllTrue[hintFeedbackHistory, # === {} &],
+      If[n > 0, 
+          Throw[{RandomChoice[soluzioneList], Missing["PositionNotApplicable"]}]
+      ,
+          Throw[Missing["SolutionIsEmpty"]] 
+      ];
+    ];
+
+    (* --- 3. Filter for Actual Played Turns --- *)
+    actualTurnsData = Select[hintFeedbackHistory, # =!= {} &];
+
+    (* If, after filtering, there are no actual turns (e.g., if hintFeedbackHistory was empty initially,
+       though the AllTrue check should handle the {{},{},...} case) *)
+    If[Length[actualTurnsData] == 0,
+      If[n > 0,
+          Throw[{RandomChoice[soluzioneList], Missing["PositionNotApplicable"]}]
+      ,
+          Throw[Missing["SolutionIsEmpty"]]
+      ];
+    ];
+
+    (* --- 4. Priority 1: Check for Unconfirmed Solution Colors --- *)
+    (* This part uses the pre-calculated feedback in actualTurnsData *)
+    
+    uniqueSolutionColors = DeleteDuplicates[soluzioneList];
+    (* Ensure uniqueSolutionColors is not empty if solution wasn't, before creating Association *)
+    If[n > 0 && Length[uniqueSolutionColors] == 0,
+        Print["Error: CalcolaHintSemplice - 'uniqueSolutionColors' became empty from a non-empty solution. Solution content: ", soluzioneList];
+        Throw[Missing["ProblemWithSolutionContent"]]
+    ];
+    If[Length[uniqueSolutionColors] == 0, (* Implies n was 0 or solution was problematic *)
+        Throw[Missing["SolutionEffectivelyEmpty"]]
+    ];
+    
+    confirmedSolutionColors = Association[# -> False & /@ uniqueSolutionColors]; 
+
+    Do[ (* Iterate through each played turn's data *)
+      currentTurnData = turnIter; (* turnIter is {{color,feedback}, {color,feedback}, ...} *)
+      Do[ (* Iterate through each peg's data in that turn *)
+        currentPegData = pegIter; (* pegIter is {guessedColor, feedbackSymbol} *)
+        guessedColor = currentPegData[[1]];
+        feedbackSymbol = currentPegData[[2]];
+        
+        If[feedbackSymbol === feedbackEsatto || feedbackSymbol === feedbackParziale,
+          If[KeyExistsQ[confirmedSolutionColors, guessedColor],
+             confirmedSolutionColors = AssociateTo[confirmedSolutionColors, guessedColor -> True];
+          ]
+          (* If guessedColor that got feedback isn't a solution color, we don't track it in confirmedSolutionColors *)
+        ];
+      , {pegIter, currentTurnData}];
+    , {turnIter, actualTurnsData}];
+
+    (* Check if any solution color remains unconfirmed *)
+    Do[
+      colorKey = solColorIter; (* Use distinct iterator *)
+      If[KeyExistsQ[confirmedSolutionColors, colorKey] && confirmedSolutionColors[colorKey] === False,
+        Print["partial"]; (* User's debug print *)
+        Throw[{colorKey, Missing["PositionNotApplicable"]}]
+      ];
+    , {solColorIter, uniqueSolutionColors}];
+
+    (* --- 5. Priority 2: Hint from Last Actual Guess's Partial Match --- *)
+    (* If we reach here, it means all solution colors have been confirmed by some feedback *)
+    
+    lastTurnData = Last[actualTurnsData]; (* lastTurnData is {{color,feedback}, ...} *)
+
+    For[i = 1, i <= n, i++,
+      feedbackSymbol = lastTurnData[[i, 2]]; (* Get feedback for i-th peg of last guess *)
+      
+      If[feedbackSymbol === feedbackParziale,
+        targetPosition = i;
+        correctColorAtTarget = soluzioneList[[targetPosition]];
+        Print["full"]; (* User's debug print *)
+        Throw[{correctColorAtTarget, targetPosition}]
+      ];
+    ];
+
+    (* --- 6. Fallback --- *)
+    Throw[Missing["NoSimpleHintAvailable"]]
+  ] (* End Module *)
+] (* End Catch *)
 
 
 
