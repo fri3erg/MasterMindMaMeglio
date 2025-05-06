@@ -38,6 +38,12 @@ timeToWait = 2.0;
 paneSize={500,80};
 imageSize= {200, 40};
 windowSize= {600, Automatic};
+PacchettoProgetto`Private`triviaData; 
+
+(* Define an accessor function or a rule for triviaData that loads it on first use *)
+PacchettoProgetto`Private`triviaData := (
+    PacchettoProgetto`Private`triviaData = LoadQuestionsFromCSV["science-technology.csv"]
+);
 (* Ricorda di documentare ogni riga di codice: funzionalit\[AGrave],
 variabili di input, variabili di lavoro, variabili di output, spiegazione dei singoli passaggi *)
 
@@ -59,7 +65,7 @@ avviaSchermataDiGioco[] := DynamicModule[
   allowDuplicates=True,
   seedInserito=""
  },
-	
+
 	
   aggiornaDimensioniSchermo[] := ( 
    (* Ottieni dimensioni schermo *)
@@ -267,7 +273,6 @@ avviaSchermataDiGioco[] := DynamicModule[
   },
   Alignment->Center
   ];
-
   (* Contenuto dinamico *)
   content=Pane[
    Dynamic @ Refresh[
@@ -458,7 +463,7 @@ vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_]
 
 
 (* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
-interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_, triviaData_] := DynamicModule[
+interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_] := DynamicModule[
 {
 	gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}],(* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacit\[AGrave] a 0.2)*)
 	hintFeedbackHistory = ConstantArray[{}, numeroTentativi],
@@ -468,7 +473,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates], (* Combinazione segreta *)
 	tentativoList=ConstantArray[None, lunghezzaCombinazione], (* Tentativo corrente *)
 	valutazioneTentativo={},
-	questionCounter=0
+	questionCounter=0,
+	correct={}
 },
 	    Framed[
 	    Column[{
@@ -804,9 +810,9 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 											                FrameMargins -> {{10, 10}, {10, 10}},
 											                ImageSize -> Automatic
 											            ],
-											            Function[ Module[{correct}, (* Hint Action *)
+											            Function[ Module[{}, (* Hint Action *)
 											            Print[hintFeedbackHistory];
-											                    correct = DisplayTriviaQuestion[seed + questionCounter, triviaData, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList];];
+											                    Append[correct , DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]]];
 											                    questionCounter++;
 											                ]
 											            ],
@@ -859,16 +865,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 
 (* Schermata di gioco random - perfettamente centrata *)
 creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, fontSize_] := 
-DynamicModule[{paletteRandom, triviaData},
+DynamicModule[{paletteRandom},
     
-    (*SeedRandom[seed];*)
-    (*paletteRandom=Table[RandomColor[], {12}];*)
-    triviaData = Check[
-        LoadQuestionsFromCSV["science-technology.csv"], (* <<< ADJUST PATH IF NEEDED *)
-        Print["\:274c Failed to load trivia questions! Hint button will be disabled."];
-        $Failed
-    ];
-
     Pane[
       Column[{
       
@@ -884,7 +882,7 @@ DynamicModule[{paletteRandom, triviaData},
             
      Dynamic[
       Pane[
-        interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates, triviaData],
+        interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates],
         {Automatic, Scaled[0.7]}, (* massimo 80% in altezza *)
         Scrollbars->False,
         Alignment->Center 
@@ -920,7 +918,6 @@ ImageSize->Scaled[1] (* prende tutto lo schermo *)
 *)
 LoadQuestionsFromCSV[path_String] := Module[
   {csvText, data, headers, rows, dataset},
-  
   (* Attempt to import the CSV file *)
   csvText = Quiet@Check[
     Import[path, "Text"],
@@ -953,9 +950,9 @@ LoadQuestionsFromCSV[path_String] := Module[
 *)
 (* Assumes PrepareQuestionData is defined in the package *)
 (* Assumes global/config variables like paneSize, imageSize are defined *)
-(* Assumes hintData is calculated BEFORE calling this function and passed in *)
+(* Assumes triviaData is calculated BEFORE calling this function and passed in *)
 
-DisplayTriviaQuestion[seed_Integer, questionsDataset_, hintData_] := Module[
+DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
   {
    (* Outer Module Variables *)
    questionWindow, 
@@ -965,11 +962,14 @@ DisplayTriviaQuestion[seed_Integer, questionsDataset_, hintData_] := Module[
    (* Data prepared once before creating the dialog *)
    initialQuestionData, 
    initialOptionsData, 
-   initialCorrectIndexData
+   initialCorrectIndexData,
+   stopDialogLoopFunc
+
   },
+    stopDialogLoopFunc = Function[Null, dialogOpen = False, HoldAll];
 
   (* Prepare question data *outside* the DynamicModule *)
-  {initialQuestionData, initialOptionsData, initialCorrectIndexData} = PrepareQuestionData[seed, questionsDataset];
+  {initialQuestionData, initialOptionsData, initialCorrectIndexData} = PrepareQuestionData[seed];
 
   (* Create the dialog *)
   questionWindow = CreateDialog[
@@ -983,8 +983,15 @@ DisplayTriviaQuestion[seed_Integer, questionsDataset_, hintData_] := Module[
         localQuestion = initialQuestionData,
         localOptions = initialOptionsData,
         localCorrectIndex = initialCorrectIndexData
+        
       }, 
-      
+      performCloseAction[currentAnswerResult_] := (
+        (* This function will correctly access 'result' and 'dialogOpen' 
+           from the parent DisplayTriviaQuestion Module due to lexical scoping *)
+        result = currentAnswerResult; 
+        dialogOpen = False;        
+        NotebookClose[EvaluationNotebook[]]; 
+      ); 
       Dynamic@Refresh[
         Switch[displayState,
 
@@ -1038,19 +1045,19 @@ DisplayTriviaQuestion[seed_Integer, questionsDataset_, hintData_] := Module[
            Column[{
              Style["Correct!", 18, Bold, Green], (* Correct text *)
              Spacer[15],
-             (* Display the hint using hintData passed into the function *)
-             If[hintData === Missing["NoHintAvailable"], 
+             (* Display the hint using triviaData passed into the function *)
+             If[hintToGive === Missing["NoHintAvailable"], 
                 Style["Hint: (No simple hint available this time)", 16],
                 Row[{
                   Style["Hint: Position ", 16],
-                  Style[hintData[[2]], 16, Bold], 
+                  Style[hintToGive[[2]], 16, Bold], 
                   Style[" should be ", 16],
-                  Graphics[{hintData[[1]], Disk[]}, ImageSize -> 30] 
+                  Graphics[{hintToGive[[1]], Disk[]}, ImageSize -> 30] 
                 }, Alignment -> Center]
              ],
              Spacer[25],
              (* Close button INSIDE the Column *)
-             Button["Close", NotebookClose[EvaluationNotebook[]]] 
+             Button["Close",  performCloseAction[True]] 
             }, Alignment -> Center], (* End Column for correct/hint view *)
 
          "incorrect_show_message", 
@@ -1059,7 +1066,7 @@ DisplayTriviaQuestion[seed_Integer, questionsDataset_, hintData_] := Module[
              Style["Incorrect!", 18, Bold, Red], (* Incorrect text, maybe Red color *)
              Spacer[25],
               (* Close button INSIDE the Column *)
-             Button["Close", NotebookClose[EvaluationNotebook[]]]
+             Button["Close",  performCloseAction[False]]
             }, Alignment -> Center], (* End Column for incorrect view *)
 
         _, (* Default/Error case *)
@@ -1077,12 +1084,12 @@ DisplayTriviaQuestion[seed_Integer, questionsDataset_, hintData_] := Module[
     WindowElements -> {},
     WindowFrame -> "ModalDialog",
     Background -> White,
-    
-    (* *** CRUCIAL: This handles closing and returning the result *** *)
     NotebookEventActions -> {"WindowClose" :> (
-        dialogOpen = False;   (* Allows the While loop below to terminate *)
-        result = internalResult (* Copies the T/F answer to the outer variable *)
-    )} 
+        (* This handles if the dialog is closed by the OS (e.g., window 'x' button)
+           before an answer's "Close" button is pressed. *)
+        stopDialogLoopFunc[];    
+    )}
+    
     
   ]; (* End CreateDialog *)
   
@@ -1104,13 +1111,13 @@ DisplayTriviaQuestion[seed_Integer, questionsDataset_, hintData_] := Module[
   @param questionsDataset: Dataset containing all questions
   @return: {question, options, correctIndex}
 *)
-PrepareQuestionData[seed_Integer, questionsDataset_] := Module[
+PrepareQuestionData[seed_Integer] := Module[
   {questionIndex, options, rawCorrectIndex, selectedQuestion, optionKeys, correctIndex},
   
   SeedRandom[seed];
   (* Select question based on seed *)
-  questionIndex = Mod[seed, Length[questionsDataset], 1];
-  selectedQuestion = Normal[questionsDataset[[questionIndex]]];
+  questionIndex = Mod[seed, Length[triviaData], 1];
+  selectedQuestion = Normal[triviaData[[questionIndex]]];
 
   (* Get correct answer index *)
   rawCorrectIndex = Lookup[selectedQuestion, "Correct Index", Missing["NotAvailable"]];
