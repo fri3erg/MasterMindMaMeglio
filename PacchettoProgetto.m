@@ -1040,25 +1040,64 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
              ] (* End Grid *)
            }, Alignment -> Center], (* End Column for question view *)
 
-         "correct_show_hint", 
+"correct_show_hint",
            (* --- Show Correct Message & Hint View --- *)
+(* --- Show Correct Message & Hint View --- *)
            Column[{
-             Style["Correct!", 18, Bold, Green], (* Correct text *)
-             Spacer[15],
-             (* Display the hint using triviaData passed into the function *)
-             If[hintToGive === Missing["NoHintAvailable"], 
-                Style["Hint: (No simple hint available this time)", 16],
-                Row[{
-                  Style["Hint: Position ", 16],
-                  Style[hintToGive[[2]], 16, Bold], 
-                  Style[" should be ", 16],
-                  Graphics[{hintToGive[[1]], Disk[]}, ImageSize -> 30] 
-                }, Alignment -> Center]
+             Style["Correct!", Large, Bold, Green, FontFamily -> "Arial", TextAlignment -> Center],
+             Spacer[10],
+
+             Pane[
+               Module[{theCol, posVal, uiElementToDisplay},
+                 (* Debug: Print the raw hintToGive *)
+                 Print["Debug (Pane Content Start): hintToGive = ", InputForm[hintToGive]];
+
+                 (* Destructure hintToGive *)
+                 {theCol, posVal} = hintToGive;
+
+                 (* Debug: Print the destructured parts *)
+                 Print["Debug (Pane Content): theCol = ", InputForm[theCol], ", posVal = ", InputForm[posVal]];
+
+                 If[
+                   posVal === Missing["PositionNotApplicable"], (* Use === for Missing objects *)
+                   (
+                     (* True Branch: Position is Missing *)
+                     Print["Debug (If): True branch taken (Position is Missing)."];
+                     uiElementToDisplay = Row[{
+                       Style["This color is present in the combination:", Medium, FontFamily -> "Arial"],
+                       Spacer[8],
+                       Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]]
+                     }, Alignment -> Center];
+                   ),
+                   (
+                     (* False Branch: Position is an Integer (e.g., 2) *)
+                     Print["Debug (If): False branch taken. posVal = ", InputForm[posVal]];
+                     uiElementToDisplay = Row[{
+                       Style["The color: ", Medium, FontFamily -> "Arial"],
+                       Spacer[8],
+                       Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]],
+                       Spacer[8],
+                       Style["is at position", Medium, FontFamily -> "Arial"],
+                       Spacer[8],
+                       Style[ToString[posVal], Medium, Bold, FontFamily -> "Arial"]
+                     }, Alignment -> Center];
+                   )
+                 ];
+
+                 (* Debug: Print what the If statement produced *)
+                 Print["Debug (Pane Content End): uiElementToDisplay Head = ", Head[uiElementToDisplay], ", Value = ", InputForm[uiElementToDisplay]];
+                 uiElementToDisplay (* This is the single expression Pane will display *)
+               ],
+               {paneSize[[1]], Automatic},
+               Alignment -> Center
              ],
-             Spacer[25],
-             (* Close button INSIDE the Column *)
-             Button["Close",  performCloseAction[True]] 
-            }, Alignment -> Center], (* End Column for correct/hint view *)
+
+             Spacer[15],
+             Button["Close", performCloseAction[True]]
+            },
+            Alignment -> Center,
+            Spacings -> 8
+           ],
 
          "incorrect_show_message", 
            (* --- Show Incorrect Message View --- *)
