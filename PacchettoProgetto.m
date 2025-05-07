@@ -751,6 +751,9 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										            ImageSize -> Automatic
 										          ],
 										          Function[
+										          If[Length[correct]<x,
+										          AppendTo[correct, {}];
+										          ]
 													If[partitaInCorso,
 													  (
 													    valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
@@ -791,51 +794,114 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 							            ]
 							                 Spacer[50], (* Spacer before Hint Button *)
 
-											Dynamic[
-											    If[x === turn && partitaInCorso && triviaData =!= $Failed,
-											        (* Hint Button Active *)
-											        ClickPane[
-											            Framed[
-											                Grid[{
-											                  {
-											                    Style["\|01f4a1", FontSize -> 10], (* Hint Icon *)
-											                    Style["HINT", White, FontFamily -> "Consolas", FontSize -> 12, Bold] (* Hint Label *)
-											                  }
-											                },
-											                Alignment -> {Center, Center}, Spacings -> {1, 0}
-											                ],
-											                Background -> Blue, (* Changed background color *)
-											                FrameStyle -> None,
-											                RoundingRadius -> 10,
-											                FrameMargins -> {{10, 10}, {10, 10}},
-											                ImageSize -> Automatic
-											            ],
-											            Function[ Module[{}, (* Hint Action *)
-											            Print[hintFeedbackHistory];
-											                    Append[correct , DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]]];
-											                    questionCounter++;
-											                ]
-											            ],
-											            Method -> "Queued" 
-											        ],
-											        (* Hint Button Inactive *)
-											        Framed[
-											            Grid[{
-											              {
-											                Style["\|01f4a1", FontSize -> 10, FontColor->Directive[GrayLevel[0.7], Opacity[0]]], (* Dimmed Icon *)
-											                Style["HINT", FontFamily -> "Consolas", FontSize -> 12,FontColor->Directive[GrayLevel[0.7], Opacity[0]], Bold] (* Dimmed Label *)
-											              }
-											            },
-											            Alignment -> {Center, Center}, Spacings -> {1, 0}
-											            ],
-											            Background -> GrayLevel[0.9], (* Standard inactive background *)
-											            FrameStyle -> None,
-											            RoundingRadius -> 10,
-											            FrameMargins -> {{10, 10}, {10, 10}},
-											            ImageSize -> Automatic
-											        ]
-											    ]
-											] (* End Hint Button Dynamic *)
+
+(* Placeholder for when a result for correct[[x]] is not yet available *)
+(* You might initialize your 'correct' list with this, e.g., correct = Table[emptyResultPlaceholder, {maxRows}] *)
+emptyResultPlaceholder = "NoResultSetYet"; (* Or use Null, or {} *)
+
+Dynamic[
+    Module[{currentValForRowX}, (* Use a local variable for clarity and safety *)
+
+        (* Safely determine the current result for row x *)
+        currentValForRowX = If[
+            ListQ[correct] && Length[correct] >= x && x >= 1 && (* Basic checks for list and valid index x *)
+            correct[[x]] =!= Null && correct[[x]] =!= {} && correct[[x]] =!= emptyResultPlaceholder, (* Check against various empty/placeholder states *)
+            correct[[x]],
+            emptyResultPlaceholder (* Default if no valid result for this row x yet *)
+        ];
+
+        (* Optional: Intensive debug for the value just determined *)
+
+        If[currentValForRowX === Missing["WrongAnswer"],
+            (* RESULT: WRONG ANSWER - Display a non-interactive red marker or similar *)
+            (* Making this ClickPane non-functional or purely visual for a 'WrongAnswer' state *)
+            Framed[
+                "", (* No text, just color *)
+                Background -> Red,
+                FrameStyle -> None,
+                RoundingRadius -> 10,
+                FrameMargins -> {{10, 10}, {10, 10}}, (* Consistent with HINT button margins *)
+                ImageSize -> {80, 35} (* Example: Make it a small square/circle like other elements *)
+                (* Or use specific ImageSize consistent with your HINT button if you want it to occupy the same space *)
+            ],
+            
+     (* ELSE IF RESULT: CORRECT ANSWER of shape {color, value} *)
+     If[MatchQ[currentValForRowX, {_?ColorQ, _}],
+           Module[{resultColor, resultValue, textColor},
+                 resultColor = First[currentValForRowX];
+                 resultValue = Last[currentValForRowX];
+                 Framed[
+                       If[resultValue =!= Missing["PositionNotApplicable"],
+                             Row[{
+             Graphics[{EdgeForm[Gray], resultColor, Disk[]}, 
+               ImageSize -> {20, 20}],
+                                  Spacer[5],  
+             Style[ToString[resultValue], Medium, Bold, 
+               FontFamily -> "Arial"]
+                                    }],
+                                
+         Graphics[{EdgeForm[Gray], resultColor, Disk[]}, 
+           ImageSize -> {20, 20}]
+                         ],
+                       Background -> Green,
+                       FrameStyle -> None,
+                       RoundingRadius -> 10,
+                       FrameMargins -> {{30, 10}, {6, 6}},
+                       ImageSize -> {80, 35} (* 
+       Or set a fixed size like {width, 38} *)
+                   ]
+             ],
+    (* ELSE: NO RESULT YET or placeholder, use turn-based logic for HINT button *)
+        If[x === turn && partitaInCorso && triviaData =!= $Failed,
+            (* Hint Button Active *)
+            ClickPane[
+                Framed[
+                    Grid[{
+                        {
+                            Style["\|01f4a1", FontSize -> 10],
+                            Style["HINT", White, FontFamily -> "Consolas", FontSize -> 12, Bold]
+                        }
+                    },
+                    Alignment -> {Center, Center}, Spacings -> {1, 0}
+                    ],
+                    Background -> Blue,
+                    FrameStyle -> None,
+                    RoundingRadius -> 10,
+                    FrameMargins -> {{10, 10}, {10, 10}},
+                    ImageSize -> {80, 35}
+                ],
+                Function[Module[{}, (* Hint Action *)
+                    (* This AppendTo adds to the global 'correct' list.
+                       If you intend to set the result for the specific row 'x',
+                       you might want something like:
+                       correct[[x]] = DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]];
+                       For now, using AppendTo as a correction of your 'Append'.
+                    *)
+                    AppendTo[correct, DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]]];
+                    questionCounter++;
+                    ]
+                ],
+                Method -> "Queued"
+            ],
+            (* Hint Button Inactive / Invisible *)
+            Framed[
+                Grid[{
+                    {
+                        Style["\|01f4a1", FontSize -> 10, FontColor -> Directive[GrayLevel[0.7], Opacity[0]]],
+                        Style["HINT", FontFamily -> "Consolas", FontSize -> 12, FontColor -> Directive[GrayLevel[0.7], Opacity[0]], Bold]
+                    }
+                },
+                Alignment -> {Center, Center}, Spacings -> {1, 0}
+                ],
+                Background -> GrayLevel[0.9], (* Or Transparent to make it fully invisible *)
+                FrameStyle -> None, (* Or Directive[GrayLevel[0.7], Opacity[0]] if you want a dim border *)
+                RoundingRadius -> 10,
+                FrameMargins -> {{10, 10}, {10, 10}},
+                ImageSize -> Automatic
+            ]
+        ]
+        ]]]
+] (* End DynamicModule *)
 							        }
 						         ]
 						      ]
@@ -1049,20 +1115,15 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
 
              Pane[
                Module[{theCol, posVal, uiElementToDisplay},
-                 (* Debug: Print the raw hintToGive *)
-                 Print["Debug (Pane Content Start): hintToGive = ", InputForm[hintToGive]];
 
                  (* Destructure hintToGive *)
                  {theCol, posVal} = hintToGive;
 
-                 (* Debug: Print the destructured parts *)
-                 Print["Debug (Pane Content): theCol = ", InputForm[theCol], ", posVal = ", InputForm[posVal]];
 
                  If[
                    posVal === Missing["PositionNotApplicable"], (* Use === for Missing objects *)
                    (
                      (* True Branch: Position is Missing *)
-                     Print["Debug (If): True branch taken (Position is Missing)."];
                      uiElementToDisplay = Row[{
                        Style["This color is present in the combination:", Medium, FontFamily -> "Arial"],
                        Spacer[8],
@@ -1071,7 +1132,6 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
                    ),
                    (
                      (* False Branch: Position is an Integer (e.g., 2) *)
-                     Print["Debug (If): False branch taken. posVal = ", InputForm[posVal]];
                      uiElementToDisplay = Row[{
                        Style["The color: ", Medium, FontFamily -> "Arial"],
                        Spacer[8],
@@ -1084,8 +1144,6 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
                    )
                  ];
 
-                 (* Debug: Print what the If statement produced *)
-                 Print["Debug (Pane Content End): uiElementToDisplay Head = ", Head[uiElementToDisplay], ", Value = ", InputForm[uiElementToDisplay]];
                  uiElementToDisplay (* This is the single expression Pane will display *)
                ],
                {paneSize[[1]], Automatic},
@@ -1093,7 +1151,7 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
              ],
 
              Spacer[15],
-             Button["Close", performCloseAction[True]]
+             Button["Close", performCloseAction[hintToGive]]
             },
             Alignment -> Center,
             Spacings -> 8
@@ -1105,7 +1163,7 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
              Style["Incorrect!", 18, Bold, Red], (* Incorrect text, maybe Red color *)
              Spacer[25],
               (* Close button INSIDE the Column *)
-             Button["Close",  performCloseAction[False]]
+             Button["Close",  performCloseAction[Missing["WrongAnswer"]]]
             }, Alignment -> Center], (* End Column for incorrect view *)
 
         _, (* Default/Error case *)
@@ -1189,25 +1247,11 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
      currentTurnData, currentPegData, guessedColor, feedbackSymbol, colorKey,
      
      (* For Priority 2 *)
-     lastTurnData, targetPosition, correctColorAtTarget
+     lastTurnData, targetPosition, correctColorAtTarget, colorList= {}
     },
-
-    (* --- 1. RIGOROUS INPUT VALIDATION --- *)
-    If[!ListQ[soluzioneListInput],
-      Print["Error: CalcolaHintSemplice - 'soluzioneListInput' is not a list. Received: ", Head[soluzioneListInput]];
-      Throw[Missing["InvalidInputSolutionNotList"]]
-    ];
     soluzioneList = soluzioneListInput;
     n = Length[soluzioneList];
 
-    If[!ListQ[hintFeedbackHistoryInput],
-      Print["Error: CalcolaHintSemplice - 'hintFeedbackHistoryInput' is not a list. Received: ", Head[hintFeedbackHistoryInput]];
-      Throw[Missing["InvalidInputHistoryNotList"]]
-    ];
-    If[Length[hintFeedbackHistoryInput] > 0 && !AllTrue[hintFeedbackHistoryInput, ListQ],
-      Print["Error: CalcolaHintSemplice - 'hintFeedbackHistoryInput' is not a list of lists."];
-      Throw[Missing["InvalidInputHistoryNotListOfLists"]]
-    ];
     hintFeedbackHistory = hintFeedbackHistoryInput;
 
     (* --- 2. SPECIAL CASE: No Actual Guesses Made Yet --- *)
@@ -1276,19 +1320,42 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
     (* --- 5. Priority 2: Hint from Last Actual Guess's Partial Match --- *)
     (* If we reach here, it means all solution colors have been confirmed by some feedback *)
     
-    lastTurnData = Last[actualTurnsData]; (* lastTurnData is {{color,feedback}, ...} *)
 
-    For[i = 1, i <= n, i++,
-      feedbackSymbol = lastTurnData[[i, 2]]; (* Get feedback for i-th peg of last guess *)
+    For[i = 1, i <= Length[actualTurnsData], i++,
+    lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
+    For[j = 1, j <= n, j++,
+      feedbackSymbol = lastTurnData[[j, 2]]; (* Get feedback for i-th peg of last guess *)
       
       If[feedbackSymbol === feedbackParziale,
-        targetPosition = i;
-        correctColorAtTarget = soluzioneList[[targetPosition]];
-        Print["full"]; (* User's debug print *)
-        Throw[{correctColorAtTarget, targetPosition}]
+        correctColorAtTarget = lastTurnData[[j,1]];
+        AppendTo[colorList,correctColorAtTarget];
       ];
     ];
-
+];
+Print[colorList];
+For[i = 1, i <= Length[actualTurnsData], i++,
+    lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
+    For[j = 1, j <= n, j++,
+      feedbackSymbol = lastTurnData[[j, 2]]; (* Get feedback for i-th peg of last guess *)
+      If[feedbackSymbol === feedbackEsatto,
+          correctColorAtTarget = lastTurnData[[j,1]];
+          DeleteCases[colorList, correctColorAtTarget];
+        ];
+    ];
+];
+Print[colorList];
+If[colorList!={},
+For[i = 1, i <= Length[actualTurnsData], i++,
+    lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
+    For[j = 1, j <= n, j++,
+      feedbackSymbol = lastTurnData[[j,2]]; (* Get feedback for i-th peg of last guess *)
+      If[feedbackSymbol === feedbackParziale && lastTurnData[[j,1]] == First[colorList],
+         Throw[{First[colorList], Position[soluzioneList, First[colorList]][[1, 1]]}]
+        ];
+    ];
+];
+    ]
+    
     (* --- 6. Fallback --- *)
     Throw[Missing["NoSimpleHintAvailable"]]
   ] (* End Module *)
