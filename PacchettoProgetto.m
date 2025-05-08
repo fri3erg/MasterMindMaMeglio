@@ -5,7 +5,7 @@
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
 (* :Package Version:0.2*)
-(* :History:last modified 11/4/2025*)
+(* :History:last modified 8/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Trivia Mastermind*)
 (* :License:MIT License*)
 (* :Discussion:Funzionalit\[AGrave] obbligatorie:
@@ -22,10 +22,11 @@ BeginPackage["PacchettoProgetto`"];
 (* USAGES DI FUNZIONI CHIAMATE ESPLICITAMENTE NEL NOTEBOOK *)
 (* ES. f::usage= "text"; *)
 avviaSchermataDiGioco::usage="aaaaaa";
-DisplayTriviaQuestion::usage = "Displays a trivia question dialog with options. Returns True if correct answer is selected, False otherwise. Parameters: seed (Integer), questionsDataset (Dataset)";
+CalcolaHintSemplice::usage = "CalcolaHintSemplice[hintFeedbackHistory, soluzioneList] calculates a prioritized hint for a Mastermind-like game based on guess history and the solution. \
+It always returns via Throw, providing a hint structure like {color, positionOrMissingCode} or a Missing[\"reason\"] object indicating specific states (e.g., no solution, no hint available).";
+DisplayTriviaQuestion::usage = "DisplayTriviaQuestion[seed, hintToGive] displays a modal trivia question dialog with multiple choice options. \
+Returns the 'hintToGive' structure if the user answers correctly, or Missing[\"WrongAnswer\"] if an incorrect answer is selected or the dialog is closed prematurely.";
 LoadQuestionsFromCSV::usage = "Loads questions from CSV file into a Dataset. Parameter: path (String)";
-InitializeQuestionInterface::usage = "Creates the main question interface window. Parameter: seed (Integer)";
-ProvideHintFeedback::usage = "Provides feedback based on answer correctness. Parameter: guessedCorrectly (True|False)";
 PrepareQuestionData::usage = "Selects and prepares question data. Returns {question, options, correctIndex}. Parameters: seed (Integer), questionsDataset (Dataset)";
 
 
@@ -34,13 +35,10 @@ Begin["`Private`"];
 
 (* Global variables that need to be shared across functions *)
 
-timeToWait = 2.0;
-paneSize={500,120};
-imageSize= {200, 80};
-windowSize= {600, Automatic};
 PacchettoProgetto`Private`triviaData; 
 
-(* Define an accessor function or a rule for triviaData that loads it on first use *)
+(* Accessor function or a rule for triviaData that loads it on first use and not each time, 
+i know it's bad but scope difference between functions put either loading inside the game or everywhere also *)
 PacchettoProgetto`Private`triviaData := (
     PacchettoProgetto`Private`triviaData = LoadQuestionsFromCSV["science-technology.csv"]
 );
@@ -719,7 +717,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										          ],
 										          Function[
 										          If[Length[correct]<x,
-										          AppendTo[correct, {}];
+										          AppendTo[correct, {}];(* used to fill the hint column even when hint not used*)
 										          ]
 													If[partitaInCorso,
 													  (
@@ -760,115 +758,130 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 											]
 							            ]
 							                 Spacer[50], (* Spacer before Hint Button *)
-
-
-(* Placeholder for when a result for correct[[x]] is not yet available *)
-(* You might initialize your 'correct' list with this, e.g., correct = Table[emptyResultPlaceholder, {maxRows}] *)
-emptyResultPlaceholder = "NoResultSetYet"; (* Or use Null, or {} *)
-
-Dynamic[
-    Module[{currentValForRowX}, (* Use a local variable for clarity and safety *)
-
-        (* Safely determine the current result for row x *)
-        currentValForRowX = If[
-            ListQ[correct] && Length[correct] >= x && x >= 1 && (* Basic checks for list and valid index x *)
-            correct[[x]] =!= Null && correct[[x]] =!= {} && correct[[x]] =!= emptyResultPlaceholder, (* Check against various empty/placeholder states *)
-            correct[[x]],
-            emptyResultPlaceholder (* Default if no valid result for this row x yet *)
-        ];
-
-        (* Optional: Intensive debug for the value just determined *)
-
-        If[currentValForRowX === Missing["WrongAnswer"],
-            (* RESULT: WRONG ANSWER - Display a non-interactive red marker or similar *)
-            (* Making this ClickPane non-functional or purely visual for a 'WrongAnswer' state *)
-            Framed[
-                "", (* No text, just color *)
-                Background -> Red,
-                FrameStyle -> None,
-                RoundingRadius -> 10,
-                FrameMargins -> {{10, 10}, {10, 10}}, (* Consistent with HINT button margins *)
-                ImageSize -> {80, 35} (* Example: Make it a small square/circle like other elements *)
-                (* Or use specific ImageSize consistent with your HINT button if you want it to occupy the same space *)
-            ],
-            
-     (* ELSE IF RESULT: CORRECT ANSWER of shape {color, value} *)
-     If[MatchQ[currentValForRowX, {_?ColorQ, _}],
-           Module[{resultColor, resultValue, textColor},
-                 resultColor = First[currentValForRowX];
-                 resultValue = Last[currentValForRowX];
-                 Framed[
-                       If[resultValue =!= Missing["PositionNotApplicable"] && resultValue =!= Missing["NoSimpleHintAvailable"],
-                             Row[{
-             Graphics[{EdgeForm[Gray], resultColor, Disk[]}, 
-               ImageSize -> {20, 20}],
-                                  Spacer[5],  
-             Style[ToString[resultValue], Medium, Bold, 
-               FontFamily -> "Arial"]
-                                    }],
-                                
-         Graphics[{EdgeForm[Gray], resultColor, Disk[]}, 
-           ImageSize -> {20, 20}]
-                         ],
-                       Background -> Green,
-                       FrameStyle -> None,
-                       RoundingRadius -> 10,
-                       FrameMargins -> {{30, 10}, {6, 6}},
-                       ImageSize -> {80, 35} (* 
-       Or set a fixed size like {width, 38} *)
-                   ]
-             ],
-    (* ELSE: NO RESULT YET or placeholder, use turn-based logic for HINT button *)
-        If[x === turn && partitaInCorso && triviaData =!= $Failed,
-            (* Hint Button Active *)
-            ClickPane[
-                Framed[
-                    Grid[{
-                        {
-                            Style["\|01f4a1", FontSize -> 10],
-                            Style["HINT", White, FontFamily -> "Consolas", FontSize -> 12, Bold]
-                        }
-                    },
-                    Alignment -> {Center, Center}, Spacings -> {1, 0}
-                    ],
-                    Background -> Blue,
-                    FrameStyle -> None,
-                    RoundingRadius -> 10,
-                    FrameMargins -> {{10, 10}, {10, 10}},
-                    ImageSize -> {80, 35}
-                ],
-                Function[Module[{}, (* Hint Action *)
-                    (* This AppendTo adds to the global 'correct' list.
-                       If you intend to set the result for the specific row 'x',
-                       you might want something like:
-                       correct[[x]] = DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]];
-                       For now, using AppendTo as a correction of your 'Append'.
-                    *)
-                    AppendTo[correct, DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]]];
-                    questionCounter++;
-                    ]
-                ],
-                Method -> "Queued"
-            ],
-            (* Hint Button Inactive / Invisible *)
-            Framed[
-                Grid[{
-                    {
-                        Style["\|01f4a1", FontSize -> 10, FontColor -> Directive[GrayLevel[0.7], Opacity[0]]],
-                        Style["HINT", FontFamily -> "Consolas", FontSize -> 12, FontColor -> Directive[GrayLevel[0.7], Opacity[0]], Bold]
-                    }
-                },
-                Alignment -> {Center, Center}, Spacings -> {1, 0}
-                ],
-                Background -> GrayLevel[0.9], (* Or Transparent to make it fully invisible *)
-                FrameStyle -> None, (* Or Directive[GrayLevel[0.7], Opacity[0]] if you want a dim border *)
-                RoundingRadius -> 10,
-                FrameMargins -> {{10, 10}, {10, 10}},
-                ImageSize -> Automatic
-            ]
-        ]
-        ]]]
-] (* End DynamicModule *)
+										(*
+										  emptyResultPlaceholder:
+										  Represents a state where a result for correct[[x]] is not yet available or not yet set.
+										*)
+										emptyResultPlaceholder = Missing["NoResultSetYet"];
+										
+										Dynamic[ (* This entire block will update dynamically when its dependent variables change *)
+										  Module[
+										    {
+										      currentValForRowX, (* Holds the processed value of correct[[x]] or the placeholder *)
+										      displayOutput      (* Will hold the final UI element to be rendered by Dynamic *)
+										    },
+										
+										    (* --- Step 1: Determine the Current Value for Row x 
+										      This block retrieves the value from correct[[x]] if it's valid and not a placeholder.
+										    *)
+										    currentValForRowX = If[
+										        ListQ[correct] && Length[correct] >= x && x >= 1 && 
+										        correct[[x]] =!= Null && correct[[x]] =!= {} && correct[[x]] =!= emptyResultPlaceholder, (* Ensure it's not various forms of empty or our specific placeholder *)
+										        correct[[x]], (* Use the actual value from correct[[x]] *)
+										        emptyResultPlaceholder (* Otherwise, use the placeholder *)
+										    ];
+										
+										    (* --- Step 2: Determine the UI to Display Based on currentValForRowX 
+										    *)
+										    displayOutput = Which[
+										
+										      (* === Case 1: The result for row x indicates a "WrongAnswer" === *)
+										      currentValForRowX === Missing["WrongAnswer"],
+										      Framed[
+										        "", (* Display an empty, colored box as a visual marker *)
+										        Background -> Red,
+										        FrameStyle -> None,
+										        RoundingRadius -> 10,
+										        FrameMargins -> {{10, 10}, {10, 10}}, 
+										        ImageSize -> {80, 35}                 
+										      ],
+										
+										      (* === Case 2: The result is a "Correct Answer" (a Hint, typically {color, value}) === *)
+										      MatchQ[currentValForRowX, {_?ColorQ, _}], (* Check if currentValForRowX matches the pattern {a Color, someValue} *)
+										      Module[ (* Localize variables for displaying the correct hint *)
+										        {
+										          resultColor = First[currentValForRowX], (* Extract the color from the hint *)
+										          resultValue = Last[currentValForRowX]  (* Extract the value/position from the hint *)
+										        },
+										        Framed[
+										          (*
+										            The content of the green "Correct Hint" box depends on the 'resultValue'.
+										          *)
+										          If[resultValue =!= Missing["PositionNotApplicable"] && resultValue =!= Missing["NoSimpleHintAvailable"],
+										            (* If the hint value is a specific position/number: display color + value *)
+										            Row[{
+										              Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}],
+										              Spacer[5],
+										              Style[ToString[resultValue], Medium, Bold, FontFamily -> "Arial"]
+										            }],
+										            (* Else (hint value indicates position not applicable or no simple hint): display only the color *)
+										            Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}]
+										          ],
+										          Background -> Green,
+										          FrameStyle -> None,
+										          RoundingRadius -> 10,
+										          FrameMargins -> {{30, 10}, {6, 6}}, 
+										          ImageSize -> {80, 35}
+										        ]
+										      ],
+										
+										      (* === Case 3: No specific result yet (i.e., currentValForRowX is emptyResultPlaceholder) === *)
+										      (* This is the default branch of the 'Which' statement. *)
+										      (* It will decide whether to show an active "HINT" button or an inactive placeholder. *)
+										      True,
+										      If[x === turn && partitaInCorso && triviaData =!= $Failed,
+										        (* --- Display Active "HINT" Button --- *)
+										        (* Conditions: current row (x) is the active turn, game is ongoing, and trivia data is loaded. *)
+										        ClickPane[
+										          Framed[ (* Visual appearance of the active HINT button *)
+										            Grid[{
+										              {
+										                Style["\|01f4a1", FontSize -> 10],
+										                Style["HINT", White, FontFamily -> "Consolas", FontSize -> 12, Bold]
+										              }
+										            },
+										            Alignment -> {Center, Center}, Spacings -> {1, 0}
+										            ],
+										            Background -> Blue,
+										            FrameStyle -> None,
+										            RoundingRadius -> 10,
+										            FrameMargins -> {{10, 10}, {10, 10}},
+										            ImageSize -> {80, 35}
+										          ],
+										          (* --- ClickPane Action: Called when the HINT button is clicked --- *)
+										          Function[ (* Anonymous function for the button's action *)
+										            (*
+										              'AppendTo' is the correct operation for their specific logic as i append {} even when not using hint in the CHECK function above
+										            *)
+										            AppendTo[correct, DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]]];
+										            questionCounter++; (* Increment a counter, for unique trivia question seeds *)
+										          ],
+										          Method -> "Queued" (* Ensures UI responsiveness by queuing the action. *)
+										        ],
+										        
+										        (* --- Display Inactive/Placeholder "HINT" Button --- *)
+										        (* Shown if the conditions for an active hint button are not met. *)
+										        Framed[
+										          Grid[{
+										            {
+										              Style["\|01f4a1", FontSize -> 10, FontColor -> Directive[GrayLevel[0.7], Opacity[0]]], (* invisible icon *)
+										              Style["HINT", FontFamily -> "Consolas", FontSize -> 12, FontColor -> Directive[GrayLevel[0.7], Opacity[0]], Bold] (* invisible text *)
+										            }
+										          },
+										          Alignment -> {Center, Center}, Spacings -> {1, 0}
+										          ],
+										          Background -> GrayLevel[0.9], 
+										          FrameStyle -> None,
+										          RoundingRadius -> 10,
+										          FrameMargins -> {{10, 10}, {10, 10}},
+										          ImageSize -> {80, 35} 
+										        ]
+										      ] (* End If for active/inactive hint button logic *)
+										    ]; (* End Which statement determining displayOutput *)
+										
+										    displayOutput (* The Dynamic expression evaluates to this UI element *)
+										  ] (* End Module for localizing currentValForRowX and displayOutput *)
+										] (* End Dynamic *)
 							        }
 						         ]
 						      ]
@@ -880,7 +893,7 @@ Dynamic[
 					Spacings->{2, 1}*)
 					]
 				},
-				Alignment -> {{Left, Center, Center, Right}}(* align each column *)
+				Alignment -> {{Left, Center, Center, Right}}
 				(*Background-> Red   DEBUG*)
 			    ],
 			    Spacer[20]
@@ -976,219 +989,225 @@ LoadQuestionsFromCSV[path_String] := Module[
 
 
 (*
-  Displays a trivia question dialog with multiple choice options
-  @param seed: Integer used to select and shuffle the question
-  @param questionsDataset: Dataset containing all trivia questions
-  @return: True if correct answer selected, False otherwise
+  Displays a trivia question dialog with multiple choice options.
+  The dialog is modal and the function will pause execution until the dialog is closed.
+
+  @param seed: Integer used to select and shuffle the question via PrepareQuestionData.
+  @param hintToGive: The hint structure, typically {color, position_or_missing_code}, 
+                     which is to be displayed if the answer is correct. This same structure
+                     will be the return value of the function if the answer is correct.
+  @return: The 'hintToGive' structure if the correct answer was selected.
+           Returns Missing["WrongAnswer"] if an incorrect answer was selected or if the
+           dialog was closed prematurely (e.g., via the OS window close button).
+           Returns $Failed if the dialog was closed before any interaction and result 
+           was not explicitly set (should be rare given NotebookEventActions).
 *)
-(* Assumes PrepareQuestionData is defined in the package *)
-(* Assumes global/config variables like paneSize, imageSize are defined *)
-(* Assumes triviaData is calculated BEFORE calling this function and passed in *)
 
 DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
   {
-   (* Outer Module Variables *)
-   questionWindow, 
-   result = $Failed,         (* Final result to return *)
-   dialogOpen = True,        (* Flag to control waiting loop *)
-   
-   (* Data prepared once before creating the dialog *)
-   initialQuestionData, 
-   initialOptionsData, 
-   initialCorrectIndexData,
-   stopDialogLoopFunc
-
+    (* --- Outer Module Variables --- *)
+    questionWindow,                 (* Stores the DialogObject *)
+    result = $Failed,               (* Final result to return. Initialized to $Failed. *)
+    dialogOpen = True,              (* Flag to control the While loop, making the function synchronous. *)
+    
+    (* Data prepared once before creating the dialog (output from PrepareQuestionData) *)
+    initialQuestionData,            
+    initialOptionsData,             
+    initialCorrectIndexData,        
+    
+    stopDialogLoopFunc              (* Function to handle premature dialog closure *)
   },
-    stopDialogLoopFunc = Function[Null, dialogOpen = False;
-    performCloseAction[Missing["WrongAnswer"]], HoldAll];
 
-  (* Prepare question data *outside* the DynamicModule *)
+  (*
+    stopDialogLoopFunc:
+    This function is called when the dialog window is closed using the OS's native
+    close button (e.g., the 'x' button on the window frame).
+    It ensures that the main While loop in DisplayTriviaQuestion terminates and
+    sets an appropriate 'result'.
+  *)
+  stopDialogLoopFunc = Function[{}, 
+    (* Call performCloseAction to set the result and close the dialog cleanly. *)
+    (* The result Missing["WrongAnswer"] indicates incorrect choice but i count it as incorrect if you close the window, because you already saw the question *)
+    performCloseAction[Missing["WrongAnswer"]];
+  , HoldAll]; 
+
+  (* Prepare question data once, outside the DynamicModule, using the provided seed. *)
   {initialQuestionData, initialOptionsData, initialCorrectIndexData} = PrepareQuestionData[seed];
 
-  (* Create the dialog *)
+  (* --- Create the Dialog Window --- *)
   questionWindow = CreateDialog[
+    (*
+      The main content of the dialog is a DynamicModule.
+      This allows for interactive content that can change state without closing the dialog.
+    *)
     DynamicModule[
       { 
-        (* Internal State Variables *)
-        displayState = "question", (* Possible states: "question", "correct_show_hint", "incorrect_show_message" *)
-        internalResult = $Failed, (* Stores True/False based on the answer *)
+        displayState = "question", (* Controls the current view: "question", "correct_show_hint", "incorrect_show_message" *)
         
-        (* Local copies initialized from outer scope *)
+        (* Local copies of question data, initialized from the outer Module's scope. *)
+        (* This ensures the DynamicModule has its own stable copy of the data. *)
         localQuestion = initialQuestionData,
         localOptions = initialOptionsData,
         localCorrectIndex = initialCorrectIndexData
-        
-      }, 
-      performCloseAction[currentAnswerResult_] := (
-        (* This function will correctly access 'result' and 'dialogOpen' 
-           from the parent DisplayTriviaQuestion Module due to lexical scoping *)
-        result = currentAnswerResult; 
-        dialogOpen = False;        
-        NotebookClose[EvaluationNotebook[]]; 
-      ); 
+      },
+      
+      (*
+        performCloseAction[currentDynamicResult_]:
+        This function is called by the "Close" buttons within the dialog.
+        It sets the 'result' and 'dialogOpen' variables in the outer DisplayTriviaQuestion Module's scope.
+        Lexical scoping allows this inner function to modify variables of its parent Module.
+      *)
+      performCloseAction[currentDynamicResult_] := (
+        result = currentDynamicResult; (* Set the final result of DisplayTriviaQuestion. *)
+        dialogOpen = False;           (* Signal the outer While loop to terminate. *)
+        NotebookClose[EvaluationNotebook[]]; (* Programmatically close this dialog notebook. *)
+      );
+      
+      (*
+        Dynamic@Refresh[ ... , TrackedSymbols :> {displayState}]
+        The main UI of the dialog. It's wrapped in Dynamic and Refresh so that it updates
+        automatically when 'displayState' changes, showing the appropriate view.
+      *)
       Dynamic@Refresh[
         Switch[displayState,
 
-          "question", 
-           (* --- Show Question View --- *)
-           Column[{
-             Pane[
-               Style[localQuestion["Question"], 16, Bold, TextAlignment -> Center], 
-               ImageSize -> paneSize, (* Use configured paneSize *)
-               Scrollbars -> False, Alignment -> Center
-             ],
-             Spacer[20],
-             Grid[
-               Partition[
-                 MapIndexed[
-                   Function[{optionText, optionIndex},
-                     (* Inner DynamicModule for button visual state *)
-                     DynamicModule[{clicked = False, isCorrect = Null, position = First[optionIndex]}, 
-                       Button[
-                         optionText,
-                         (* --- Button Action --- *)
-                         isCorrect = (position == localCorrectIndex); 
-                         clicked = True;
-                         internalResult = isCorrect; (* Store the result internally *)
-                         
-                         (* Change the view based on correctness *)
-                         If[isCorrect,
-                           displayState = "correct_show_hint" (* Go to hint view *)
-                         ,
-                           displayState = "incorrect_show_message" (* Go to incorrect message view *)
-                         ];
-                         (* --- End Button Action --- *)
-                         , 
-                         Background -> Dynamic[If[clicked, If[isCorrect, Green, Red], White]],
-                         ImageSize -> imageSize, (* Use configured imageSize *)
-                         BaseStyle -> {FontColor -> Black, FontWeight -> Bold, FontFamily -> "Arial", FontSize -> 14},
-                         FrameMargins -> 12
-                       ] (* End Button *)
-                     ] (* End Inner DynamicModule *)
-                   ], (* End Function *)
-                   localOptions (* Use local options data *)
-                 ], (* End MapIndexed *)
-                 UpTo[Ceiling[Length[localOptions]/2]] 
-               ], (* End Partition *)
-               Spacings -> {1, 1}, Alignment -> Center
-             ] (* End Grid *)
-           }, Alignment -> Center], (* End Column for question view *)
+          "question",
+          (* --- View 1: Displaying the Question and Answer Options --- *)
+          Column[{
+            Pane[
+              Style[localQuestion["Question"], 16, Bold, TextAlignment -> Center], 
+              ImageSize -> {500,120}, 
+              Scrollbars -> False, Alignment -> Center
+            ],
+            Spacer[20],
+            Grid[
+              Partition[ (* Arrange answer buttons into a grid, typically 2 columns *)
+                MapIndexed[
+                  Function[{optionText, optionIndex}, (* For each answer option... *)
+                    (*
+                      Inner DynamicModule for each button:
+                      This gives each answer button its own state for visual feedback (clicked, color).
+                    *)
+                    DynamicModule[{clicked = False, isCorrect = Null, position = First[optionIndex]}, 
+                      Button[
+                        optionText,
+                        (* --- Button Action (when an answer option is clicked) --- *)
+                        (
+                          isCorrect = (position == localCorrectIndex); (* Check if the selected option is correct. *)
+                          clicked = True; (* Mark this button as clicked for visual feedback. *)
+                          
+                          (* Transition to the appropriate feedback view. *)
+                          If[isCorrect,
+                            displayState = "correct_show_hint",
+                            displayState = "incorrect_show_message"
+                          ];
+                        ),
+                        (* --- End Button Action --- *)
+                        Background -> Dynamic[If[clicked, If[isCorrect, Green, Red], White]], (* Dynamic background color *)
+                        ImageSize -> {200, 80},
+                        BaseStyle -> {FontColor -> Black, FontWeight -> Bold, FontFamily -> "Arial", FontSize -> 14},
+                        FrameMargins -> 12
+                      ] (* End Button *)
+                    ] (* End Inner DynamicModule for button state *)
+                  ], (* End Function for MapIndexed *)
+                  localOptions (* List of answer strings *)
+                ], (* End MapIndexed over options *)
+                UpTo[Ceiling[Length[localOptions]/2]] (* Controls items per row in Partition for Grid *)
+              ], (* End Partition *)
+              Spacings -> {1, 1}, Alignment -> Center
+            ] (* End Grid for answer buttons *)
+          }, Alignment -> Center], (* End Column for "question" view *)
 
-"correct_show_hint",
-           (* --- Show Correct Message & Hint View --- *)
-(* --- Show Correct Message & Hint View --- *)
+          "correct_show_hint",
+          (* --- View 2: Displayed when the User Answers Correctly --- *)
+          Column[{
+            Style["Correct!", Bold, Green, FontFamily -> "Arial", FontSize -> 36, TextAlignment -> Center],
+            Pane[
+              (* This inner Module is just for localizing 'theCol' and 'posVal' if needed,*)
+              Module[{theCol, posVal},
+                {theCol, posVal} = hintToGive; (* Destructure the hint passed to DisplayTriviaQuestion. *)
+                
+                (* Display the hint based on its structure. *)
+                Which[
+                  posVal === Missing["PositionNotApplicable"],
+                  Row[{
+                    Style["This color is present in the combination:", Medium, FontFamily -> "Arial", FontSize -> 18],
+                    Spacer[8],
+                    Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]]
+                  }, Alignment -> Center],
 
-           Column[{
-             Style["Correct!", Bold, Green, FontFamily -> "Arial",FontSize->36, TextAlignment -> Center],
+                  posVal === Missing["NoSimpleHintAvailable"],
+                  Row[{
+                    Style["No hint available, you have all the information", Medium, FontFamily -> "Arial", FontSize -> 18]
+                  }, Alignment -> Center],
+                  
+                  True, (* Default case: assumes posVal is an integer representing a position. *)
+                  Row[{
+                    Style["The color: ", Medium, FontFamily -> "Arial", FontSize -> 18], Spacer[8],
+                    Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]], Spacer[8],
+                    Style["is at position", Medium, FontFamily -> "Arial", FontSize -> 18], Spacer[8],
+                    Style[ToString[posVal], Medium, Bold, FontFamily -> "Arial", FontSize -> 24]
+                  }, Alignment -> Center]
+                ] (* End Which for hint display logic *)
+              ], (* End Module for hint destructuring *)
+              {500, Automatic}, (* Use configured width, automatic height *)
+              Alignment -> Center
+            ],
+            Button[ (* "Close" button for the "Correct!" view *)
+              Style["Close", Bold, FontSize -> 24],
+              performCloseAction[hintToGive] (* Return the original hintToGive structure as the result. *)
+            ]
+          }, Alignment -> Center, Spacings -> 15], (* End Column for "correct_show_hint" view *)
 
-             Pane[
-               Module[{theCol, posVal, uiElementToDisplay},
-               
-                 (* Destructure hintToGive *)
-                 {theCol, posVal} = hintToGive;
-                 If[
-                   posVal === Missing["PositionNotApplicable"], (* Use === for Missing objects *)
-                   (
-                     (* True Branch: Position is Missing *)
-                     uiElementToDisplay = Row[{
-                       Style["This color is present in the combination:", Medium, FontFamily -> "Arial", FontSize->18],
-                       Spacer[8],
-                       Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]]
-                     }, Alignment -> Center];
-                   ),
-                   (
-                    If[posVal===Missing["NoSimpleHintAvailable"],
-                    (
-               uiElementToDisplay= Row[{
-                       Style["No hint available, you have all the information", Medium, FontFamily -> "Arial", FontSize->18]
-                     }, Alignment -> Center];
-                     ),
-                     (
-                     (* False Branch: Position is an Integer (e.g., 2) *)
-                     uiElementToDisplay = Row[{
-                       Style["The color: ", Medium, FontFamily -> "Arial", FontSize->18],
-                       Spacer[8],
-                       Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]],
-                       Spacer[8],
-                       Style["is at position", Medium, FontFamily -> "Arial", FontSize->18],
-                       Spacer[8],
-                       Style[ToString[posVal], Medium, Bold, FontFamily -> "Arial", FontSize->24]
-                     }, Alignment -> Center];
-                     )
-						];
+          "incorrect_show_message",
+          (* --- View 3: Displayed when the User Answers Incorrectly --- *)
+          Column[{
+            Spacer[4],
+            Pane[
+              Style["Incorrect!", 36, Bold, Red, FontFamily -> "Arial", TextAlignment -> Center],
+              {500, Automatic}, Alignment -> Center
+            ],
+            Button[ (* "Close" button for the "Incorrect!" view *)
+              Style["Close", Bold, FontSize -> 24],
+              performCloseAction[Missing["WrongAnswer"]] (* Return Missing["WrongAnswer"] as the result. *)
+            ]
+          }, Alignment -> Center, Spacings -> 15], (* End Column for "incorrect_show_message" view *)
 
-                   )
-                 ];
-
-                 uiElementToDisplay (* This is the single expression Pane will display *)
-               ],
-               {paneSize[[1]], Automatic},
-               Alignment -> Center
-             ],
-               Button[
-    Style["Close", Bold, FontSize -> 24], (* Larger and bolder button text *)
-    performCloseAction[hintToGive] (* Assuming performCloseAction is defined *)
-  ]
-            },
-            Alignment -> Center,
-            Spacings -> 15
-           ],
-
-"incorrect_show_message",
-  (* --- Show Incorrect Message View --- *)
-  Column[{
-  Spacer[4],
-    Pane[ (* Wrap the "Incorrect!" message in a Pane *)
-      Style["Incorrect!", 36, Bold, Red, FontFamily -> "Arial", TextAlignment -> Center],
-      {paneSize[[1]], Automatic}, (* Use the same width as the hint Pane *)
-      Alignment -> Center         (* Center the Style block within this Pane *)
-    ],
-    Button[Style["Close", Bold, FontSize -> 24], performCloseAction[Missing["WrongAnswer"]]] (* Assuming Missing["WrongAnswer"] is the intended value for 'result' *)
-  },
-  Alignment -> Center,
-  Spacings -> 15
-],
-
-        _, (* Default/Error case *)
-         Style["Error displaying dialog content.", Red]
-         
-        ], (* End Switch *)
-      TrackedSymbols :> {displayState} (* Refresh only when displayState changes *)
+          _, (* Default case for Switch[displayState, ...]: handles any unexpected state. *)
+          Style["Error: Dialog display state is invalid. Please report this.", Red, Bold]
+          
+        ], (* End Switch on displayState *)
+        TrackedSymbols :> {displayState} (* Ensures the Dynamic content updates only when 'displayState' changes. *)
       ] (* End Dynamic@Refresh *)
-    ], (* End DynamicModule *)
+    ], (* End DynamicModule for dialog content *)
     
-    (* --- Dialog Options --- *)
+    (* --- Standard Dialog Options --- *)
     WindowTitle -> "Trivia Mastermind Hint",
-    WindowSize -> {520, 400}, (* Or use configured windowSize *)
-    Modal -> True,
-    WindowElements -> {},
-    WindowFrame -> "ModalDialog",
+    WindowSize -> {520, 400}, 
+    Modal -> True,             (* Dialog blocks interaction with other notebooks. *)
+    WindowElements -> {},       
+    WindowFrame -> "ModalDialog", (* Standard frame for modal dialogs, usually includes an OS close button. *)
     Background -> White,
-    NotebookEventActions -> {"WindowClose" :> (
-        (* This handles if the dialog is closed by the OS (e.g., window 'x' button)
-           before an answer's "Close" button is pressed. *)
-        stopDialogLoopFunc[];    
-    )}
-    
-    
+    NotebookEventActions -> {
+      "WindowClose" :> stopDialogLoopFunc[] (* Custom action when OS close button is clicked. *)
+    }
   ]; (* End CreateDialog *)
   
   (* --- Wait for Dialog Closure --- *)
-  (* Reset state just before waiting *)
-  result = $Failed; 
-  dialogOpen = True;
-  (* Pause execution here until the dialog is closed (manually or via button) *)
+  (* The 'result' and 'dialogOpen' variables are initialized at the start of the Module. *)
+  (* This loop pauses the execution of DisplayTriviaQuestion until 'dialogOpen' becomes False 
+     (which happens inside performCloseAction or stopDialogLoopFunc).
+     so that the result gets passed only after the dialog is closed and user has a chance to respond *)
   While[dialogOpen, Pause[0.1]];
   
-  (* --- Return Result --- *)
-  result (* Return True if correct answer was selected, False otherwise *)
+  (* --- Return Final Result --- *)
+  result (* The value set by performCloseAction. *)
 ];
 
 
 (*
   Prepares question data by selecting and shuffling options
   @param seed: Integer used for random selection
-  @param questionsDataset: Dataset containing all questions
   @return: {question, options, correctIndex}
 *)
 PrepareQuestionData[seed_Integer] := Module[
@@ -1211,125 +1230,205 @@ PrepareQuestionData[seed_Integer] := Module[
 ];
 
 
-(* CalcolaHintSemplice adapted for new hintFeedbackHistory structure *)
+(*
+  CalcolaHintSemplice
 
+  Provides a prioritized hint for a Mastermind-like game based on the history of guesses
+  and the known solution. The function uses a Catch/Throw mechanism for all its return paths.
+
+  The function assumes 'feedbackEsatto' (correct color in correct position) and
+  'feedbackParziale' (correct color in wrong position) are globally defined symbols
+  or accessible in the calling scope.
+
+  Hint Priorities:
+  1. No Guesses Yet: If no actual guesses have been made, suggest a random color from the solution.
+  2. Unconfirmed Solution Color: Suggest a color from the solution that has not yet appeared in
+     any guess that received 'feedbackEsatto' or 'feedbackParziale'.
+  3. Partially Matched, Not Exactly Matched Color: If all solution colors have received some
+     feedback, suggest a color that has received 'feedbackParziale' but never 'feedbackEsatto',
+     along with its correct position in the solution.
+  4. Fallback: If no other specific hint can be generated.
+
+  @param hintFeedbackHistoryInput_List:
+    A list representing the history of all played turns. Each element is a turn.
+    - A turn is a list of peg data: {{color1, feedback1}, {color2, feedback2}, ...}.
+    - Each peg data is a list: {guessedColor, feedbackSymbol}.
+      'guessedColor' can be any color type (e.g., RGBColor, a named color string).
+      'feedbackSymbol' is expected to be one of 'feedbackEsatto', 'feedbackParziale', or
+      another symbol indicating an incorrect guess (though only esatto/parziale are actively used
+      for positive hint generation).
+    - Empty lists '{}' within hintFeedbackHistoryInput represent turns where no guess was made
+      or that are not yet played.
+    Example: {{{RGBColor[1,0,0], feedbackEsatto}, {RGBColor[0,1,0], feedbackParziale}}, {}}
+
+  @param soluzioneListInput_List:
+    A list representing the secret code or solution. Each element is a color.
+    Example: {RGBColor[1,0,0], RGBColor[0,1,0], RGBColor[0,0,1]}
+
+  @return (via Throw):
+    The function always exits by Throwing one of the following structures:
+
+    - Missing["SolutionIsEmpty"]:
+        If 'soluzioneListInput' is empty or contains no valid colors.
+
+    - {color_SymbolOrObject, Missing["PositionNotApplicable"]}:
+        - If no actual guesses have been made yet (a random color from the solution is provided).
+        - For a Priority 1 hint (an unconfirmed solution color is provided).
+
+    - {color_SymbolOrObject, position_Integer}:
+        For a Priority 2 hint. 'color' is the suggested color, and 'position' is its
+        1-based index in the 'soluzioneListInput'.
+
+    - {"Red", Missing["NoSimpleHintAvailable"]}:
+        The fallback hint if no other hint priority is met. "Red" is an arbitrary
+        placeholder color. The Missing object indicates the reason.
+*)
 CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := Catch[
   Module[
     {
-     (* Parameters after validation *)
-     soluzioneList, 
-     hintFeedbackHistory,
-     n, (* Length of the solution *)
-     
-     (* Derived from inputs *)
-     actualTurnsData, (* List of actual played turns, each turn is {{color,feedback},...} *)
-     uniqueSolutionColors,
-     confirmedSolutionColors, (* Association: solutionColor -> True/False *)
+      (* Parameters after validation/assignment *)
+      soluzioneList = soluzioneListInput,
+      hintFeedbackHistory = hintFeedbackHistoryInput,
+      n = Length[soluzioneListInput], (* Length of the solution *)
 
-     (* Loop/temp variables *)
-     currentTurnData, currentPegData, guessedColor, feedbackSymbol, colorKey,
-     
-     (* For Priority 2 *)
-     lastTurnData, targetPosition, correctColorAtTarget, colorList= {}
+      (* Derived from inputs *)
+      actualTurnsData, (* List of actual played turns, each turn is {{color,feedback},...} *)
+      uniqueSolutionColors,
+      confirmedSolutionColors, (* Association: solutionColor -> True/False indicating if a color has received 'esatto' or 'parziale' feedback *)
+
+      (* Loop/temp variables *)
+      currentTurnData, currentPegData, guessedColor, feedbackSymbol, colorKey,
+      
+      (* For Priority 2 *)
+      lastTurnData, 
+      colorList = {}, (* List of colors that received 'feedbackParziale' and not 'feedbackEsatto' *)
+      
+      (* Iterators for loops *)
+      turnIter, pegIter, solColorIter, i, j
     },
-    soluzioneList = soluzioneListInput;
-    n = Length[soluzioneList];
-
-    hintFeedbackHistory = hintFeedbackHistoryInput;
-
-    (* --- 2. SPECIAL CASE: No Actual Guesses Made Yet --- *)
-    (* This checks if all entries in hintFeedbackHistory are empty lists {} *)
-    If[AllTrue[hintFeedbackHistory, # === {} &],
-      If[n > 0, 
-          Throw[{RandomChoice[soluzioneList], Missing["PositionNotApplicable"]}]
-      ,
-          Throw[Missing["SolutionIsEmpty"]] 
-      ];
+    
+    If[n == 0,
+      Throw[Missing["SolutionIsEmpty"]]
     ];
 
-    (* --- 3. Filter for Actual Played Turns --- *)
+    (* --- 2. Filter for Actual Played Turns & Handle "No Guesses Yet" Case --- *)
+    
+    (* Select only turns that have actual guess data (i.e., are not empty lists) *)
     actualTurnsData = Select[hintFeedbackHistory, # =!= {} &];
 
-    (* If, after filtering, there are no actual turns (e.g., if hintFeedbackHistory was empty initially,
-       though the AllTrue check should handle the {{},{},...} case) *)
+    (* If no actual guesses have been made yet *)
     If[Length[actualTurnsData] == 0,
-      If[n > 0,
-          Throw[{RandomChoice[soluzioneList], Missing["PositionNotApplicable"]}]
-      ,
-          Throw[Missing["SolutionIsEmpty"]]
-      ];
+      (* Provide a random color from the solution as a starting hint *)
+      (* The position is not applicable for this type of hint *)
+      Throw[{RandomChoice[soluzioneList], Missing["PositionNotApplicable"]}]
     ];
 
-    (* --- 4. Priority 1: Check for Unconfirmed Solution Colors --- *)
-    (* This part uses the pre-calculated feedback in actualTurnsData *)
-    
-    uniqueSolutionColors = DeleteDuplicates[soluzioneList];
-    (* Ensure uniqueSolutionColors is not empty if solution wasn't, before creating Association *)
-    confirmedSolutionColors = Association[# -> False & /@ uniqueSolutionColors]; 
+    (* --- 3. Priority 1: Check for Unconfirmed Solution Colors --- *)
+    (* Goal: Suggest a color from the solution that has not yet been part of any guess receiving 'feedbackEsatto' or 'feedbackParziale'. *)
 
-    Do[ (* Iterate through each played turn's data *)
-      currentTurnData = turnIter; (* turnIter is {{color,feedback}, {color,feedback}, ...} *)
-      Do[ (* Iterate through each peg's data in that turn *)
-        currentPegData = pegIter; (* pegIter is {guessedColor, feedbackSymbol} *)
+    uniqueSolutionColors = DeleteDuplicates[soluzioneList];
+    
+    (* Initialize an association to track if each unique solution color has been "confirmed" (received positive feedback) *)
+    (* A color is considered "confirmed" if it was guessed and received either 'feedbackEsatto' or 'feedbackParziale' *)
+    confirmedSolutionColors = Association[# -> False & /@ uniqueSolutionColors];
+
+    (* Iterate through each played turn and each peg in that turn *)
+    Do[
+      currentTurnData = turnIter; (* currentTurnData is a list of {guessedColor, feedbackSymbol} for one turn *)
+      Do[
+        currentPegData = pegIter; (* currentPegData is a single {guessedColor, feedbackSymbol} pair *)
         guessedColor = currentPegData[[1]];
         feedbackSymbol = currentPegData[[2]];
         
+        (* If the guessed color received 'feedbackEsatto' or 'feedbackParziale' *)
         If[feedbackSymbol === feedbackEsatto || feedbackSymbol === feedbackParziale,
+          (* And if this color is one of the colors in the actual solution *)
           If[KeyExistsQ[confirmedSolutionColors, guessedColor],
-             confirmedSolutionColors = AssociateTo[confirmedSolutionColors, guessedColor -> True];
+            (* Mark this solution color as "confirmed" *)
+            confirmedSolutionColors = AssociateTo[confirmedSolutionColors, guessedColor -> True];
           ]
-          (* If guessedColor that got feedback isn't a solution color, we don't track it in confirmedSolutionColors *)
+          (* If a guessedColor that received feedback isn't a solution color, it's not tracked in confirmedSolutionColors *)
         ];
-      , {pegIter, currentTurnData}];
-    , {turnIter, actualTurnsData}];
+      , {pegIter, currentTurnData}]; (* End loop over pegs in the current turn *)
+    , {turnIter, actualTurnsData}]; (* End loop over actual played turns *)
 
     (* Check if any solution color remains unconfirmed *)
     Do[
-      colorKey = solColorIter; (* Use distinct iterator *)
-      If[KeyExistsQ[confirmedSolutionColors, colorKey] && confirmedSolutionColors[colorKey] === False,
+      colorKey = solColorIter; (* colorKey is one of the unique solution colors *)
+      (* If the color exists in our tracking and is marked as False (unconfirmed) *)
+      If[Lookup[confirmedSolutionColors, colorKey, True] === False,
+        (* Suggest this unconfirmed solution color. Position is not applicable for this hint type. *)
         Throw[{colorKey, Missing["PositionNotApplicable"]}]
       ];
-    , {solColorIter, uniqueSolutionColors}];
+    , {solColorIter, uniqueSolutionColors}]; (* End loop over unique solution colors *)
 
-    (* --- 5. Priority 2: Hint from Last Actual Guess's Partial Match --- *)
-    (* If we reach here, it means all solution colors have been confirmed by some feedback *)
-    
+    (* --- 4. Priority 2: Hint from a Color with Partial Match but No Exact Match --- *)
+    (* Goal: If all solution colors have been "confirmed" (i.e., received some form of positive feedback),
+       find a color that has received 'feedbackParziale' but has NOT received 'feedbackEsatto' in any guess.
+       Then, suggest this color and its actual position in the solution. *)
+
+    (* Step 4a: Collect all colors that received 'feedbackParziale' in any position across all guesses *)
     For[i = 1, i <= Length[actualTurnsData], i++,
-    lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
-    For[j = 1, j <= n, j++,
-      feedbackSymbol = lastTurnData[[j, 2]]; (* Get feedback for i-th peg of last guess *)
-      
-      If[feedbackSymbol === feedbackParziale,
-        correctColorAtTarget = lastTurnData[[j,1]];
-        AppendTo[colorList,correctColorAtTarget];
-      ];
-    ];
-];
+      lastTurnData = actualTurnsData[[i]]; (* A single turn's data: {{color,feedback}, ...} *)
+      For[j = 1, j <= n, j++, (* Iterate through each peg position of the guess *)
+        Module[{colorInGuess, feedbackForPeg},
+          colorInGuess = lastTurnData[[j, 1]];
+          feedbackForPeg = lastTurnData[[j, 2]];
+          
+          If[feedbackForPeg === feedbackParziale,
+            AppendTo[colorList, colorInGuess];
+          ];
+        ];
+      ]; (* End loop over pegs for the current turn (lastTurnData) *)
+    ]; (* End loop over actualTurnsData *)
 
-For[i = 1, i <= Length[actualTurnsData], i++,
-    lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
-    For[j = 1, j <= n, j++,
-      feedbackSymbol = lastTurnData[[j, 2]]; (* Get feedback for i-th peg of last guess *)
-      If[feedbackSymbol === feedbackEsatto,
-          correctColorAtTarget = lastTurnData[[j,1]];
-          colorList= DeleteCases[colorList, correctColorAtTarget];
+    (* Step 4b: Remove any colors from 'colorList' if they ever received 'feedbackEsatto' in any position *)
+    For[i = 1, i <= Length[actualTurnsData], i++,
+      lastTurnData = actualTurnsData[[i]];
+      For[j = 1, j <= n, j++,
+        Module[{colorInGuess, feedbackForPeg},
+          colorInGuess = lastTurnData[[j, 1]];
+          feedbackForPeg = lastTurnData[[j, 2]];
+        
+          If[feedbackForPeg === feedbackEsatto,
+            (* If a color received 'feedbackEsatto', it's no longer a candidate for this type of hint *)
+            colorList = DeleteCases[colorList, colorInGuess];
+          ];
         ];
-    ];
-];
-If[colorList!={},
-For[i = 1, i <= Length[actualTurnsData], i++,
-    lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
-    For[j = 1, j <= n, j++,
-      feedbackSymbol = lastTurnData[[j,2]]; (* Get feedback for i-th peg of last guess *)
-      If[feedbackSymbol === feedbackParziale && lastTurnData[[j,1]] == First[colorList],
-         Throw[{First[colorList], Position[soluzioneList, First[colorList]][[1, 1]]}]
-        ];
-    ];
-];
-    ]
+      ]; (* End loop over pegs for the current turn (lastTurnData) *)
+    ]; (* End loop over actualTurnsData *)
+
+    (* 'colorList' now contains colors that have received 'feedbackParziale' at least once, 
+       and have never received 'feedbackEsatto'. It might contain duplicates. *)
+
+    (* Step 4c: If candidate colors exist, take the first one and find an instance where it got 'feedbackParziale' *)
+    If[colorList =!= {},
+      Module[{targetHintColor = First[colorList], firstOccurrencePositionInSolution},
+        (* This loop re-iterates to find a specific instance where First[colorList] got 'feedbackParziale'.
+           This is part of the original logic to confirm the condition before throwing. *)
+        For[i = 1, i <= Length[actualTurnsData], i++,
+          lastTurnData = actualTurnsData[[i]];
+          For[j = 1, j <= n, j++,
+            Module[{colorInGuess, feedbackForPeg},
+              colorInGuess = lastTurnData[[j, 1]];
+              feedbackForPeg = lastTurnData[[j, 2]];
+            
+              If[feedbackForPeg === feedbackParziale && colorInGuess == targetHintColor,
+                (* Found an instance. Now get the true position of this color in the solution. *)
+                firstOccurrencePositionInSolution = Position[soluzioneList, targetHintColor][[1, 1]];
+                Throw[{targetHintColor, firstOccurrencePositionInSolution}]
+              ];
+            ];
+          ]; (* End loop over pegs for the current turn (lastTurnData) *)
+        ]; (* End loop over actualTurnsData *)
+      ] (* End Module for targetHintColor *)
+    ]; (* End If *)
     
-    (* --- 6. Fallback --- *)
-    Throw[{Red, Missing["NoSimpleHintAvailable"]}]
+    (* --- 5. Fallback Hint --- *)
+    (* If no other specific hint could be generated based on the priorities above. *)
+    (* "Red" is an arbitrary placeholder color *)
+    Throw[{"Red", Missing["NoSimpleHintAvailable"]}]
+    
   ] (* End Module *)
 ] (* End Catch *)
 
