@@ -35,8 +35,8 @@ Begin["`Private`"];
 (* Global variables that need to be shared across functions *)
 
 timeToWait = 2.0;
-paneSize={500,80};
-imageSize= {200, 40};
+paneSize={500,120};
+imageSize= {200, 80};
 windowSize= {600, Automatic};
 PacchettoProgetto`Private`triviaData; 
 
@@ -550,39 +550,6 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
              ]
 		   }]
 		  ),
-		 Length[valutazioneTentativo]>0 && valutazioneTentativo[[1]] === mastermindProsegui,
-		  (
-		   Row[{
-		     (*Bottone TRIVIA*)
-		     ClickPane[
-		      Framed[
-		       Grid[{{
-		         Style[labels["idea"], FontSize->12, Yellow],
-				 Style[labels["trivia"], White, FontFamily->"Consolas", FontSize->12]
-		       }},
-		       Alignment->{Center, Center}
-		       ],
-		      Background->Purple,
-			  FrameStyle->None,
-			  RoundingRadius->10,
-			  FrameMargins->{{10, 10}, {5, 5}},
-			  ImageSize->Automatic
-		      ],
-		      Function[ (*DA CAMBIARE*)
-		        gridItemsColors=Table[Opacity[0.2, Black],{numeroTentativi},{lunghezzaCombinazione}];
-				hintFeedbackHistory=ConstantArray[{}, numeroTentativi];
-				turn=1;(*Numero del tentativo*)
-				colorsList=paletteColori;(*Lista di colori della palette di scelta*)
-				selectedItem={1,1}; (* Elemento selezionato riga,colonna*)
-				(*SeedRandom[seed];*)
-				soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
-				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
-				valutazioneTentativo={};
-				partitaInCorso=True
-		      ] 
-		     ]
-		   }]
-		  ),
 		 True, Style["", FontSize->0]
 		],
 	   TrackedSymbols:>{valutazioneTentativo}
@@ -831,7 +798,7 @@ Dynamic[
                  resultColor = First[currentValForRowX];
                  resultValue = Last[currentValForRowX];
                  Framed[
-                       If[resultValue =!= Missing["PositionNotApplicable"],
+                       If[resultValue =!= Missing["PositionNotApplicable"] && resultValue =!= Missing["NoSimpleHintAvailable"],
                              Row[{
              Graphics[{EdgeForm[Gray], resultColor, Disk[]}, 
                ImageSize -> {20, 20}],
@@ -1032,7 +999,8 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
    stopDialogLoopFunc
 
   },
-    stopDialogLoopFunc = Function[Null, dialogOpen = False, HoldAll];
+    stopDialogLoopFunc = Function[Null, dialogOpen = False;
+    performCloseAction[Missing["WrongAnswer"]], HoldAll];
 
   (* Prepare question data *outside* the DynamicModule *)
   {initialQuestionData, initialOptionsData, initialCorrectIndexData} = PrepareQuestionData[seed];
@@ -1109,38 +1077,46 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
 "correct_show_hint",
            (* --- Show Correct Message & Hint View --- *)
 (* --- Show Correct Message & Hint View --- *)
+
            Column[{
-             Style["Correct!", Large, Bold, Green, FontFamily -> "Arial", TextAlignment -> Center],
-             Spacer[10],
+             Style["Correct!", Bold, Green, FontFamily -> "Arial",FontSize->36, TextAlignment -> Center],
 
              Pane[
                Module[{theCol, posVal, uiElementToDisplay},
-
+               
                  (* Destructure hintToGive *)
                  {theCol, posVal} = hintToGive;
-
-
                  If[
                    posVal === Missing["PositionNotApplicable"], (* Use === for Missing objects *)
                    (
                      (* True Branch: Position is Missing *)
                      uiElementToDisplay = Row[{
-                       Style["This color is present in the combination:", Medium, FontFamily -> "Arial"],
+                       Style["This color is present in the combination:", Medium, FontFamily -> "Arial", FontSize->18],
                        Spacer[8],
                        Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]]
                      }, Alignment -> Center];
                    ),
                    (
+                    If[posVal===Missing["NoSimpleHintAvailable"],
+                    (
+               uiElementToDisplay= Row[{
+                       Style["No hint available, you have all the information", Medium, FontFamily -> "Arial", FontSize->18]
+                     }, Alignment -> Center];
+                     ),
+                     (
                      (* False Branch: Position is an Integer (e.g., 2) *)
                      uiElementToDisplay = Row[{
-                       Style["The color: ", Medium, FontFamily -> "Arial"],
+                       Style["The color: ", Medium, FontFamily -> "Arial", FontSize->18],
                        Spacer[8],
                        Tooltip[Graphics[{EdgeForm[Gray], theCol, Disk[]}, ImageSize -> {25, 25}], ToString[theCol]],
                        Spacer[8],
-                       Style["is at position", Medium, FontFamily -> "Arial"],
+                       Style["is at position", Medium, FontFamily -> "Arial", FontSize->18],
                        Spacer[8],
-                       Style[ToString[posVal], Medium, Bold, FontFamily -> "Arial"]
+                       Style[ToString[posVal], Medium, Bold, FontFamily -> "Arial", FontSize->24]
                      }, Alignment -> Center];
+                     )
+						];
+
                    )
                  ];
 
@@ -1149,22 +1125,29 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
                {paneSize[[1]], Automatic},
                Alignment -> Center
              ],
-
-             Spacer[15],
-             Button["Close", performCloseAction[hintToGive]]
+               Button[
+    Style["Close", Bold, FontSize -> 24], (* Larger and bolder button text *)
+    performCloseAction[hintToGive] (* Assuming performCloseAction is defined *)
+  ]
             },
             Alignment -> Center,
-            Spacings -> 8
+            Spacings -> 15
            ],
 
-         "incorrect_show_message", 
-           (* --- Show Incorrect Message View --- *)
-           Column[{
-             Style["Incorrect!", 18, Bold, Red], (* Incorrect text, maybe Red color *)
-             Spacer[25],
-              (* Close button INSIDE the Column *)
-             Button["Close",  performCloseAction[Missing["WrongAnswer"]]]
-            }, Alignment -> Center], (* End Column for incorrect view *)
+"incorrect_show_message",
+  (* --- Show Incorrect Message View --- *)
+  Column[{
+  Spacer[4],
+    Pane[ (* Wrap the "Incorrect!" message in a Pane *)
+      Style["Incorrect!", 36, Bold, Red, FontFamily -> "Arial", TextAlignment -> Center],
+      {paneSize[[1]], Automatic}, (* Use the same width as the hint Pane *)
+      Alignment -> Center         (* Center the Style block within this Pane *)
+    ],
+    Button[Style["Close", Bold, FontSize -> 24], performCloseAction[Missing["WrongAnswer"]]] (* Assuming Missing["WrongAnswer"] is the intended value for 'result' *)
+  },
+  Alignment -> Center,
+  Spacings -> 15
+],
 
         _, (* Default/Error case *)
          Style["Error displaying dialog content.", Red]
@@ -1176,7 +1159,7 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
     
     (* --- Dialog Options --- *)
     WindowTitle -> "Trivia Mastermind Hint",
-    WindowSize -> {600, Automatic}, (* Or use configured windowSize *)
+    WindowSize -> {520, 400}, (* Or use configured windowSize *)
     Modal -> True,
     WindowElements -> {},
     WindowFrame -> "ModalDialog",
@@ -1282,14 +1265,6 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
     
     uniqueSolutionColors = DeleteDuplicates[soluzioneList];
     (* Ensure uniqueSolutionColors is not empty if solution wasn't, before creating Association *)
-    If[n > 0 && Length[uniqueSolutionColors] == 0,
-        Print["Error: CalcolaHintSemplice - 'uniqueSolutionColors' became empty from a non-empty solution. Solution content: ", soluzioneList];
-        Throw[Missing["ProblemWithSolutionContent"]]
-    ];
-    If[Length[uniqueSolutionColors] == 0, (* Implies n was 0 or solution was problematic *)
-        Throw[Missing["SolutionEffectivelyEmpty"]]
-    ];
-    
     confirmedSolutionColors = Association[# -> False & /@ uniqueSolutionColors]; 
 
     Do[ (* Iterate through each played turn's data *)
@@ -1312,7 +1287,6 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
     Do[
       colorKey = solColorIter; (* Use distinct iterator *)
       If[KeyExistsQ[confirmedSolutionColors, colorKey] && confirmedSolutionColors[colorKey] === False,
-        Print["partial"]; (* User's debug print *)
         Throw[{colorKey, Missing["PositionNotApplicable"]}]
       ];
     , {solColorIter, uniqueSolutionColors}];
@@ -1320,7 +1294,6 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
     (* --- 5. Priority 2: Hint from Last Actual Guess's Partial Match --- *)
     (* If we reach here, it means all solution colors have been confirmed by some feedback *)
     
-
     For[i = 1, i <= Length[actualTurnsData], i++,
     lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
     For[j = 1, j <= n, j++,
@@ -1332,18 +1305,17 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
       ];
     ];
 ];
-Print[colorList];
+
 For[i = 1, i <= Length[actualTurnsData], i++,
     lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
     For[j = 1, j <= n, j++,
       feedbackSymbol = lastTurnData[[j, 2]]; (* Get feedback for i-th peg of last guess *)
       If[feedbackSymbol === feedbackEsatto,
           correctColorAtTarget = lastTurnData[[j,1]];
-          DeleteCases[colorList, correctColorAtTarget];
+          colorList= DeleteCases[colorList, correctColorAtTarget];
         ];
     ];
 ];
-Print[colorList];
 If[colorList!={},
 For[i = 1, i <= Length[actualTurnsData], i++,
     lastTurnData = actualTurnsData[[i]]; (* lastTurnData is {{color,feedback}, ...} *)
@@ -1357,7 +1329,7 @@ For[i = 1, i <= Length[actualTurnsData], i++,
     ]
     
     (* --- 6. Fallback --- *)
-    Throw[Missing["NoSimpleHintAvailable"]]
+    Throw[{Red, Missing["NoSimpleHintAvailable"]}]
   ] (* End Module *)
 ] (* End Catch *)
 
