@@ -718,7 +718,6 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										  Represents a state where a result for correct[[x]] is not yet available or not yet set.
 										*)
 										emptyResultPlaceholder = Missing["NoResultSetYet"];
-										
 										Dynamic[ (* This entire block will update dynamically when its dependent variables change *)
 										  Module[
 										    {
@@ -742,14 +741,15 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										
 										      (* === Case 1: The result for row x indicates a "WrongAnswer" === *)
 										      currentValForRowX === Missing["WrongAnswer"],
-										      Framed[
-										        "", (* Display an empty, colored box as a visual marker *)
-										        Background -> Red,
-										        FrameStyle -> None,
-										        RoundingRadius -> 10,
-										        FrameMargins -> {{10, 10}, {10, 10}}, 
-										        ImageSize -> {80, 35}                 
-										      ],
+												Framed[
+												  Style["\:274c", FontSize -> 18], 
+												  Background -> GrayLevel[0.95],                                    (* Light grey background *)
+												  FrameStyle -> Red,                                 (* Darker grey border *)
+												  RoundingRadius -> 10,                                       
+												  FrameMargins -> {{10, 10}, {0, 0}},                       
+												  ImageSize -> {80, 35},                                      
+												  Alignment -> Center                                         
+												],
 										
 										      (* === Case 2: The result is a "Correct Answer" (a Hint, typically {color, value}) === *)
 										      MatchQ[currentValForRowX, {_?ColorQ, _}], (* Check if currentValForRowX matches the pattern {a Color, someValue} *)
@@ -762,7 +762,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										          (*
 										            The content of the green "Correct Hint" box depends on the 'resultValue'.
 										          *)
-										          If[resultValue =!= Missing["PositionNotApplicable"] && resultValue =!= Missing["NoSimpleHintAvailable"],
+										          If[resultValue =!= Missing["NoSimpleHintAvailable"],
+										          If[resultValue =!= Missing["PositionNotApplicable"],
 										            (* If the hint value is a specific position/number: display color + value *)
 										            Row[{
 										              Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}],
@@ -772,9 +773,11 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										            (* Else (hint value indicates position not applicable or no simple hint): display only the color *)
 										            Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}]
 										          ],
-										          Background -> Green,
-										          FrameStyle -> None,
-										          RoundingRadius -> 10,
+										          ""
+										          ],
+												  Background -> GrayLevel[0.95],                                    (* Light grey background *)
+												  FrameStyle -> Darker[Green],                                 (* Darker grey border *)
+												  RoundingRadius -> 10,  
 										          FrameMargins -> {{30, 10}, {6, 6}}, 
 										          ImageSize -> {80, 35}
 										        ]
@@ -1391,7 +1394,7 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
     (* --- 5. Fallback Hint --- *)
     (* If no other specific hint could be generated based on the priorities above. *)
     (* "Red" is an arbitrary placeholder color *)
-    Throw[{"Red", Missing["NoSimpleHintAvailable"]}]
+    Throw[{Green , Missing["NoSimpleHintAvailable"]}]
     
   ] (* End Module *)
 ] (* End Catch *)
