@@ -8,45 +8,56 @@
 (* :History:last modified 8/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Trivia Mastermind*)
 (* :License:MIT License*)
-(* :Discussion:Funzionalit\[AGrave] obbligatorie:
-	- Seed da chiedere all\[CloseCurlyQuote]utente per (ri)generare un esercizio
-	- Genera Esercizio
-	- Verifica Risultato
-	- Mostra Soluzione
-	- Pulisci
-*)
 
 BeginPackage["PacchettoProgetto`"];
 (*ClearAll["PacchettoProgetto`*"];*)
 
 (* USAGES DI FUNZIONI CHIAMATE ESPLICITAMENTE NEL NOTEBOOK *)
-(* ES. f::usage= "text"; *)
-avviaSchermataDiGioco::usage="aaaaaa";
-CalcolaHintSemplice::usage = "CalcolaHintSemplice[hintFeedbackHistory, soluzioneList] calculates a prioritized hint for a Mastermind-like game based on guess history and the solution. \
-It always returns via Throw, providing a hint structure like {color, positionOrMissingCode} or a Missing[\"reason\"] object indicating specific states (e.g., no solution, no hint available).";
-DisplayTriviaQuestion::usage = "DisplayTriviaQuestion[seed, hintToGive] displays a modal trivia question dialog with multiple choice options. \
-Returns the 'hintToGive' structure if the user answers correctly, or Missing[\"WrongAnswer\"] if an incorrect answer is selected or the dialog is closed prematurely.";
-LoadQuestionsFromCSV::usage = "Loads questions from CSV file into a Dataset. Parameter: path (String)";
-PrepareQuestionData::usage = "Selects and prepares question data. Returns {question, options, correctIndex}. Parameters: seed (Integer), questionsDataset (Dataset)";
-
+avviaSchermataDiGioco::usage="Avvia l\[CloseCurlyQuote]interfaccia grafica principale, visualizzando una schermata iniziale da cui \[EGrave] possibile personalizzare i parametri del gioco e avviare una nuova partita.";
 
 
 Begin["`Private`"];
 
 (* Global variables that need to be shared across functions *)
+PacchettoProgetto`Private`triviaData;
 
-PacchettoProgetto`Private`triviaData; 
-
-(* Accessor function or a rule for triviaData that loads it on first use and not each time, 
-i know it's bad but scope difference between functions put either loading inside the game or everywhere also *)
+(* Accessor function or a rule for triviaData that loads it on first use and not each time.
+(Scope difference between functions put either loading inside the game or everywhere also) *)
 PacchettoProgetto`Private`triviaData := (
     PacchettoProgetto`Private`triviaData = LoadQuestionsFromCSV["science-technology.csv"]
 );
-(* Ricorda di documentare ogni riga di codice: funzionalit\[AGrave],
-variabili di input, variabili di lavoro, variabili di output, spiegazione dei singoli passaggi *)
+
+(* Lista dei colori usati da Mastermind *)
+paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White, Gray, Black};
+(* Stato della partita *)
+partitaInCorso=True
+
+labels=translations = <|
+	"titoloGioco" -> "TRIVIA MASTERMIND",
+	"fattoDa" -> "by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
+	"inserisciSeed" -> "Insert seed: ",
+	"placeholderSeed" -> "Write a numeric seed...",
+	"play" -> "\[FilledRightTriangle]",
+	"randomSeed" -> "\:21bb",
+	"nTurni" -> "Turns",
+	"nCombinazione" -> "Cipher Length",
+	"allowDuplicates"->"Repeating colors",
+	"esci" -> "EXIT",
+	"partita" -> "GAME - DELETE ME",
+	"seedSelezionato" -> "GAME STARTED WITH SEED: ",
+	"colori" -> "Colors",
+	"combinazione" -> "Cipher",
+	"suggerimenti" -> "Feedback",
+	"azione" -> "Actions",
+	"restartVinto"->"YOU WON! Want to crack the same code?",
+	"restartPerso"->"You lost... Want to crack the same code?",
+	"vai"->"CHECK",
+	"menu"->"BACK TO MENU",
+	"trivia"->"NEED A TIP?",
+	"idea"->"\[LightBulb]"
+	|>;
 
 
-(* Menu di avvio *)
 (* Menu di avvio *)
 avviaSchermataDiGioco[] := DynamicModule[
  {
@@ -311,37 +322,6 @@ avviaSchermataDiGioco[] := DynamicModule[
 ]
 
 
-(* Lista dei colori usati da Mastermind *)
-paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White, Gray, Black};
-(* Stato della partita *)
-partitaInCorso=True
-
-labels=translations = <|
-	"titoloGioco" -> "TRIVIA MASTERMIND",
-	"fattoDa" -> "by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
-	"inserisciSeed" -> "Insert seed: ",
-	"placeholderSeed" -> "Write a numeric seed...",
-	"play" -> "\[FilledRightTriangle]",
-	"randomSeed" -> "\:21bb",
-	"nTurni" -> "Turns",
-	"nCombinazione" -> "Cipher Length",
-	"allowDuplicates"->"Repeating colors",
-	"esci" -> "EXIT",
-	"partita" -> "GAME - DELETE ME",
-	"seedSelezionato" -> "GAME STARTED WITH SEED: ",
-	"colori" -> "Colors",
-	"combinazione" -> "Cipher",
-	"suggerimenti" -> "Feedback",
-	"azione" -> "Actions",
-	"restartVinto"->"YOU WON! Want to crack the same code?",
-	"restartPerso"->"You lost... Want to crack the same code?",
-	"vai"->"CHECK",
-	"menu"->"BACK TO MENU",
-	"trivia"->"NEED A TIP?",
-	"idea"->"\[LightBulb]"
-	|>;
-
-
 (* === Funzione per generare il codice segreto da indovinare ===
 Prende in input la lunghezza del codice da generare come intero, il seed, ed un booleano che ammette o meno la presenza di colori duplicati.
 Ritorna tale codice. Esempio: {Red, Purple, Purple, Green} *)
@@ -364,7 +344,7 @@ generaCodiceSegreto[seed_, lunghezza_Integer, allowDuplicates_] := Module[
 (* === Funzione di feedback del tentativo === 
 Prende in input il codice soluzione e il codice appena tentato dall'utente.
 Ritorna il feedback ottenuto confrontando tali codici, via simboli 'feedbackEsatto', 'feedbackParziale' e 'feedbackAssente'.
-Esesmpio: {feedbackParziale, feedbackEsatto, feedbackParziale, feedbackAssente} *)
+Esempio: {feedbackParziale, feedbackEsatto, feedbackParziale, feedbackAssente} *)
 feedbackTentativo[soluzione_List, tentativo_List] := Module[
 {
     feedback,          (* Lista dei feedback per ogni posizione *)
@@ -1444,6 +1424,10 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
   ] (* End Module *)
 ] (* End Catch *)
 
+
+(* === Codice usato per il bottone di avvio nel notebook ===
+Button["Avvia Programma", FrontEndExecute[FrontEndToken[InputNotebook[], "EvaluateNotebook"]],
+ BaseStyle -> {"GenericButton", 16, Bold}, ImageSize -> {175, 50}] *)
 
 
 End[];
