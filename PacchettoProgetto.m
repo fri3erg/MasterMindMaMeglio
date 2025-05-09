@@ -789,7 +789,12 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                                                     Row[{
                                                                         Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}],
                                                                         Spacer[5],
-                                                                        Style[ToString[resultValue], 16, Bold, FontFamily -> "Arial"]
+                                                                        Column[{
+																        Style[ToString[resultValue], 16, Bold, FontFamily -> "Arial"] (*mette apposto lo spazio verticale, 
+																        pensavo di dover metter Spacer ma Column lo sposta gi\[AGrave] abbastanza*)
+																    },
+																    Spacings -> 0
+																     ]
                                                                     }],
                                                                     (* Altrimenti (l'indizio indica che la posizione non \[EGrave] applicabile o non c'\[EGrave] un indizio semplice): mostra solo il colore *)
                                                                     Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}]
