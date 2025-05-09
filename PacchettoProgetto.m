@@ -694,6 +694,12 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 												
 											Function[
 												If[partitaInCorso,
+                                                     (* Prima di processare il tentativo, assicuriamoci che esista una entry per l'eventuale aiuto in questa riga. *)
+                                                     (* Questo serve per mantenere l'allineamento della griglia degli aiuti, anche se l'aiuto non viene usato. *)
+                                                     If[Length[correct] < x,
+                                                        AppendTo[correct, {}];
+                                                     ];
+												
 													valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
 													Module[{currentTurnFeedbackSymbols = valutazioneTentativo[[2]], combinedTurnData},
 														combinedTurnData = Table[{tentativoList[[i]], currentTurnFeedbackSymbols[[i]]}, {i, Length[tentativoList]}];
