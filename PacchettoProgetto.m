@@ -32,6 +32,7 @@ paletteColori={RGBColor[0.9,0,0], Green, Yellow, Blue, Orange, Brown, Purple, Cy
 (* Stato della partita *)
 partitaInCorso=True
 
+(* Libreria di etichette *)
 labels=translations = <|
 	"titoloGioco" -> "TRIVIA MASTERMIND",
 	"fattoDa" -> "by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
@@ -548,12 +549,13 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 									],
 									{
 										"MouseClicked":>(
-											gridItemsColors[[Sequence @@ selectedItem]]=col;
-											tentativoList[[selectedItem[[2]]]]=col;
-											(* Passa la selezione al prossimo pallino indiscriminatamente *)
-											(*If[selectedItem[[2]] < lunghezzaCombinazione, selectedItem[[2]]=selectedItem[[2]]+1]*)
-											(* Passa la selezione al prossimo pallino vuoto *)
-											selectedItem = vaiAlProssimoPallinoVuoto[selectedItem, tentativoList, lunghezzaCombinazione];
+											If[partitaInCorso,  (* Per fermare ulteriori interazioni una volta conclusa la partita *)
+									        (
+									          gridItemsColors[[Sequence @@ selectedItem]] = col;
+									          tentativoList[[selectedItem[[2]]]] = col;
+									          selectedItem = vaiAlProssimoPallinoVuoto[selectedItem, tentativoList, lunghezzaCombinazione];
+									        )
+									      ]
 										)
 									}
 								]
@@ -591,7 +593,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 						                          ],
 						                      {
 						                          "MouseClicked":>(
-												    If[x === turn,
+												    If[partitaInCorso && x === turn,  (* Per fermare ulteriori interazioni una volta conclusa la partita, e per agire solo sulla riga corrente *)
 												        If[tentativoList[[y]] =!= None,  (* Se clicchi un colore nel tentativo, rimuovilo *)
 												            (
 												                selectedItem = {x, y};
