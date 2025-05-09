@@ -4,19 +4,21 @@
 (* :Context:PacchettoProgetto`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
-(* :Package Version:0.2*)
-(* :History:last modified 8/5/2025*)
+(* :Package Version:0.9*)
+(* :History:last modified 9/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Trivia Mastermind*)
 (* :License:MIT License*)
 
 BeginPackage["PacchettoProgetto`"];
 (*ClearAll["PacchettoProgetto`*"];*)
 
-(* USAGES DI FUNZIONI CHIAMATE ESPLICITAMENTE NEL NOTEBOOK *)
+(* USAGE DI FUNZIONI CHIAMATE ESPLICITAMENTE NEL NOTEBOOK *)
 avviaSchermataDiGioco::usage="Avvia l\[CloseCurlyQuote]interfaccia grafica principale, visualizzando una schermata iniziale da cui \[EGrave] possibile personalizzare i parametri del gioco e avviare una nuova partita.";
 
 
 Begin["`Private`"];
+
+(* Variabili Globali *)
 
 (*
   Spiegazione del funzionamento per 'triviaData':
@@ -218,7 +220,6 @@ avviaSchermataDiGioco[] := DynamicModule[
            partitaInCorso=True;
            customSeed=seedInserito;
            seedInserito="";
-           (*SeedRandom[customSeed];*)
            cambiaSchermata["gioco"];
          )]
         ],
@@ -502,7 +503,6 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                             turn = 1; (*Numero del tentativo*)
                                             colorsList = paletteColori; (*Lista di colori della palette di scelta*)
                                             selectedItem = {1, 1}; (* Elemento selezionato riga,colonna*)
-                                            (*SeedRandom[seed];*)
                                             soluzioneList = generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
                                             tentativoList = ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
                                             valutazioneTentativo = {};
@@ -538,7 +538,6 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                             turn = 1; (*Numero del tentativo*)
                                             colorsList = paletteColori; (*Lista di colori della palette di scelta*)
                                             selectedItem = {1, 1}; (* Elemento selezionato riga,colonna*)
-                                            (*SeedRandom[seed];*)
                                             soluzioneList = generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
                                             tentativoList = ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
                                             valutazioneTentativo = {};
@@ -675,73 +674,61 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                         ],
 
                                         Spacer[50],
+                                        
+                                        (* Tasto di check *)
+                                        Dynamic[Module[
+											{tentativoCompletoQ},
+											tentativoCompletoQ = AllTrue[tentativoList, # =!= None &];  (* Il tentativo \[EGrave] 'completo' se non ha None *)
+										
+											Which[
+											(* Caso 1: turno corrente e tentativo completo *)
+											x === turn && tentativoCompletoQ,
+											ClickPane[
+											Framed[
+												Grid[{{Style["\|01f3ae", FontSize -> 10],
+													Style[labels["vai"], White, FontFamily -> "Consolas",
+													FontSize -> 12, Bold]}}],
+												Background -> Orange,  (* Arancio *)
+												FrameStyle -> None, RoundingRadius -> 10,
+												FrameMargins -> {{10, 10}, {10, 10}}, ImageSize -> Automatic],
+												
+											Function[
+												If[partitaInCorso,
+													valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
+													Module[{currentTurnFeedbackSymbols = valutazioneTentativo[[2]], combinedTurnData},
+														combinedTurnData = Table[{tentativoList[[i]], currentTurnFeedbackSymbols[[i]]}, {i, Length[tentativoList]}];
+												        hintFeedbackHistory[[turn]] = combinedTurnData;
+												    ];
+											        If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
+											        selectedItem = {turn, 1};
+											        tentativoList = ConstantArray[None, lunghezzaCombinazione];
+										        ]
+										    ]],
+										     
+										     (* Caso 2: turno corrente ma tentativo incompleto *)
+										     x === turn && !tentativoCompletoQ,
+										     Framed[
+											     Grid[{{Style["\|01f3ae", FontSize -> 10, FontColor -> Gray], 
+											         Style[labels["vai"], FontFamily -> "Consolas", FontSize -> 12, FontColor -> Gray, Bold]}}],
+											     Background -> GrayLevel[0.8],  (* Grigio*)
+											     FrameStyle -> None, RoundingRadius -> 10,
+											     FrameMargins -> {{10, 10}, {10, 10}}, ImageSize -> Automatic
+										     ],
+										     
+										     (* Caso 3 (default): non \[EGrave] il turno corrente *)
+										     True,
+										     Framed[
+										         Grid[{{Style["\|01f3ae", FontSize -> 10, FontColor -> Directive[GrayLevel[0.9], Opacity[0]]],
+										             Style[labels["vai"], FontFamily -> "Consolas", FontSize -> 12,
+										             FontColor -> Directive[GrayLevel[0.9], Opacity[0]], Bold]}}],  (* Invisibile *)
+										         Background -> GrayLevel[0.9],
+										         FrameStyle -> None, RoundingRadius -> 10,
+										         FrameMargins -> {{10, 10}, {10, 10}}, ImageSize -> Automatic
+										     ]]
+										]]
 
-                                        Dynamic[
-                                            If[x === turn,
-                                                (* Se \[EGrave] il turno corrente, mostra il pulsante "VAI" attivo *)
-                                                ClickPane[
-                                                    Framed[
-                                                        Grid[{
-                                                            {
-                                                                Style["\|01f3ae", FontSize -> 10],
-                                                                Style[labels["vai"], White, FontFamily -> "Consolas", FontSize -> 12, Bold]
-                                                            }
-                                                        },
-                                                        Alignment -> {Center, Center}, Spacings -> {1, 0}
-                                                        ],
-                                                        Background -> Orange,
-                                                        FrameStyle -> None,
-                                                        RoundingRadius -> 10,
-                                                        FrameMargins -> {{10, 10}, {10, 10}},
-                                                        ImageSize -> Automatic
-                                                    ],
-                                                    Function[
-                                                        (* Prima di processare il tentativo, assicuriamoci che esista una entry per l'eventuale aiuto in questa riga. *)
-                                                        (* Questo serve per mantenere l'allineamento della griglia degli aiuti, anche se l'aiuto non viene usato. *)
-                                                        If[Length[correct] < x,
-                                                            AppendTo[correct, {}];
-                                                        ];
-                                                        If[partitaInCorso,
-                                                            (
-                                                                valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
-
-                                                                (* Aggiorniamo la cronologia dei feedback con il tentativo corrente. *)
-                                                                Module[{currentTurnFeedbackSymbols = valutazioneTentativo[[2]], combinedTurnData},
-                                                                    (* Combiniamo ogni colore tentato con il suo simbolo di feedback. *)
-                                                                    combinedTurnData = Table[
-                                                                        {tentativoList[[i]], currentTurnFeedbackSymbols[[i]]},
-                                                                        {i, Length[tentativoList]}
-                                                                    ];
-                                                                    hintFeedbackHistory[[turn]] = combinedTurnData;
-                                                                ];
-
-                                                                If[valutazioneTentativo[[1]] === mastermindProsegui, turn++]; (* Se il gioco continua, passa al turno successivo *)
-                                                                selectedItem = {turn, 1}; (* Reimposta la selezione per il prossimo input *)
-                                                                tentativoList = ConstantArray[None, lunghezzaCombinazione]; (* Svuota la lista del tentativo per il prossimo turno *)
-                                                            )
-                                                        ]
-                                                    ]
-                                                ],
-                                                (* Altrimenti, mostra una versione disabilitata (grigia) del pulsante "VAI" *)
-                                                Framed[
-                                                    Grid[{
-                                                        {
-                                                            Style["\|01f3ae", FontSize -> 10, FontColor -> Directive[GrayLevel[0.9], Opacity[0]]],
-                                                            Style[labels["vai"], FontFamily -> "Consolas", FontSize -> 12, FontColor -> GrayLevel[0.9], Bold]
-                                                        }
-                                                    },
-                                                    Alignment -> {Center, Center}, Spacings -> {1, 0}
-                                                    ],
-                                                    Background -> GrayLevel[0.9],
-                                                    FrameStyle -> None,
-                                                    RoundingRadius -> 10,
-                                                    FrameMargins -> {{10, 10}, {10, 10}},
-                                                    ImageSize -> Automatic
-                                                ]
-                                            ]
-                                        ],
-
-                                        Spacer[50], (* Spazio prima del pulsante Hint *)
+                                        Spacer[50],
+                                        
                                         (* Definiamo un valore per rappresentare uno stato in cui il risultato per l'aiuto (correct[[x]]) non \[EGrave] ancora disponibile. *)
                                         emptyResultPlaceholder = Missing["NoResultSetYet"];
                                         Dynamic[ 
@@ -790,11 +777,11 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                                                         Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}],
                                                                         Spacer[5],
                                                                         Column[{
-																        Style[ToString[resultValue], 16, Bold, FontFamily -> "Arial"] (*mette apposto lo spazio verticale, 
-																        pensavo di dover metter Spacer ma Column lo sposta gi\[AGrave] abbastanza*)
-																    },
-																    Spacings -> 0
-																     ]
+														        Style[ToString[resultValue], 16, Bold, FontFamily -> "Arial"] (*mette apposto lo spazio verticale, 
+														        pensavo di dover metter Spacer ma Column lo sposta gi\[AGrave] abbastanza*)
+														    },
+														    Spacings -> 0
+														     ]
                                                                     }],
                                                                     (* Altrimenti (l'indizio indica che la posizione non \[EGrave] applicabile o non c'\[EGrave] un indizio semplice): mostra solo il colore *)
                                                                     Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}]
@@ -885,9 +872,10 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
             FrameMargins -> {{15, 15}, {5, 5}},
             ImageSize -> Automatic
         ]
-    ]
+]
+
     
-    (*
+(*
   Costruisce e restituisce l'interfaccia utente dinamica per la schermata di gioco principale.
   Questa schermata \[EGrave] composta da una barra superiore, contenente un pulsante per tornare al menu
   e l'indicazione del seme (seed) della partita corrente, e dall'area di gioco principale

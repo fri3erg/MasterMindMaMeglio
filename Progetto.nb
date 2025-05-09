@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[   8947150,     146880]
-NotebookOptionsPosition[   8942943,     146796]
-NotebookOutlinePosition[   8943982,     146828]
-CellTagsIndexPosition[   8943826,     146821]
+NotebookDataLength[   8947722,     146890]
+NotebookOptionsPosition[   8943513,     146806]
+NotebookOutlinePosition[   8944552,     146838]
+CellTagsIndexPosition[   8944396,     146831]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -146646,14 +146646,24 @@ Cell["Fine della Partita:", "Subsubsection",
   3.9530045873935566`*^9}},ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-\
 be3e2d0ca442"],
 
-Cell["\<\
-Se il giocatore decifra il codice entro il numero massimo di tentativi, vince \
-la partita.
-Altrimenti, ottiene una sconfitta.\
-\>", "Text",
+Cell[TextData[{
+ "Se il giocatore decifra il codice entro il numero massimo di tentativi, \
+vince la partita. Altrimenti, ottiene una sconfitta.\nNel caso di una \
+sconfitta, viene anche data la possibilit\[AGrave] di ",
+ StyleBox["ricominciare la partita con lo stesso seed",
+  FontSlant->"Italic"],
+ ".\n\nIn qualsiasi momento \[EGrave] possibile ",
+ StyleBox["abbandonare la partita",
+  FontSlant->"Italic"],
+ " in corso e tornare al men\[UGrave] con il tasto \[OpenCurlyQuote]\
+\[LongLeftArrow]\[CloseCurlyQuote] in alto.\nSi pu\[OGrave] ",
+ StyleBox["chiudere il programma",
+  FontSlant->"Italic"],
+ " con il tasto \[OpenCurlyQuote]QUIT\[CloseCurlyQuote]."
+}], "Text",
  CellChangeTimes->{{3.953004551563715*^9, 3.9530046344878254`*^9}, {
-  3.954838160274866*^9, 
-  3.954838195577881*^9}},ExpressionUUID->"b2de94b4-7376-2242-b1f9-\
+  3.954838160274866*^9, 3.954838195577881*^9}, {3.955810233559187*^9, 
+  3.955810410826414*^9}},ExpressionUUID->"b2de94b4-7376-2242-b1f9-\
 cc91f914495e"]
 }, Open  ]]
 }, Open  ]]
@@ -146713,7 +146723,7 @@ Cell[BoxData[{
    3.9535298573689156`*^9}, 3.9535299027479725`*^9, {3.9535303448612385`*^9, 
    3.9535303926919975`*^9}, {3.953530479847145*^9, 3.953530480411598*^9}, 
    3.9537305887514687`*^9},
- CellLabel->"In[4]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
+ CellLabel->"In[37]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -146807,22 +146817,22 @@ ExpressionUUID->"f3d60804-c8f6-d94d-8044-faa8435f3bfb"
 (* Internal cache information *)
 (*CellTagsOutline
 CellTagsIndex->{
- "Dataset_Source"->{
-  Cell[8939862, 146738, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
-   CellTags->"Dataset_Source"]},
  "Wikipedia_Mastermind"->{
-  Cell[8939347, 146726, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+  Cell[8939917, 146736, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
    CellTags->"Wikipedia_Mastermind"]},
  "Wordle"->{
-  Cell[8939622, 146733, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
-   CellTags->"Wordle"]}
+  Cell[8940192, 146743, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+   CellTags->"Wordle"]},
+ "Dataset_Source"->{
+  Cell[8940432, 146748, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+   CellTags->"Dataset_Source"]}
  }
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Dataset_Source", 8943369, 146809},
- {"Wikipedia_Mastermind", 8943528, 146812},
- {"Wordle", 8943679, 146815}
+ {"Wikipedia_Mastermind", 8943945, 146819},
+ {"Wordle", 8944096, 146822},
+ {"Dataset_Source", 8944241, 146825}
  }
 *)
 (*NotebookFileOutline
@@ -146859,27 +146869,27 @@ Cell[8933911, 146600, 1765, 38, 109, "Text",ExpressionUUID->"b64a694d-e7e4-fc47-
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[8935713, 146643, 172, 3, 39, "Subsubsection",ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-be3e2d0ca442"],
-Cell[8935888, 146648, 327, 8, 50, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
+Cell[8935888, 146648, 896, 18, 109, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8936276, 146663, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
-Cell[8936503, 146669, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
-Cell[8936953, 146682, 2127, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
+Cell[8936845, 146673, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
+Cell[8937072, 146679, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
+Cell[8937522, 146692, 2128, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8939117, 146720, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
-Cell[8939347, 146726, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+Cell[8939687, 146730, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
+Cell[8939917, 146736, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
  CellTags->"Wikipedia_Mastermind"],
-Cell[8939622, 146733, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+Cell[8940192, 146743, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
  CellTags->"Wordle"],
-Cell[8939862, 146738, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+Cell[8940432, 146748, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
  CellTags->"Dataset_Source"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8940152, 146747, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
-Cell[8940326, 146752, 2589, 40, 246, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
+Cell[8940722, 146757, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
+Cell[8940896, 146762, 2589, 40, 246, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
 }, Open  ]]
 }, Open  ]]
 }
