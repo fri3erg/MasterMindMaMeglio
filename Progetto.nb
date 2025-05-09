@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[   8943571,     146799]
-NotebookOptionsPosition[   8939668,     146724]
-NotebookOutlinePosition[   8940281,     146747]
-CellTagsIndexPosition[   8940204,     146742]
+NotebookDataLength[   8947150,     146880]
+NotebookOptionsPosition[   8942943,     146796]
+NotebookOutlinePosition[   8943982,     146828]
+CellTagsIndexPosition[   8943826,     146821]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -146391,78 +146391,65 @@ Cell[TextData[{
  "Il ",
  StyleBox["Trivia Mastermind",
   FontWeight->"Bold"],
- " \[EGrave] una variante educativa del classico gioco di decifrazione ",
+ " \[EGrave] una variante del classico gioco di decifrazione ",
  ButtonBox["[1]",
   BaseStyle->"Hyperlink",
-  ButtonData->"Wikipedia"],
+  ButtonData->"Wikipedia_Mastermind"],
  ", in cui l\[CloseCurlyQuote]obiettivo \[EGrave] indovinare un codice \
 segreto generato dal programma composto da una sequenza di ",
  StyleBox["n",
   FontWeight->"Bold",
   FontSlant->"Italic"],
- " colori."
+ " colori con un numero limitato di tentativi."
 }], "Text",
  CellFrame->{{0, 0}, {0, 0}},
  CellChangeTimes->CompressedData["
-1:eJxTTMoPSmViYGAQAWIQ/YDHVuNX0VvHD6tKdEB0i+WrUBB9J0g7CkTvEF5S
+1:eJxTTMoPSmViYGAQB2IQ/YDHVuNX0VvHD6tKdEB0i+WrUBB9J0g7CkTvEF5S
 d7D4raOMmHM9iPboYW8G0Vci2rtBdEnA/4kgumfOsukg+sicg3NBdMTHU/NB
 tEjC1Gsg2sLv2k0QHZP46cUhID1Bc/0rEL2mcRfHYSCtMglCx2Rt+3QMZE7L
 lv8g2sD+BudxID2D1ZMfRDfMfy0Jolscq+VB9JqfX8VPgNxTxKsEonu2a6mB
 6D+puXogOuKyoxWIluDptwXRe37sKwHRHTy/qkC0CjtbPYh+kF/dBKIrFi1r
-B9Eap3WmgugV+8NngmibnVwbQPSFuknbwOoOLt8OogFjZbFh
+B9Eap3WmgugV+8NngmibnVwbQPSFuknbwOoOLt8Oot+0pb8SrnzryFH6/g2I
+Fuj48Q3MD1L7DqINEqo+iyLRAP3WyNY=
   "],ExpressionUUID->"79c2c610-7e0b-f346-bb4a-fb0cdae303ce"],
 
 Cell[TextData[{
  "In ogni turno, il giocatore prova a indovinare il codice e riceve un \
-feedback sulla correttezza del suo tentativo:\n\t\[Bullet] Un piolo verde (",
- Cell[BoxData[
-  TemplateBox[<|"color" -> RGBColor[0.57, 1, 0.05]|>,
-   "RGBColorSwatchTemplate"]], "Output",
-  GeneratedCell->False,
-  CellAutoOverwrite->False,
-  CellChangeTimes->{3.953005298349924*^9},ExpressionUUID->
-  "8b8a120c-6bfa-214c-8b5c-84974ade91a9"],
- ") se ",
- StyleBox["sia colore che posizione sono corretti;",
+feedback sulla correttezza del suo tentativo. Rispetto alla versione di \
+Mastermind originale, questo feedback fornisce pi\[UGrave] informazioni, in \
+quanto ogni piolo si riferisce al colore usato nella rispettiva posizione. \
+Questo lo rende simile al sistema di feedback del rompicapo ",
+ StyleBox["Wordle",
   FontSlant->"Italic"],
- "\n\t\[Bullet] Un piolo giallo (",
- Cell[BoxData[
-  TemplateBox[<|"color" -> RGBColor[1, 0.85, 0]|>,
-   "RGBColorSwatchTemplate"]], "Output",
-  GeneratedCell->False,
-  CellAutoOverwrite->False,
-  CellChangeTimes->{{3.953005298349924*^9, 3.9530053303235474`*^9}},
-  ExpressionUUID->"1aacd1fa-1347-ef4e-84cf-8422758dd73e"],
- ") se ",
- StyleBox["il colore \[EGrave] presente ma la posizione \[EGrave] errata;\n\t",
-  FontSlant->"Italic"],
- "\[Bullet] Nessun piolo se ",
- StyleBox["il colore \[EGrave] assente;",
-  FontSlant->"Italic"],
- "\nRispetto alla versione originale questo feedback fornisce pi\[UGrave] \
-informazioni, in quanto ogni piolo si riferisce al colore usato nella \
-rispettiva posizione."
+ " ",
+ ButtonBox["[2]",
+  BaseStyle->"Hyperlink",
+  ButtonData->"Wordle"],
+ " e simili."
 }], "Text",
  CellChangeTimes->{
   3.953018297619215*^9, {3.953018521701229*^9, 3.9530185225503273`*^9}, {
    3.9530197067934265`*^9, 3.9530197942814217`*^9}, {3.9530198929024315`*^9, 
    3.953019920657831*^9}, {3.953525881218567*^9, 3.953525886977869*^9}, {
-   3.955766445364746*^9, 
-   3.9557664564550533`*^9}},ExpressionUUID->"b35c3540-3144-8943-a285-\
+   3.955766445364746*^9, 3.9557664564550533`*^9}, {3.955793903181261*^9, 
+   3.955793916798996*^9}, {3.955797534029665*^9, 3.9557975786756077`*^9}, {
+   3.955797729642149*^9, 3.955797740621374*^9}, {3.955797796201103*^9, 
+   3.9557978285029984`*^9}, {3.955797870761175*^9, 
+   3.9557978707624035`*^9}},ExpressionUUID->"b35c3540-3144-8943-a285-\
 3724195b37b3"],
 
 Cell[TextData[{
  "Al posto di tentare a vuoto, il giocatore pu\[OGrave] anche chiedere un \
-suggerimento (una volta per turno), a condizione di ",
+suggerimento (una volta per turno): a condizione di ",
  StyleBox["rispondere correttamente a una domanda di trivia",
   FontSlant->"Italic"],
- " legata a un determinato argomento scelto a inizio partita (gli argomenti \
-disponibili sono A, B, C, D). ",
- StyleBox["(?)",
-  FontWeight->"Bold"]
+ ", si pu\[OGrave] scoprire uno dei colori presenti nel codice, o la \
+posizione di un colore gi\[AGrave] trovato",
+ "."
 }], "Text",
  CellChangeTimes->{
-  3.953018303644039*^9},ExpressionUUID->"51daa29c-dde2-ec47-83ce-\
+  3.953018303644039*^9, {3.9557939472902317`*^9, 
+   3.9557940147291813`*^9}},ExpressionUUID->"51daa29c-dde2-ec47-83ce-\
 d04b82781ea5"],
 
 Cell[CellGroupData[{
@@ -146479,17 +146466,51 @@ Cell["Setup iniziale:", "Subsubsection",
   3.9530043669901695`*^9}},ExpressionUUID->"eb9e00c1-85b5-3440-956a-\
 745d1a83fe71"],
 
-Cell["\<\
-Il giocatore imposta un seed numerico e seleziona un tema didattico (es: \
-\[OpenCurlyDoubleQuote]Matematica\[CloseCurlyDoubleQuote]).
-Il computer genera un codice segreto casuale (Default: lunghezza 4, colori \
-scelti tra 6 possibili).\
-\>", "Text",
+Cell[TextData[{
+ "Il giocatore inserisce  un ",
+ StyleBox["seed numerico",
+  FontWeight->"Bold"],
+ " (o lo genera casualmente col tasto \[OpenCurlyQuote]\:21bb\
+\[CloseCurlyQuote]), e modifica i parametri di gioco come pi\[UGrave] \
+preferisce.\nSi pu\[OGrave] cambiare il ",
+ StyleBox["numero di tentativi",
+  FontWeight->"Bold"],
+ " concessi, la ",
+ StyleBox["lunghezza del codice",
+  FontWeight->"Bold"],
+ " da indovinare, e si pu\[OGrave] permettere o meno la ",
+ "presenza di ",
+ StyleBox["colori ripetuti",
+  FontWeight->"Bold"],
+ " nel codice (poich\[EGrave] ogni codice \[EGrave] casuale, non \[EGrave] \
+detto che la loro presenza sia garantita).\nCon l\[CloseCurlyQuote]avvio \
+della partita tramite il tasto \[OpenCurlyQuote]\[FilledRightTriangle]\
+\[CloseCurlyQuote], viene generato il codice segreto casuale con i parametri \
+selezionati, e il giocatore pu\[OGrave] iniziare la sua decifratura.\nSi \
+trover\[AGrave] in una nuova schermata dove, da sinistra a destra, trover\
+\[AGrave]: la ",
+ StyleBox["palette dei colori",
+  FontSlant->"Italic"],
+ ", il ",
+ StyleBox["tentativo di decifratura",
+  FontSlant->"Italic"],
+ ", i ",
+ StyleBox["pioli di feedback",
+  FontSlant->"Italic"],
+ ", e i ",
+ StyleBox["tasti \[OpenCurlyQuote]Check\[CloseCurlyQuote] ed \
+\[OpenCurlyQuote]Hint\[CloseCurlyQuote]",
+  FontSlant->"Italic"],
+ "."
+}], "Text",
  CellChangeTimes->{{3.953004283666073*^9, 3.953004395713415*^9}, {
   3.9530044732255974`*^9, 3.9530044858907146`*^9}, {3.953004538099596*^9, 
   3.9530045415174084`*^9}, {3.953004641047596*^9, 3.9530046677419415`*^9}, {
   3.9530058036871967`*^9, 3.9530058038307953`*^9}, {3.9530184178256836`*^9, 
-  3.9530184263837643`*^9}},ExpressionUUID->"989716a2-dcba-3f46-8227-\
+  3.9530184263837643`*^9}, {3.955794037282469*^9, 3.9557944867596226`*^9}, {
+  3.955796293844795*^9, 3.955796416458149*^9}, {3.955798679360098*^9, 
+  3.955798705865303*^9}, {3.955798948509636*^9, 
+  3.955798990242508*^9}},ExpressionUUID->"989716a2-dcba-3f46-8227-\
 eb803432c3bb"]
 }, Open  ]],
 
@@ -146500,29 +146521,74 @@ Cell["Turno del Giocatore", "Subsubsection",
   3.953004409938101*^9}},ExpressionUUID->"059e13a3-dc36-a746-ad10-\
 d9f82896b100"],
 
-Cell["\<\
-Il giocatore ha la possibilit\[AGrave] di inserire un tentativo di \
-decifratura. Fatto questo, si passa alla fase di Feedback.
-Prima di effettuare il tentativo, si pu\[OGrave] chiedere un suggerimento, e \
-questo fa partire la modalit\[AGrave] Trivia.
-Nella modalit\[AGrave] Trivia, viene posta una domanda (con 2 o 4 risposte \
-multiple) sulla base del tema selezionato.
-\t\[Bullet] Risposta corretta: viene dato un suggerimento al giocatore (es: \
-rimuovere un colore non presente o segnarne uno presente).
-\t\[Bullet] Risposta errata: Non viene dato alcun suggerimento.
-In entrambi i casi viene mostrata la risposta corretta della domanda via \
-colori opportuni. Si pu\[OGrave] chiedere solo un suggerimento per turno.\
-\>", "Text",
- CellChangeTimes->{{3.9530044133760033`*^9, 3.953004424428934*^9}, {
-  3.9530044667656326`*^9, 3.9530044673918*^9}, {3.953004677592003*^9, 
-  3.9530048807898827`*^9}, {3.953004969825796*^9, 3.953004997781801*^9}, {
-  3.953005030457634*^9, 3.95300507550576*^9}, {3.953005575488825*^9, 
-  3.953005583470682*^9}, {3.953005615939413*^9, 3.9530057170701046`*^9}, {
-  3.95300601840464*^9, 3.953006067197239*^9}, {3.953006225296921*^9, 
-  3.95300623454702*^9}, {3.953018437767149*^9, 3.9530184695079803`*^9}, {
-  3.9557664852996845`*^9, 
-  3.95576649941955*^9}},ExpressionUUID->"686d69ef-c426-7647-ac81-\
-e6e0604d3de0"]
+Cell[TextData[{
+ "Facendo click sui vari colori disponibili nella ",
+ "palette",
+ ", il giocatore pu\[OGrave] ",
+ StyleBox["inserire il suo tentativo",
+  FontWeight->"Bold"],
+ " di decifratura",
+ ".\nSe invece viene cliccato uno dei pioli nel tentativo, viene ",
+ StyleBox["deselezionato l\[CloseCurlyQuote]eventuale colore inserito",
+  FontSlant->"Italic"],
+ " ed il prossimo inserimento avverr\[AGrave] in quel piolo (utile se si \
+vuole correggere un inserimento errato).\n\[LineSeparator]Inserito un colore \
+in ogni piolo del tentativo, il giocatore pu\[OGrave] premere il ",
+ "tasto \[OpenCurlyQuote]Check\[CloseCurlyQuote]",
+ " per ",
+ StyleBox["concludere il tentativo",
+  FontWeight->"Bold"],
+ ", proseguendo nella fase di Feedback."
+}], "Text",
+ CellChangeTimes->CompressedData["
+1:eJxTTMoPSmViYGAQAWIQbcGx5v3B4reOV3byfgTRAg0R30D0gs4cML3h4yaB
+Q0B6h5ukFoh+k2NlCqJbWHZagOgPS87ZgGgD/QInEF2y5H0DiL7C/74RRK/h
+/9cKon3sFk0C0Rc++ewA0Sf80/aB6IQGzUtg/Y2Bl0F0Tc+OEydA4o4bzoBo
+lukrZ7FVvnX8kpM7B0T/qetkEwXSMm93i4LoEwe0pEH0lGxhGRDN0bVICUSL
+BB5VBdEMEVLWIPpN3m8fEP1BmTUQRMecbQgFm3NidRKIPnOOpxpEdzz/UA+i
+W1jKm0D0kdlWbWDzjhV2gOg7P1aEiIHs23waTAMANryjvw==
+  "],ExpressionUUID->"686d69ef-c426-7647-ac81-e6e0604d3de0"]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Trivia", "Subsubsection",
+ CellChangeTimes->{{3.955797024605959*^9, 
+  3.9557970251574326`*^9}},ExpressionUUID->"dfa0db4d-a22b-2646-ab49-\
+5fafc6700732"],
+
+Cell[TextData[{
+ "Prima di concludere il tentativo, si pu\[OGrave] chiedere un suggerimento \
+tramite il tasto",
+ " \[OpenCurlyQuote]Hint\[CloseCurlyQuote]",
+ ", e questo fa partire la fase Trivia.\nNella fase Trivia, viene posta una ",
+ StyleBox["domanda a risposta multipla",
+  FontWeight->"Bold"],
+ " al giocatore, presi da una collezione pubblica di domande ",
+ ButtonBox["[3]",
+  BaseStyle->"Hyperlink",
+  ButtonData->"Dataset_Source"],
+ " su argomenti di ",
+ StyleBox["AAAAAAAAAAAAAAAAAAA",
+  FontWeight->"Bold"],
+ ".\n\t\[Bullet] ",
+ "Risposta",
+ StyleBox[" corretta",
+  FontWeight->"Bold"],
+ ": viene dato un suggerimento al giocatore.\n\t\[Bullet] Risposta ",
+ StyleBox["errata",
+  FontWeight->"Bold"],
+ ": Viene mostrata la risposta esatta, ma non viene dato alcun suggerimento.\n\
+Si pu\[OGrave] chiedere solo un suggerimento per turno."
+}], "Text",
+ CellChangeTimes->{
+  3.9557970319555264`*^9, {3.955797122423971*^9, 3.955797159143461*^9}, {
+   3.955797243437006*^9, 3.955797270449978*^9}, {3.9557979574378567`*^9, 
+   3.955797963046913*^9}, {3.9557980160720596`*^9, 3.955798042624033*^9}, {
+   3.9557981159348965`*^9, 3.9557981408594666`*^9}, 3.9557986960584946`*^9, {
+   3.955800396761801*^9, 
+   3.955800402752102*^9}},ExpressionUUID->"eff1c535-2ac5-5f4d-bc61-\
+c37bfe5f523c"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -146535,14 +146601,19 @@ Cell["Feedback", "Subsubsection",
 Cell[TextData[{
  "Dopo ogni tentativo, il sistema mostra dei pioli di vario colore.\nIn base \
 alla loro posizione, il giocatore inferisce se il colore relativo nel \
-tentativo dato \[EGrave]:\n\t\[Bullet] Presente nella posizione giusta (piolo \
-verde, ",
+tentativo dato \[EGrave]:\n\t\[Bullet] ",
+ StyleBox["Presente nella posizione giusta",
+  FontSlant->"Italic"],
+ " (piolo verde, ",
  Cell[BoxData[
   TemplateBox[<|"color" -> RGBColor[0.57, 1, 0.05]|>,
    "RGBColorSwatchTemplate"]], "Output",
   CellChangeTimes->{3.9548380204097614`*^9},ExpressionUUID->
   "6e1db867-0499-bf48-b2cc-94e5dbd00df0"],
- ")\n\t\[Bullet] Presente ma nella posizione sbagliata (piolo giallo, ",
+ ")\n\t\[Bullet] ",
+ StyleBox["Presente ma nella posizione sbagliata",
+  FontSlant->"Italic"],
+ " (piolo giallo, ",
  Cell[BoxData[
   TemplateBox[<|"color" -> RGBColor[1, 0.85, 0]|>,
    "RGBColorSwatchTemplate"]], "Output",
@@ -146550,7 +146621,10 @@ verde, ",
   CellAutoOverwrite->False,
   CellChangeTimes->{{3.953005298349924*^9, 3.9530053303235474`*^9}},
   ExpressionUUID->"a0afec76-acc0-3545-8034-48918161c13e"],
- ")\n\t\[Bullet] Assente (nessun piolo)"
+ ")\n\t\[Bullet] ",
+ StyleBox["Assente",
+  FontSlant->"Italic"],
+ " (nessun piolo)"
 }], "Text",
  CellChangeTimes->{{3.953004490772209*^9, 3.953004526486223*^9}, {
    3.9530051358430023`*^9, 3.9530052758958397`*^9}, {3.9530053913643837`*^9, 
@@ -146560,8 +146634,8 @@ verde, ",
    3.9530190519983826`*^9, 3.953019054478716*^9}, {3.9535258634150925`*^9, 
    3.953525871347948*^9}, {3.9548379421235065`*^9, 3.954837957353176*^9}, {
    3.954838043429775*^9, 3.9548380488815613`*^9}, {3.954838104231077*^9, 
-   3.95483810561833*^9}, 
-   3.9557664607639256`*^9},ExpressionUUID->"b64a694d-e7e4-fc47-89b9-\
+   3.95483810561833*^9}, 3.9557664607639256`*^9, {3.955797208975279*^9, 
+   3.9557972242604713`*^9}},ExpressionUUID->"b64a694d-e7e4-fc47-89b9-\
 8d2927fd1059"]
 }, Open  ]],
 
@@ -146639,48 +146713,7 @@ Cell[BoxData[{
    3.9535298573689156`*^9}, 3.9535299027479725`*^9, {3.9535303448612385`*^9, 
    3.9535303926919975`*^9}, {3.953530479847145*^9, 3.953530480411598*^9}, 
    3.9537305887514687`*^9},
- CellLabel->"In[55]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
-}, Open  ]],
-
-Cell[CellGroupData[{
-
-Cell["Boh altre sezioni?", "Section",
- CellChangeTimes->{{3.9525965608637543`*^9, 3.952596564019945*^9}, {
-  3.953731915415142*^9, 
-  3.953731915624256*^9}},ExpressionUUID->"7ec18a12-b242-5948-b3e4-\
-1b4015f8d52e"],
-
-Cell[TextData[StyleBox["Per ora qui segno cose che sembrano importanti:",
- FontSlant->"Italic"]], "Text",
- CellChangeTimes->{{3.9530190715419216`*^9, 
-  3.9530190844905434`*^9}},ExpressionUUID->"08352a49-113b-a449-bd5a-\
-34fa7b1c2179"],
-
-Cell["\<\
-In qualsiasi modo lo organizziate, Tutorial.nb deve spiegare:
-- Argomento trattato (col minor numero di pre-requisiti possibile);
-- Uso del (Pacchetto.m) attraverso l\[CloseCurlyQuote]Interfaccia sviluppata;
-Deve essere semplice e chiaro, sintetico ma esauriente, e ovviamente corretto.\
-\>", "Text",
- CellChangeTimes->{{3.952595303500765*^9, 3.9525953301156406`*^9}, {
-  3.953019110891344*^9, 
-  3.953019162453415*^9}},ExpressionUUID->"193b3d02-5a94-bf46-aa9b-\
-76b23b4dab85"],
-
-Cell["\<\
-- Le sezioni comprese tra TITOLO e BIBLIO/SITOGRAFIA incluse sono rivolte al \
-vostro utente (TARGET, da specificare).
-- La sezione COMMENTI & LAVORO FUTURO \[EGrave] rivolta a me; \[EGrave] \
-obbligatoria ed \[EGrave] l\[CloseCurlyQuote]ultima sezione di Tutorial.nb
-- Anche la sezione BIBLIO/SITOGRAFIA \[EGrave] obbligatoria ed \[EGrave] la \
-penultima sezione di Tutorial.nb
-La numerazione [1], [2], ecc, dei riferimenti biblio/sitografici deve essere \
-inserita opportunamente nel testo di Tutorial.nb, con link attivi.\
-\>", "Text",
- CellChangeTimes->{{3.95259533358115*^9, 3.9525953450317707`*^9}, {
-  3.9530144101069107`*^9, 3.9530144144367065`*^9}, {3.9530191585003033`*^9, 
-  3.95301917382008*^9}},ExpressionUUID->"55a50af3-e6ab-cd42-bff0-\
-c1e6172fd179"]
+ CellLabel->"In[4]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -146694,17 +146727,20 @@ Cell["Bibliografia e Sitografia", "Section",
 Cell["[1] https://it.wikipedia.org/wiki/Mastermind", "Text",
  CellChangeTimes->{{3.952594845518009*^9, 3.952594854946026*^9}, {
   3.9530063716326923`*^9, 3.953006398992241*^9}},
- CellTags->"Wikipedia",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92"],
+ CellTags->
+  "Wikipedia_Mastermind",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-\
+b67b031f1d92"],
 
-Cell["[2] ", "Text",
- CellChangeTimes->{{3.9530192534337616`*^9, 
-  3.953019255650673*^9}},ExpressionUUID->"e2c99314-ff46-364b-8c91-\
-1039f3eea440"],
+Cell["[2] https://www.nytimes.com/games/wordle/index.html", "Text",
+ CellChangeTimes->{{3.9530192534337616`*^9, 3.953019255650673*^9}, 
+   3.955797698363899*^9},
+ CellTags->"Wordle",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440"],
 
-Cell["[3] ", "Text",
- CellChangeTimes->{{3.953019257981903*^9, 
-  3.9530192593719273`*^9}},ExpressionUUID->"3323fd67-09f3-5246-8f6f-\
-c1e535071d01"]
+Cell["[3] https://github.com/uberspot/OpenTriviaQA/tree/master", "Text",
+ CellChangeTimes->{{3.953019257981903*^9, 3.9530192593719273`*^9}, 
+   3.955798183147232*^9},
+ CellTags->
+  "Dataset_Source",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -146714,16 +146750,53 @@ Cell["Commenti e lavori futuri", "Section",
   3.9525948670562153`*^9}},ExpressionUUID->"398824ef-a83f-8140-be33-\
 e05e242be3ba"],
 
-Cell["In questo progetto...", "Text",
+Cell[TextData[{
+ "Questo progetto \[EGrave] stato creato con pochi cambiamenti rispetto a \
+quanto pianificato inizialmente. Ad ogni lezione, \[EGrave] stato effettuato \
+un brainstorming di idee su come iniziare e proseguire lo sviluppo, scrivendo \
+del codice in cooperativa. Al termine della lezione, ogni membro del gruppo \
+ha comunicato agli altri la parte del progetto di cui si sarebbe occupato, \
+unendo le varie componenti passo dopo passo. \n\nI problemi pi\[UGrave] \
+grandi sono stati quelli tecnici: inizialmente il programma si avviava solo \
+se il pacchetto veniva valutato a priori, ma questo \[EGrave] stato corretto \
+spostandolo in un file di testo normale e risalvandolo come pacchetto Wolfram \
+(",
+ StyleBox[".m",
+  FontSlant->"Italic"],
+ "). Inoltre, Github non \[EGrave] capace di effettuare un ",
+ StyleBox["merge automatico",
+  FontSlant->"Italic"],
+ " delle modifiche effettuate su un file di lavoro Wolfram. Questo ha \
+rallentato il processo di sviluppo, in quanto ogni modifica doveva essere \
+preannunciata al resto del gruppo, e non ci potevano essere pi\[UGrave] \
+persone che lavoravano individualmente a uno stesso file in contemporanea (o \
+almeno, non senza dover effettuare un merge manuale).\n\nLavori che espandono \
+su questo progetto potrebbero includere un\[CloseCurlyQuote]ulteriore \
+parametrizzazione del gioco, come ad esempio la scelta dei colori disponibili \
+nella palette (e il loro numero).\nSi potrebbe anche implementare una \
+versione multigiocatore competitiva, dove al posto di ricevere un \
+suggerimento, si pu\[OGrave] scegliere di \[OpenCurlyQuote]attaccare\
+\[CloseCurlyQuote] il proprio avversario se si risponde correttamente alla \
+domanda di trivia (ad esempio, cambiando un colore del suo codice o \
+nascondendo i feedback ricevuti fino a quel punto)."
+}], "Text",
  CellChangeTimes->{{3.9525952273489*^9, 3.9525952276444645`*^9}, {
-  3.953019275843094*^9, 
-  3.9530192867414913`*^9}},ExpressionUUID->"b504615a-a0a3-1945-a68a-\
+   3.953019275843094*^9, 3.9530192867414913`*^9}, {3.9557983708186913`*^9, 
+   3.9557984021664543`*^9}, {3.955798505985876*^9, 3.9557986169477196`*^9}, {
+   3.955799056369055*^9, 3.955799183922756*^9}, {3.955799227377203*^9, 
+   3.9557992853737545`*^9}, {3.9558001687200184`*^9, 3.955800229663597*^9}, 
+   3.9558006175790863`*^9, {3.955801149281437*^9, 3.9558011757624683`*^9}, {
+   3.955801231407175*^9, 3.955801589648344*^9}, {3.9558016612060337`*^9, 
+   3.95580173638109*^9}, {3.9558017665322456`*^9, 3.955801823022541*^9}, {
+   3.9558018874760704`*^9, 3.9558022417048855`*^9}, {3.9558026901866913`*^9, 
+   3.955802691915308*^9}},ExpressionUUID->"b504615a-a0a3-1945-a68a-\
 7afe5baa9a87"]
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{1141.2, 568.8},
-WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowSize->{1152, 579.6},
+WindowMargins->{{
+  Automatic, -5.399999999999864}, {-5.399999999999977, Automatic}},
 Magnification:>0.9 Inherited,
 FrontEndVersion->"14.2 for Microsoft Windows (64-bit) (December 26, 2024)",
 StyleDefinitions->"Default.nb",
@@ -146734,14 +146807,22 @@ ExpressionUUID->"f3d60804-c8f6-d94d-8044-faa8435f3bfb"
 (* Internal cache information *)
 (*CellTagsOutline
 CellTagsIndex->{
- "Wikipedia"->{
-  Cell[8938657, 146693, 256, 3, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
-   CellTags->"Wikipedia"]}
+ "Dataset_Source"->{
+  Cell[8939862, 146738, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+   CellTags->"Dataset_Source"]},
+ "Wikipedia_Mastermind"->{
+  Cell[8939347, 146726, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+   CellTags->"Wikipedia_Mastermind"]},
+ "Wordle"->{
+  Cell[8939622, 146733, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+   CellTags->"Wordle"]}
  }
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Wikipedia", 8940054, 146736}
+ {"Dataset_Source", 8943369, 146809},
+ {"Wikipedia_Mastermind", 8943528, 146812},
+ {"Wordle", 8943679, 146815}
  }
 *)
 (*NotebookFileOutline
@@ -146755,50 +146836,50 @@ Cell[8925204, 146372, 353, 6, 30, "Text",ExpressionUUID->"09cab00b-4b1e-cd46-8ac
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[8925594, 146383, 225, 4, 59, "Section",ExpressionUUID->"6827955b-ce5f-f848-80cd-e50789846624"],
-Cell[8925822, 146389, 925, 23, 50, "Text",ExpressionUUID->"79c2c610-7e0b-f346-bb4a-fb0cdae303ce"],
-Cell[8926750, 146414, 1592, 37, 109, "Text",ExpressionUUID->"b35c3540-3144-8943-a285-3724195b37b3"],
-Cell[8928345, 146453, 496, 12, 50, "Text",ExpressionUUID->"51daa29c-dde2-ec47-83ce-d04b82781ea5"],
+Cell[8925822, 146389, 1007, 24, 50, "Text",ExpressionUUID->"79c2c610-7e0b-f346-bb4a-fb0cdae303ce"],
+Cell[8926832, 146415, 1131, 23, 50, "Text",ExpressionUUID->"b35c3540-3144-8943-a285-3724195b37b3"],
+Cell[8927966, 146440, 521, 12, 50, "Text",ExpressionUUID->"51daa29c-dde2-ec47-83ce-d04b82781ea5"],
 Cell[CellGroupData[{
-Cell[8928866, 146469, 167, 3, 47, "Subsection",ExpressionUUID->"55bd708c-3894-534b-8f5f-28fd80081cca"],
+Cell[8928512, 146456, 167, 3, 47, "Subsection",ExpressionUUID->"55bd708c-3894-534b-8f5f-28fd80081cca"],
 Cell[CellGroupData[{
-Cell[8929058, 146476, 168, 3, 39, "Subsubsection",ExpressionUUID->"eb9e00c1-85b5-3440-956a-745d1a83fe71"],
-Cell[8929229, 146481, 641, 11, 50, "Text",ExpressionUUID->"989716a2-dcba-3f46-8227-eb803432c3bb"]
+Cell[8928704, 146463, 168, 3, 39, "Subsubsection",ExpressionUUID->"eb9e00c1-85b5-3440-956a-745d1a83fe71"],
+Cell[8928875, 146468, 1930, 45, 109, "Text",ExpressionUUID->"989716a2-dcba-3f46-8227-eb803432c3bb"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8929907, 146497, 170, 3, 39, "Subsubsection",ExpressionUUID->"059e13a3-dc36-a746-ad10-d9f82896b100"],
-Cell[8930080, 146502, 1359, 22, 128, "Text",ExpressionUUID->"686d69ef-c426-7647-ac81-e6e0604d3de0"]
+Cell[8930842, 146518, 170, 3, 39, "Subsubsection",ExpressionUUID->"059e13a3-dc36-a746-ad10-d9f82896b100"],
+Cell[8931015, 146523, 1206, 26, 109, "Text",ExpressionUUID->"686d69ef-c426-7647-ac81-e6e0604d3de0"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8931476, 146529, 159, 3, 39, "Subsubsection",ExpressionUUID->"da962190-bc9e-984e-bdd0-518a8db506ca"],
-Cell[8931638, 146534, 1590, 30, 109, "Text",ExpressionUUID->"b64a694d-e7e4-fc47-89b9-8d2927fd1059"]
+Cell[8932258, 146554, 159, 3, 39, "Subsubsection",ExpressionUUID->"dfa0db4d-a22b-2646-ab49-5fafc6700732"],
+Cell[8932420, 146559, 1292, 31, 109, "Text",ExpressionUUID->"eff1c535-2ac5-5f4d-bc61-c37bfe5f523c"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8933265, 146569, 172, 3, 39, "Subsubsection",ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-be3e2d0ca442"],
-Cell[8933440, 146574, 327, 8, 50, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
+Cell[8933749, 146595, 159, 3, 39, "Subsubsection",ExpressionUUID->"da962190-bc9e-984e-bdd0-518a8db506ca"],
+Cell[8933911, 146600, 1765, 38, 109, "Text",ExpressionUUID->"b64a694d-e7e4-fc47-89b9-8d2927fd1059"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[8935713, 146643, 172, 3, 39, "Subsubsection",ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-be3e2d0ca442"],
+Cell[8935888, 146648, 327, 8, 50, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8933828, 146589, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
-Cell[8934055, 146595, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
-Cell[8934505, 146608, 2128, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
+Cell[8936276, 146663, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
+Cell[8936503, 146669, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
+Cell[8936953, 146682, 2127, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8936670, 146646, 214, 4, 59, "Section",ExpressionUUID->"7ec18a12-b242-5948-b3e4-1b4015f8d52e"],
-Cell[8936887, 146652, 235, 4, 30, "Text",ExpressionUUID->"08352a49-113b-a449-bd5a-34fa7b1c2179"],
-Cell[8937125, 146658, 487, 9, 89, "Text",ExpressionUUID->"193b3d02-5a94-bf46-aa9b-76b23b4dab85"],
-Cell[8937615, 146669, 775, 13, 89, "Text",ExpressionUUID->"55a50af3-e6ab-cd42-bff0-c1e6172fd179"]
+Cell[8939117, 146720, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
+Cell[8939347, 146726, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+ CellTags->"Wikipedia_Mastermind"],
+Cell[8939622, 146733, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+ CellTags->"Wordle"],
+Cell[8939862, 146738, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+ CellTags->"Dataset_Source"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[8938427, 146687, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
-Cell[8938657, 146693, 256, 3, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
- CellTags->"Wikipedia"],
-Cell[8938916, 146698, 148, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440"],
-Cell[8939067, 146703, 148, 3, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01"]
-}, Open  ]],
-Cell[CellGroupData[{
-Cell[8939252, 146711, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
-Cell[8939426, 146716, 214, 4, 30, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
+Cell[8940152, 146747, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
+Cell[8940326, 146752, 2589, 40, 246, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
 }, Open  ]]
 }, Open  ]]
 }
