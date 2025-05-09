@@ -509,7 +509,9 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 				soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
 				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
 				valutazioneTentativo={};
-				partitaInCorso=True
+				partitaInCorso=True;
+				questionCounter=0;
+				correct= {};
 			  ]
              ]
 		   }]
@@ -543,7 +545,9 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 				soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates]; (* Combinazione segreta *)
 				tentativoList=ConstantArray[None, lunghezzaCombinazione]; (* Tentativo corrente *)
 				valutazioneTentativo={};
-				partitaInCorso=True
+				partitaInCorso=True;
+				questionCounter=0;
+				correct= {};
 			  ] 
              ]
 		   }]
@@ -829,7 +833,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										      (* This is the default branch of the 'Which' statement. *)
 										      (* It will decide whether to show an active "HINT" button or an inactive placeholder. *)
 										      True,
-										      If[x === turn && partitaInCorso && triviaData =!= $Failed,
+										      If[x === turn  && triviaData =!= $Failed,
 										        (* --- Display Active "HINT" Button --- *)
 										        (* Conditions: current row (x) is the active turn, game is ongoing, and trivia data is loaded. *)
 										        ClickPane[
@@ -853,9 +857,10 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 										            (*
 										              'AppendTo' is the correct operation for their specific logic as i append {} even when not using hint in the CHECK function above
 										            *)
+										            If[partitaInCorso,
 										            AppendTo[correct, DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]]];
 										            questionCounter++; (* Increment a counter, for unique trivia question seeds *)
-										          ],
+										          ]],
 										          Method -> "Queued" (* Ensures UI responsiveness by queuing the action. *)
 										        ],
 										        
@@ -1162,16 +1167,23 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
           "incorrect_show_message",
           (* --- View 3: Displayed when the User Answers Incorrectly --- *)
           Column[{
-            Spacer[4],
             Pane[
               Style["Incorrect!", 36, Bold, Red, FontFamily -> "Arial", TextAlignment -> Center],
+              {500, Automatic}, Alignment -> Center
+            ],
+            Pane[
+               Style["The correct answer was: ", Medium, FontFamily -> "Arial", FontSize -> 18],
+              {500, Automatic}, Alignment -> Center
+            ],
+            Pane[
+                    Style[localOptions[[localCorrectIndex]], Medium, Bold, FontFamily -> "Arial", FontSize -> 18],
               {500, Automatic}, Alignment -> Center
             ],
             Button[ (* "Close" button for the "Incorrect!" view *)
               Style["Close", Bold, FontSize -> 24],
               performCloseAction[Missing["WrongAnswer"]] (* Return Missing["WrongAnswer"] as the result. *)
             ]
-          }, Alignment -> Center, Spacings -> 15], (* End Column for "incorrect_show_message" view *)
+          }, Alignment -> Center, Spacings -> 8], (* End Column for "incorrect_show_message" view *)
 
           _, (* Default case for Switch[displayState, ...]: handles any unexpected state. *)
           Style["Error: Dialog display state is invalid. Please report this.", Red, Bold]
