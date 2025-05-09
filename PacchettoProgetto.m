@@ -19,8 +19,8 @@ avviaSchermataDiGioco::usage="Avvia l\[CloseCurlyQuote]interfaccia grafica princ
 Begin["`Private`"];
 
 (* Global variables that need to be shared across functions *)
-PacchettoProgetto`Private`triviaData;
 
+PacchettoProgetto`Private`triviaData;
 (* Accessor function or a rule for triviaData that loads it on first use and not each time.
 (Scope difference between functions put either loading inside the game or everywhere also) *)
 PacchettoProgetto`Private`triviaData := (
@@ -28,7 +28,7 @@ PacchettoProgetto`Private`triviaData := (
 );
 
 (* Lista dei colori usati da Mastermind *)
-paletteColori={Red, Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White, Gray, Black};
+paletteColori={RGBColor[0.9,0,0], Green, Yellow, Blue, Orange, Brown, Purple, Cyan, Magenta, White, Gray, Black};
 (* Stato della partita *)
 partitaInCorso=True
 
@@ -42,8 +42,7 @@ labels=translations = <|
 	"nTurni" -> "Turns",
 	"nCombinazione" -> "Cipher Length",
 	"allowDuplicates"->"Repeating colors",
-	"esci" -> "EXIT",
-	"partita" -> "GAME - DELETE ME",
+	"esci" -> "QUIT",
 	"seedSelezionato" -> "GAME STARTED WITH SEED: ",
 	"colori" -> "Colors",
 	"combinazione" -> "Cipher",
@@ -52,7 +51,7 @@ labels=translations = <|
 	"restartVinto"->"YOU WON! Want to crack the same code?",
 	"restartPerso"->"You lost... Want to crack the same code?",
 	"vai"->"CHECK",
-	"menu"->"BACK TO MENU",
+	"menu"->"\[LongLeftArrow]",
 	"trivia"->"NEED A TIP?",
 	"idea"->"\[LightBulb]"
 	|>;
@@ -97,15 +96,6 @@ avviaSchermataDiGioco[] := DynamicModule[
   creaHomepage[] := Column[{
         
     Spacer[{0, 50}],
-    
-    (*TITOLO ORIGINALE*)
-    (*Dynamic @ Style[labels["titoloGioco"],
-      FontSize->titleFontScale,
-      FontWeight->Bold,
-      FontColor->Black,
-      FontFamily->"Consolas",
-      TextAlignment->Center
-    ],*)
     
     (*TITOLO COLORATO*)
     With[
@@ -227,13 +217,13 @@ avviaSchermataDiGioco[] := DynamicModule[
      Row[{
        Style[labels["nTurni"], FontSize->14, FontFamily->"Consolas", Bold],
         
-       Spacer[20],
+       Spacer[63.5],
 	    
 	   SetterBar[
 	    Dynamic[customTurni],
 	    Table[
 	      i->Style[ToString[i], FontFamily->"Consolas", Bold],
-	      {i, 6, 14}
+	      {i, 6, 12}
 	    ],
 	   Appearance->"Horizontal"
 	   ]  
@@ -400,7 +390,7 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:8, tentativoCorren
 },  
   
     If[tentativo === soluzione,
-        {mastermindVittoria, feedback},                      (* Caso vincita *)
+        {mastermindVittoria, feedback},                        (* Caso vincita *)
     
         If[tentativoCorrente >= maxTentativi,
             {mastermindSconfitta, feedback},                   (* Caso sconfitta *)
@@ -537,27 +527,6 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	   TrackedSymbols:>{valutazioneTentativo}
 	   ]
 	 }],
-				
-				Spacer[3],
-				
-				(*Header*)
-				Pane[
-				  Grid[{
-				    {
-				      Style[labels["colori"], FontSize -> 14, FontColor -> Black, FontFamily -> "Consolas"],
-				      Style[labels["combinazione"], FontSize -> 14, FontColor -> Black, FontFamily -> "Consolas"],
-				      Style[labels["suggerimenti"], FontSize -> 14, FontColor -> Black, FontFamily -> "Consolas"],
-				      Style[labels["azione"], FontSize -> 14, FontColor -> Black, FontFamily -> "Consolas"]
-				    }
-				  },
-				  Alignment -> Center,
-				  ItemSize -> All,
-				  Spacings -> {lunghezzaCombinazione+1.5, 1}
-				  ],
-				  Alignment -> Center
-				],
-				
-				Spacer[2],
 				
 				(* Content *)
 				Row[{
@@ -896,14 +865,29 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 
 (* Schermata di gioco random - perfettamente centrata *)
 creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, fontSize_] := 
-DynamicModule[{paletteRandom},
+DynamicModule[{},
     
     Pane[
       Column[{
       
         Panel[
-      Column[{
-        (*Style[labels["partita"], FontSize->fontSize/2, FontFamily->"Consolas", Bold],*)
+      Row[{
+	      ClickPane[
+	      Framed[
+	        Style[labels["menu"], White, FontSize->12, FontFamily->"Consolas", Bold],
+	        Background->Red,
+	        FrameStyle->None,
+	        RoundingRadius->5,
+	        FrameMargins->{{6, 6}, {3, 3}},
+	        ImageSize->Automatic
+	      ],  
+	      Function[
+	        cambiaSchermata["menu"]
+	      ]
+	     ],
+	     
+	     Spacer[5],
+     
         Style[labels["seedSelezionato"] <> ToString[seed], FontSize->12, FontFamily->"Consolas", FontColor->Red, Bold]
       },
       Alignment->Center
@@ -917,20 +901,6 @@ DynamicModule[{paletteRandom},
         {Automatic, Scaled[0.7]}, (* massimo 80% in altezza *)
         Scrollbars->False,
         Alignment->Center 
-      ]
-     ],
-    
-    ClickPane[
-      Framed[
-        Style[labels["menu"], White, FontSize->12, FontFamily->"Consolas", Bold],
-        Background->Red,
-        FrameStyle->None,
-        RoundingRadius->10,
-        FrameMargins->{{15, 15}, {5, 5}},
-        ImageSize->Automatic
-      ],  
-      Function[
-        cambiaSchermata["menu"]
       ]
      ]
     
