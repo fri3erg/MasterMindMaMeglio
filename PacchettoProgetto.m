@@ -176,9 +176,9 @@ avviaSchermataDiGioco[] := DynamicModule[
 		FrameMargins->{{10, 10}, {5, 5}}, 
 		ImageSize->Automatic 
 	  ],
-	  Function[( 
+	  Function[
 	    seedInserito=RandomInteger[{1, 9999999999}];
-	  )]
+	  ]
 	 ],
 		    
 	 Spacer[15],
@@ -218,12 +218,12 @@ avviaSchermataDiGioco[] := DynamicModule[
            FrameMargins->{{10, 10}, {5, 5}},
            ImageSize->Automatic
          ],
-         Function[( 
+         Function[
            partitaInCorso=True;
            customSeed=seedInserito;
            seedInserito="";
            cambiaSchermata["gioco"];
-         )]
+         ]
         ],
         
         (* seed non inserito -> tasto disabilitato  *)
@@ -499,11 +499,11 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                         {
                                             "MouseClicked" :> (
                                                 If[partitaInCorso, (* Per fermare ulteriori interazioni una volta conclusa la partita *)
-                                                    (
+                                                    
                                                         gridItemsColors[[Sequence @@ selectedItem]] = col;
                                                         tentativoList[[selectedItem[[2]]]] = col;
                                                         selectedItem = vaiAlProssimoPallinoVuoto[selectedItem, tentativoList, lunghezzaCombinazione];
-                                                    )
+                                                    
                                                 ]
                                             )
                                         }
@@ -544,15 +544,15 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                                     "MouseClicked" :> (
                                                         If[partitaInCorso && x === turn, (* Per fermare ulteriori interazioni una volta conclusa la partita, e per agire solo sulla riga corrente *)
                                                             If[tentativoList[[y]] =!= None, (* Se clicchi un colore nel tentativo, rimuovilo *)
-                                                                (
+                                                                
                                                                     selectedItem = {x, y};
                                                                     tentativoList[[y]] = None;
                                                                     gridItemsColors[[x, y]] = Opacity[0.2, Black];
-                                                                ),
-                                                                (
+                                                                ,
+                                                                
                                                                     (* Altrimenti seleziona il pallino vuoto normalmente *)
                                                                     selectedItem = {x, y};
-                                                                )
+                                                                
                                                             ]
                                                         ]
                                                     )
@@ -1104,7 +1104,6 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
                     DynamicModule[{clicked = False, isCorrect = Null, position = First[optionIndex]}, 
                       Button[
                         optionText,
-                        (
                           isCorrect = (position == localCorrectIndex); 
                           clicked = True; (* Contrassegna questo pulsante come cliccato per il feedback visivo. *)
                           
@@ -1112,8 +1111,7 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
                           If[isCorrect,
                             displayState = "correct_show_hint",
                             displayState = "incorrect_show_message"
-                          ];
-                        ),
+                          ];,
                         Background -> Dynamic[If[clicked, If[isCorrect, Green, Red], White]], (* Colore di sfondo dinamico: verde se corretto e cliccato, rosso se errato e cliccato, altrimenti bianco. *)
                         ImageSize -> {200, 80},
                         BaseStyle -> {FontColor -> Black, FontWeight -> Bold, FontFamily -> "Arial", FontSize -> 14},
