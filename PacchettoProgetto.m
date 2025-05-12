@@ -44,7 +44,7 @@ Begin["`Private`"];
   perdite di prestazione, anche con cache automatiche per il risultato
   
   le parentesi chiuse non sono necessarie, ma lo trovo molto meno intuitivo scrivere:
-  triviaData := triviaData = LoadQuestionsFromCSV["science-technology.csv"];
+  triviaData := triviaData = LoadQuestionsFromCSV["trivia.csv"];
   
   le giuro per\[OGrave] che \[EGrave] l'unica volta che uso le parentesi, le ho tolte in tutte le altri parti
 
@@ -52,7 +52,7 @@ Begin["`Private`"];
   ma aveva ragione che potevano essere tolte.
 *)
 triviaData := (
-    triviaData = LoadQuestionsFromCSV["science-technology.csv"]
+    triviaData = LoadQuestionsFromCSV["trivia.csv"]
 );
 
 (* Lista dei colori usati da Mastermind *)
