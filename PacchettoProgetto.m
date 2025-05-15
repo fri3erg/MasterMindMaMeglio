@@ -539,6 +539,7 @@ vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_]
 ]
 
 
+<<<<<<< HEAD
 (* === Interfaccia della griglia di gioco === 
 Costruisce l'interfaccia grafica dinamica del gioco Trivia Mastermind. 
 Tutto ci\[OGrave] che riguarda lo stato del gioco (turni, tentativi, griglia, ...) viene 
@@ -587,6 +588,37 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	- elemento Missing: se l'utente ha sbagliato *)
 	correct = {}
 },
+=======
+(* Funzione di generazione dell'interfaccia della griglia di gioco dinamica, prende in input il seed, il numero di colori che formano la combinazione segreta,
+ il numero di tentativi e un flag per l'utilizzo di colori duplicati.
+ Genera: 
+ -Griglia di tentativi e relative combinazioni
+ -Griglia di feedback per ciascun tentativo
+ -Bottone di check del tentativo
+ -Bottone di Hint per l'avvio del Trivia
+ -Funzioni di restart e termina partita
+*)
+interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_] :=
+    DynamicModule[
+        {
+            gridItemsColors = Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}], (* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacit\[AGrave] a 0.2)*)
+            hintFeedbackHistory = ConstantArray[{}, numeroTentativi],(* Storico feedback*)
+            turn = 1, (*Numero del tentativo*)
+            colorsList = paletteColori, (*Lista di colori della palette di scelta*)
+            selectedItem = {1, 1}, (* Elemento selezionato riga,colonna*)
+            soluzioneList = generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates], (* Combinazione segreta *)
+            tentativoList = ConstantArray[None, lunghezzaCombinazione], (* Tentativo corrente *)
+            valutazioneTentativo = {},
+            questionCounter = 0,
+            correct = {}
+        },
+        
+        Framed[
+            Column[{
+                (* Content *)
+                Row[{
+                    Spacer[20],
+>>>>>>> 7f4a9b31cbb911e9ed358f9c9e99dde494c96f00
 
 	Framed[
         Column[{
