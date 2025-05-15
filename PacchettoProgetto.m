@@ -460,12 +460,20 @@ vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_]
 ]
 
 
-(* Interfaccia della griglia di gioco con selezione di un elemento del primo turno con turni successivi disabilitati*)
+(* Funzione di generazione dell'interfaccia della griglia di gioco dinamica, prende in input il seed, il numero di colori che formano la combinazione segreta,
+ il numero di tentativi e un flag per l'utilizzo di colori duplicati.
+ Genera: 
+ -Griglia di tentativi e relative combinazioni
+ -Griglia di feedback per ciascun tentativo
+ -Bottone di check del tentativo
+ -Bottone di Hint per l'avvio del Trivia
+ -Funzioni di restart e termina partita
+*)
 interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_] :=
     DynamicModule[
         {
             gridItemsColors = Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}], (* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacit\[AGrave] a 0.2)*)
-            hintFeedbackHistory = ConstantArray[{}, numeroTentativi],
+            hintFeedbackHistory = ConstantArray[{}, numeroTentativi],(* Storico feedback*)
             turn = 1, (*Numero del tentativo*)
             colorsList = paletteColori, (*Lista di colori della palette di scelta*)
             selectedItem = {1, 1}, (* Elemento selezionato riga,colonna*)
