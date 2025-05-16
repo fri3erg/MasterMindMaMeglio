@@ -4,6 +4,8 @@ Un clone del classico gioco di decifratura **MasterMind**, sviluppato in *Wolfra
 
 Sviluppato come progetto del corso di Matematica Computazionale per la Laurea Magistrale in Informatica dell'Università di Bologna, anno 2024/2025
 
+Il file ProgettoTriviaMastermind.nb è il notebook che include una descrizione dettagliata del progetto e un tasto per avviare il programma. Il file PacchettoProgetto.m è il pacchetto wolfram contenente il codice del programma.
+
 ## Come Funziona
 
 - **Gioco Base**: Indovina la sequenza di colori segreta entro un numero limitato di tentativi.
