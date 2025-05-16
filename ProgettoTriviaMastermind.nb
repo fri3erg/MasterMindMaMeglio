@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[   9453086,     155170]
-NotebookOptionsPosition[   9449010,     155088]
-NotebookOutlinePosition[   9450014,     155119]
-CellTagsIndexPosition[   9449858,     155112]
+NotebookDataLength[   9453603,     155178]
+NotebookOptionsPosition[   9449492,     155095]
+NotebookOutlinePosition[   9450531,     155127]
+CellTagsIndexPosition[   9450375,     155120]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -154903,7 +154903,11 @@ tentativo dato \[EGrave]:\n\t\[Bullet] ",
  ")\n\t\[Bullet] ",
  StyleBox["Assente",
   FontSlant->"Italic"],
- " (nessun piolo)"
+ " (nessun piolo)\nIl suggerimento mostra un colore non ancora scoperto nel \
+codice, o, se gi\[AGrave] trovati, mostra la posizione di uno di essi.\nSe \
+tutte le informazioni necessarie alla decodifica sono state trovate, il \
+suggerimento avvisa il giocatore che tutti i suggerimenti possibili sono \
+stati forniti (e che quindi la vittoria \[EGrave] in pugno)."
 }], "Text",
  CellChangeTimes->{{3.953004490772209*^9, 3.953004526486223*^9}, {
    3.9530051358430023`*^9, 3.9530052758958397`*^9}, {3.9530053913643837`*^9, 
@@ -154914,7 +154918,8 @@ tentativo dato \[EGrave]:\n\t\[Bullet] ",
    3.953525871347948*^9}, {3.9548379421235065`*^9, 3.954837957353176*^9}, {
    3.954838043429775*^9, 3.9548380488815613`*^9}, {3.954838104231077*^9, 
    3.95483810561833*^9}, 3.9557664607639256`*^9, {3.955797208975279*^9, 
-   3.9557972242604713`*^9}},ExpressionUUID->"b64a694d-e7e4-fc47-89b9-\
+   3.9557972242604713`*^9}, {3.9563707438433266`*^9, 
+   3.956370950242729*^9}},ExpressionUUID->"b64a694d-e7e4-fc47-89b9-\
 8d2927fd1059"]
 }, Open  ]],
 
@@ -154927,11 +154932,12 @@ be3e2d0ca442"],
 
 Cell[TextData[{
  "Se il giocatore decifra il codice entro il numero massimo di tentativi, \
-vince la partita. Altrimenti, ottiene una sconfitta.\nNel caso di una \
-sconfitta, viene anche data la possibilit\[AGrave] di ",
+vince la partita. Altrimenti, ottiene una sconfitta.\nAlla fine, viene anche \
+data la possibilit\[AGrave] di ",
  StyleBox["ricominciare la partita con lo stesso seed",
   FontSlant->"Italic"],
- ".\n\nIn qualsiasi momento \[EGrave] possibile ",
+ " o semplicemente tornare al men\[UGrave].",
+ "\n\nIn qualsiasi momento \[EGrave] possibile ",
  StyleBox["abbandonare la partita",
   FontSlant->"Italic"],
  " in corso e tornare al men\[UGrave] con il tasto \[OpenCurlyQuote]\
@@ -154942,7 +154948,8 @@ sconfitta, viene anche data la possibilit\[AGrave] di ",
 }], "Text",
  CellChangeTimes->{{3.953004551563715*^9, 3.9530046344878254`*^9}, {
   3.954838160274866*^9, 3.954838195577881*^9}, {3.955810233559187*^9, 
-  3.955810410826414*^9}},ExpressionUUID->"b2de94b4-7376-2242-b1f9-\
+  3.955810410826414*^9}, {3.9563706859770584`*^9, 
+  3.9563707363561726`*^9}},ExpressionUUID->"b2de94b4-7376-2242-b1f9-\
 cc91f914495e"]
 }, Open  ]]
 }, Open  ]]
@@ -155002,7 +155009,7 @@ Cell[BoxData[{
    3.9535298573689156`*^9}, 3.9535299027479725`*^9, {3.9535303448612385`*^9, 
    3.9535303926919975`*^9}, {3.953530479847145*^9, 3.953530480411598*^9}, 
    3.9537305887514687`*^9},
- CellLabel->"In[4]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
+ CellLabel->"In[19]:=",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -155086,8 +155093,9 @@ fino a quel punto)."
 }, Open  ]]
 }, Open  ]]
 },
-WindowSize->{1141.2, 568.8},
-WindowMargins->{{0, Automatic}, {Automatic, 0}},
+WindowSize->{1152, 579.6},
+WindowMargins->{{
+  Automatic, -5.399999999999864}, {-5.399999999999977, Automatic}},
 Magnification:>0.9 Inherited,
 FrontEndVersion->"14.2 for Microsoft Windows (64-bit) (December 26, 2024)",
 StyleDefinitions->"Default.nb",
@@ -155099,21 +155107,21 @@ ExpressionUUID->"f3d60804-c8f6-d94d-8044-faa8435f3bfb"
 (*CellTagsOutline
 CellTagsIndex->{
  "Wikipedia_Mastermind"->{
-  Cell[9445219, 155015, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+  Cell[9445701, 155022, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
    CellTags->"Wikipedia_Mastermind"]},
  "Wordle"->{
-  Cell[9445494, 155022, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+  Cell[9445976, 155029, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
    CellTags->"Wordle"]},
  "Dataset_Source"->{
-  Cell[9445734, 155027, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+  Cell[9446216, 155034, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
    CellTags->"Dataset_Source"]}
  }
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Wikipedia_Mastermind", 9449407, 155100},
- {"Wordle", 9449558, 155103},
- {"Dataset_Source", 9449703, 155106}
+ {"Wikipedia_Mastermind", 9449924, 155108},
+ {"Wordle", 9450075, 155111},
+ {"Dataset_Source", 9450220, 155114}
  }
 *)
 (*NotebookFileOutline
@@ -155145,31 +155153,31 @@ Cell[9437661, 154842, 1354, 27, 109, "Text",ExpressionUUID->"eff1c535-2ac5-5f4d-
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[9439052, 154874, 159, 3, 39, "Subsubsection",ExpressionUUID->"da962190-bc9e-984e-bdd0-518a8db506ca"],
-Cell[9439214, 154879, 1765, 38, 109, "Text",ExpressionUUID->"b64a694d-e7e4-fc47-89b9-8d2927fd1059"]
+Cell[9439214, 154879, 2164, 43, 168, "Text",ExpressionUUID->"b64a694d-e7e4-fc47-89b9-8d2927fd1059"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9441016, 154922, 172, 3, 39, "Subsubsection",ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-be3e2d0ca442"],
-Cell[9441191, 154927, 896, 18, 109, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
+Cell[9441415, 154927, 172, 3, 39, "Subsubsection",ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-be3e2d0ca442"],
+Cell[9441590, 154932, 978, 20, 109, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9442148, 154952, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
-Cell[9442375, 154958, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
-Cell[9442825, 154971, 2127, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
+Cell[9442629, 154959, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
+Cell[9442856, 154965, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
+Cell[9443306, 154978, 2128, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9444989, 155009, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
-Cell[9445219, 155015, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+Cell[9445471, 155016, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
+Cell[9445701, 155022, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
  CellTags->"Wikipedia_Mastermind"],
-Cell[9445494, 155022, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+Cell[9445976, 155029, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
  CellTags->"Wordle"],
-Cell[9445734, 155027, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+Cell[9446216, 155034, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
  CellTags->"Dataset_Source"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9446024, 155036, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
-Cell[9446198, 155041, 2784, 43, 266, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
+Cell[9446506, 155043, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
+Cell[9446680, 155048, 2784, 43, 266, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
 }, Open  ]]
 }, Open  ]]
 }
