@@ -2,7 +2,7 @@
 
 Un clone del classico gioco di decifratura **MasterMind**, sviluppato in *Wolfram Mathematica*, con meccaniche ispirate a Wordle e un sistema di suggerimenti basato su quiz di cultura generale.
 
-Sviluppato come progetto di Matematica Computazionale per l'Università di Bologna, Laurea Magistrale in Informatica, a.2024/2025
+Sviluppato come progetto del corso di Matematica Computazionale per la Laurea Magistrale in Informatica dell'Università di Bologna, anno 2024/2025
 
 ## Come Funziona
 
