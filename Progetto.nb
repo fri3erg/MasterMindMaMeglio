@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       154,          7]
-NotebookDataLength[   9489475,     155770]
-NotebookOptionsPosition[   9485306,     155687]
-NotebookOutlinePosition[   9486305,     155718]
-CellTagsIndexPosition[   9486149,     155711]
+NotebookDataLength[   9489424,     155767]
+NotebookOptionsPosition[   9485348,     155685]
+NotebookOutlinePosition[   9486352,     155716]
+CellTagsIndexPosition[   9486196,     155709]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -155254,15 +155254,7 @@ A\tAnno 1, curriculum C"
    3.9560601278899975`*^9}, {3.9561576991714582`*^9, 3.956157699171494*^9}, {
    3.956157781334256*^9, 
    3.956157781744506*^9}},ExpressionUUID->"4f13c661-6e35-8b47-93ab-\
-c46546fb1a2a"],
-
-Cell[TextData[StyleBox["Quando si incolla la foto, si pu\[OGrave] tagliare \
-col Crop Tool. In basso si apre un menu dove si pu\[OGrave] impostare l\
-\[CloseCurlyQuote]aspect ratio, se usiamo tutti 4:6 escono uniformi.",
- FontWeight->"Bold"]], "Text",
- CellChangeTimes->{
-  3.953796311145544*^9},ExpressionUUID->"09cab00b-4b1e-cd46-8acb-\
-5d4eafaa6773"]
+c46546fb1a2a"]
 }, Open  ]],
 
 Cell[CellGroupData[{
@@ -155311,7 +155303,7 @@ Questo lo rende simile al sistema di feedback del rompicapo ",
  ButtonBox["[2]",
   BaseStyle->"Hyperlink",
   ButtonData->"Wordle"],
- " e simili."
+ " e suoi simili."
 }], "Text",
  CellChangeTimes->{
   3.953018297619215*^9, {3.953018521701229*^9, 3.9530185225503273`*^9}, {
@@ -155320,18 +155312,20 @@ Questo lo rende simile al sistema di feedback del rompicapo ",
    3.955766445364746*^9, 3.9557664564550533`*^9}, {3.955793903181261*^9, 
    3.955793916798996*^9}, {3.955797534029665*^9, 3.9557975786756077`*^9}, {
    3.955797729642149*^9, 3.955797740621374*^9}, {3.955797796201103*^9, 
-   3.9557978285029984`*^9}, {3.955797870761175*^9, 
-   3.9557978707624035`*^9}},ExpressionUUID->"b35c3540-3144-8943-a285-\
+   3.9557978285029984`*^9}, {3.955797870761175*^9, 3.9557978707624035`*^9}, {
+   3.956368139594452*^9, 
+   3.9563681402010155`*^9}},ExpressionUUID->"b35c3540-3144-8943-a285-\
 3724195b37b3"],
 
 Cell[TextData[{
- "Al posto di tentare a vuoto, il giocatore pu\[OGrave] anche chiedere un \
-suggerimento (una volta per turno): a condizione di ",
+ "Al posto di tentare a vuoto, il giocatore pu\[OGrave] anche chiedere un ",
+ StyleBox["suggerimento",
+  FontWeight->"Bold"],
+ " (una volta per turno): a condizione di ",
  StyleBox["rispondere correttamente a una domanda di trivia",
   FontSlant->"Italic"],
  ", si pu\[OGrave] scoprire uno dei colori presenti nel codice, o la \
-posizione di un colore gi\[AGrave] trovato",
- "."
+posizione di un colore gi\[AGrave] trovato."
 }], "Text",
  CellChangeTimes->{
   3.953018303644039*^9, {3.9557939472902317`*^9, 
@@ -155364,8 +155358,7 @@ preferisce.\nSi pu\[OGrave] cambiare il ",
  " concessi, la ",
  StyleBox["lunghezza del codice",
   FontWeight->"Bold"],
- " da indovinare, e si pu\[OGrave] permettere o meno la ",
- "presenza di ",
+ " da indovinare, e si pu\[OGrave] permettere o meno la presenza di ",
  StyleBox["colori ripetuti",
   FontWeight->"Bold"],
  " nel codice (poich\[EGrave] ogni codice \[EGrave] casuale, non \[EGrave] \
@@ -155395,8 +155388,9 @@ trover\[AGrave] in una nuova schermata dove, da sinistra a destra, trover\
   3.9530058036871967`*^9, 3.9530058038307953`*^9}, {3.9530184178256836`*^9, 
   3.9530184263837643`*^9}, {3.955794037282469*^9, 3.9557944867596226`*^9}, {
   3.955796293844795*^9, 3.955796416458149*^9}, {3.955798679360098*^9, 
-  3.955798705865303*^9}, {3.955798948509636*^9, 
-  3.955798990242508*^9}},ExpressionUUID->"989716a2-dcba-3f46-8227-\
+  3.955798705865303*^9}, {3.955798948509636*^9, 3.955798990242508*^9}, {
+  3.9563681759150295`*^9, 
+  3.956368183326437*^9}},ExpressionUUID->"989716a2-dcba-3f46-8227-\
 eb803432c3bb"]
 }, Open  ]],
 
@@ -155449,7 +155443,7 @@ tramite il tasto \[OpenCurlyQuote]Hint\[CloseCurlyQuote], e questo fa partire \
 la fase Trivia.\nNella fase Trivia, viene posta una ",
  StyleBox["domanda a risposta multipla",
   FontWeight->"Bold"],
- " al giocatore, presi da una collezione pubblica di domande ",
+ " al giocatore, presi da una collezione pubblica di domande in inglese ",
  ButtonBox["[3]",
   BaseStyle->"Hyperlink",
   ButtonData->"Dataset_Source"],
@@ -155468,7 +155462,8 @@ Si pu\[OGrave] chiedere solo un suggerimento per turno."
    3.955797963046913*^9}, {3.9557980160720596`*^9, 3.955798042624033*^9}, {
    3.9557981159348965`*^9, 3.9557981408594666`*^9}, 3.9557986960584946`*^9, {
    3.955800396761801*^9, 3.955800402752102*^9}, {3.9560364115323505`*^9, 
-   3.956036451848156*^9}},ExpressionUUID->"eff1c535-2ac5-5f4d-bc61-\
+   3.956036451848156*^9}, {3.9563682542694416`*^9, 
+   3.9563682556270676`*^9}},ExpressionUUID->"eff1c535-2ac5-5f4d-bc61-\
 c37bfe5f523c"]
 }, Open  ]],
 
@@ -155644,14 +155639,14 @@ e05e242be3ba"],
 Cell[TextData[{
  "Questo progetto \[EGrave] stato creato con pochi cambiamenti rispetto a \
 quanto pianificato inizialmente. Ad ogni lezione, \[EGrave] stato effettuato \
-un brainstorming di idee su come iniziare e proseguire lo sviluppo, scrivendo \
-del codice in cooperativa. Al termine della lezione, ogni membro del gruppo \
-ha comunicato agli altri la parte del progetto di cui si sarebbe occupato, \
-unendo le varie componenti passo dopo passo. \n\nI problemi pi\[UGrave] \
-grandi sono stati quelli tecnici: inizialmente il programma si avviava solo \
-se il pacchetto veniva valutato a priori, ma questo \[EGrave] stato corretto \
-spostandolo in un file di testo normale e risalvandolo come pacchetto Wolfram \
-(",
+un brainstorming di idee su come iniziare (e proseguire) lo sviluppo, \
+scrivendo del codice in cooperativa. Al termine della lezione, ogni membro \
+del gruppo ha comunicato agli altri la parte del progetto di cui si sarebbe \
+occupato, unendo le varie componenti passo dopo passo.\n\nI problemi pi\
+\[UGrave] grandi sono stati di natura tecnica: inizialmente il programma si \
+avviava solo se il pacchetto veniva valutato a priori, ma questo \[EGrave] \
+stato corretto spostandolo in un file di testo normale e risalvandolo come \
+pacchetto Wolfram (",
  StyleBox[".m",
   FontSlant->"Italic"],
  "). Inoltre, Github non \[EGrave] capace di effettuare un ",
@@ -155663,13 +155658,14 @@ preannunciata al resto del gruppo, e non ci potevano essere pi\[UGrave] \
 persone che lavoravano individualmente a uno stesso file in contemporanea (o \
 almeno, non senza dover effettuare un merge manuale).\n\nLavori che espandono \
 su questo progetto potrebbero includere un\[CloseCurlyQuote]ulteriore \
-parametrizzazione del gioco, come ad esempio la scelta dei colori disponibili \
-nella palette (e il loro numero).\nSi potrebbe anche implementare una \
-versione multigiocatore competitiva, dove al posto di ricevere un \
-suggerimento, si pu\[OGrave] scegliere di \[OpenCurlyQuote]attaccare\
-\[CloseCurlyQuote] il proprio avversario se si risponde correttamente alla \
-domanda di trivia (ad esempio, cambiando un colore del suo codice o \
-nascondendo i feedback ricevuti fino a quel punto)."
+personalizzazione del gioco, come ad esempio la scelta dei colori disponibili \
+nella palette (e il loro numero), nonch\[EGrave] la creazione di un dataset \
+di domande ad-hoc.\nSi potrebbe anche implementare una versione \
+multigiocatore competitiva, dove al posto di ricevere un suggerimento, si pu\
+\[OGrave] scegliere di \[OpenCurlyQuote]attaccare\[CloseCurlyQuote] il \
+proprio avversario se si risponde correttamente alla domanda di trivia (ad \
+esempio, cambiando un colore del suo codice o nascondendo i feedback ricevuti \
+fino a quel punto)."
 }], "Text",
  CellChangeTimes->{{3.9525952273489*^9, 3.9525952276444645`*^9}, {
    3.953019275843094*^9, 3.9530192867414913`*^9}, {3.9557983708186913`*^9, 
@@ -155680,7 +155676,9 @@ nascondendo i feedback ricevuti fino a quel punto)."
    3.955801231407175*^9, 3.955801589648344*^9}, {3.9558016612060337`*^9, 
    3.95580173638109*^9}, {3.9558017665322456`*^9, 3.955801823022541*^9}, {
    3.9558018874760704`*^9, 3.9558022417048855`*^9}, {3.9558026901866913`*^9, 
-   3.955802691915308*^9}},ExpressionUUID->"b504615a-a0a3-1945-a68a-\
+   3.955802691915308*^9}, {3.9563679792002983`*^9, 3.956367998158182*^9}, {
+   3.9563680313122025`*^9, 3.956368099179041*^9}, 
+   3.9563685372261105`*^9},ExpressionUUID->"b504615a-a0a3-1945-a68a-\
 7afe5baa9a87"]
 }, Open  ]]
 }, Open  ]]
@@ -155688,7 +155686,7 @@ nascondendo i feedback ricevuti fino a quel punto)."
 WindowSize->{1141.2, 568.8},
 WindowMargins->{{0, Automatic}, {Automatic, 0}},
 Magnification:>0.9 Inherited,
-FrontEndVersion->"14.2 for Mac OS X ARM (64-bit) (December 26, 2024)",
+FrontEndVersion->"14.2 for Microsoft Windows (64-bit) (December 26, 2024)",
 StyleDefinitions->"Default.nb",
 ExpressionUUID->"f3d60804-c8f6-d94d-8044-faa8435f3bfb"
 ]
@@ -155698,21 +155696,21 @@ ExpressionUUID->"f3d60804-c8f6-d94d-8044-faa8435f3bfb"
 (*CellTagsOutline
 CellTagsIndex->{
  "Wikipedia_Mastermind"->{
-  Cell[9481710, 155617, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+  Cell[9481557, 155612, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
    CellTags->"Wikipedia_Mastermind"]},
  "Wordle"->{
-  Cell[9481985, 155624, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+  Cell[9481832, 155619, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
    CellTags->"Wordle"]},
  "Dataset_Source"->{
-  Cell[9482225, 155629, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+  Cell[9482072, 155624, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
    CellTags->"Dataset_Source"]}
  }
 *)
 (*CellTagsIndex
 CellTagsIndex->{
- {"Wikipedia_Mastermind", 9485698, 155699},
- {"Wordle", 9485849, 155702},
- {"Dataset_Source", 9485994, 155705}
+ {"Wikipedia_Mastermind", 9485745, 155697},
+ {"Wordle", 9485896, 155700},
+ {"Dataset_Source", 9486041, 155703}
  }
 *)
 (*NotebookFileOutline
@@ -155721,55 +155719,54 @@ Cell[CellGroupData[{
 Cell[576, 22, 213, 4, 86, "Title",ExpressionUUID->"aa091549-bd51-5642-b972-132a25138a21"],
 Cell[CellGroupData[{
 Cell[814, 30, 289, 7, 93, "Section",ExpressionUUID->"7990e173-5adc-7d4f-a253-03c1bdbff410"],
-Cell[1106, 39, 9465892, 155217, 206, "Text",ExpressionUUID->"4f13c661-6e35-8b47-93ab-c46546fb1a2a"],
-Cell[9467001, 155258, 353, 6, 30, "Text",ExpressionUUID->"09cab00b-4b1e-cd46-8acb-5d4eafaa6773"]
+Cell[1106, 39, 9465892, 155217, 206, "Text",ExpressionUUID->"4f13c661-6e35-8b47-93ab-c46546fb1a2a"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9467391, 155269, 225, 4, 59, "Section",ExpressionUUID->"6827955b-ce5f-f848-80cd-e50789846624"],
-Cell[9467619, 155275, 1007, 24, 50, "Text",ExpressionUUID->"79c2c610-7e0b-f346-bb4a-fb0cdae303ce"],
-Cell[9468629, 155301, 1131, 23, 50, "Text",ExpressionUUID->"b35c3540-3144-8943-a285-3724195b37b3"],
-Cell[9469763, 155326, 521, 12, 50, "Text",ExpressionUUID->"51daa29c-dde2-ec47-83ce-d04b82781ea5"],
+Cell[9467035, 155261, 225, 4, 59, "Section",ExpressionUUID->"6827955b-ce5f-f848-80cd-e50789846624"],
+Cell[9467263, 155267, 1007, 24, 50, "Text",ExpressionUUID->"79c2c610-7e0b-f346-bb4a-fb0cdae303ce"],
+Cell[9468273, 155293, 1188, 24, 50, "Text",ExpressionUUID->"b35c3540-3144-8943-a285-3724195b37b3"],
+Cell[9469464, 155319, 556, 13, 50, "Text",ExpressionUUID->"51daa29c-dde2-ec47-83ce-d04b82781ea5"],
 Cell[CellGroupData[{
-Cell[9470309, 155342, 167, 3, 47, "Subsection",ExpressionUUID->"55bd708c-3894-534b-8f5f-28fd80081cca"],
+Cell[9470045, 155336, 167, 3, 47, "Subsection",ExpressionUUID->"55bd708c-3894-534b-8f5f-28fd80081cca"],
 Cell[CellGroupData[{
-Cell[9470501, 155349, 168, 3, 39, "Subsubsection",ExpressionUUID->"eb9e00c1-85b5-3440-956a-745d1a83fe71"],
-Cell[9470672, 155354, 1930, 45, 109, "Text",ExpressionUUID->"989716a2-dcba-3f46-8227-eb803432c3bb"]
+Cell[9470237, 155343, 168, 3, 39, "Subsubsection",ExpressionUUID->"eb9e00c1-85b5-3440-956a-745d1a83fe71"],
+Cell[9470408, 155348, 1976, 45, 109, "Text",ExpressionUUID->"989716a2-dcba-3f46-8227-eb803432c3bb"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9472639, 155404, 170, 3, 39, "Subsubsection",ExpressionUUID->"059e13a3-dc36-a746-ad10-d9f82896b100"],
-Cell[9472812, 155409, 1206, 26, 109, "Text",ExpressionUUID->"686d69ef-c426-7647-ac81-e6e0604d3de0"]
+Cell[9472421, 155398, 170, 3, 39, "Subsubsection",ExpressionUUID->"059e13a3-dc36-a746-ad10-d9f82896b100"],
+Cell[9472594, 155403, 1206, 26, 109, "Text",ExpressionUUID->"686d69ef-c426-7647-ac81-e6e0604d3de0"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9474055, 155440, 159, 3, 39, "Subsubsection",ExpressionUUID->"dfa0db4d-a22b-2646-ab49-5fafc6700732"],
-Cell[9474217, 155445, 1289, 26, 109, "Text",ExpressionUUID->"eff1c535-2ac5-5f4d-bc61-c37bfe5f523c"]
+Cell[9473837, 155434, 159, 3, 39, "Subsubsection",ExpressionUUID->"dfa0db4d-a22b-2646-ab49-5fafc6700732"],
+Cell[9473999, 155439, 1354, 27, 109, "Text",ExpressionUUID->"eff1c535-2ac5-5f4d-bc61-c37bfe5f523c"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9475543, 155476, 159, 3, 39, "Subsubsection",ExpressionUUID->"da962190-bc9e-984e-bdd0-518a8db506ca"],
-Cell[9475705, 155481, 1765, 38, 109, "Text",ExpressionUUID->"b64a694d-e7e4-fc47-89b9-8d2927fd1059"]
+Cell[9475390, 155471, 159, 3, 39, "Subsubsection",ExpressionUUID->"da962190-bc9e-984e-bdd0-518a8db506ca"],
+Cell[9475552, 155476, 1765, 38, 109, "Text",ExpressionUUID->"b64a694d-e7e4-fc47-89b9-8d2927fd1059"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9477507, 155524, 172, 3, 39, "Subsubsection",ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-be3e2d0ca442"],
-Cell[9477682, 155529, 896, 18, 109, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
+Cell[9477354, 155519, 172, 3, 39, "Subsubsection",ExpressionUUID->"b6cd82b2-a133-fc4b-bbe8-be3e2d0ca442"],
+Cell[9477529, 155524, 896, 18, 109, "Text",ExpressionUUID->"b2de94b4-7376-2242-b1f9-cc91f914495e"]
 }, Open  ]]
 }, Open  ]]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9478639, 155554, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
-Cell[9478866, 155560, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
-Cell[9479316, 155573, 2127, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
+Cell[9478486, 155549, 224, 4, 59, "Section",ExpressionUUID->"987ee9e7-0c8d-c741-a899-64405e9f61c4"],
+Cell[9478713, 155555, 447, 11, 60, "Output",ExpressionUUID->"8f8fbbb6-2301-b740-aa68-540b4bde8837"],
+Cell[9479163, 155568, 2127, 33, 59, "Input",ExpressionUUID->"0d453e4b-3050-2946-9f5d-4dbcea148f69"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9481480, 155611, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
-Cell[9481710, 155617, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
+Cell[9481327, 155606, 227, 4, 59, "Section",ExpressionUUID->"bdc59806-8e64-7b4e-9cee-97a46cc52810"],
+Cell[9481557, 155612, 272, 5, 30, "Text",ExpressionUUID->"0fa18afb-f1b4-f44d-a30b-b67b031f1d92",
  CellTags->"Wikipedia_Mastermind"],
-Cell[9481985, 155624, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
+Cell[9481832, 155619, 237, 3, 30, "Text",ExpressionUUID->"e2c99314-ff46-364b-8c91-1039f3eea440",
  CellTags->"Wordle"],
-Cell[9482225, 155629, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
+Cell[9482072, 155624, 253, 4, 30, "Text",ExpressionUUID->"3323fd67-09f3-5246-8f6f-c1e535071d01",
  CellTags->"Dataset_Source"]
 }, Open  ]],
 Cell[CellGroupData[{
-Cell[9482515, 155638, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
-Cell[9482689, 155643, 2589, 40, 246, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
+Cell[9482362, 155633, 171, 3, 59, "Section",ExpressionUUID->"398824ef-a83f-8140-be33-e05e242be3ba"],
+Cell[9482536, 155638, 2784, 43, 266, "Text",ExpressionUUID->"b504615a-a0a3-1945-a68a-7afe5baa9a87"]
 }, Open  ]]
 }, Open  ]]
 }
