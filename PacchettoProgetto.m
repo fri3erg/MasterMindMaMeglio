@@ -62,7 +62,7 @@ paletteColori={RGBColor[0.9,0,0], Green, Yellow, Blue, Orange, Brown, Purple, Cy
 
 
 (* Stato della partita *)
-partitaInCorso=True;
+partitaInCorso=True
 
 
 (* Libreria di etichette *)
@@ -539,25 +539,21 @@ vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_]
 ]
 
 
-<<<<<<< HEAD
-(* === Interfaccia della griglia di gioco === 
-Costruisce l'interfaccia grafica dinamica del gioco Trivia Mastermind. 
-Tutto ci\[OGrave] che riguarda lo stato del gioco (turni, tentativi, griglia, ...) viene 
-memorizzato e aggiornato dentro questa DynamicModule.
-Parametri:
-- seed: seme per la generazione della combinazione segreta,
-- lunghezzaCombinazione: numero di pallini da riempire per ogni tentativo,
-- numeroTentativi: numero massimo di tentativi che il giocatore pu\[OGrave] fare,
-- allowDuplicates: booleano. Se True, la combinazione pu\[OGrave] contenere colori ripetuti.
-Le variabili locali sono dinamicamente aggiornate durante il corso della partita.
-La funzione interfacciaGriglia permette che l'interfaccia possa rispondere agli 
-input del giocare e aggiornarsi automaticamente *)
+(* Funzione di generazione dell'interfaccia della griglia di gioco dinamica, prende in input il seed,
+il numero di colori che formano la combinazione segreta, il numero di tentativi e un flag per l'utilizzo di colori duplicati.
+Genera: 
+ -Griglia di tentativi e relative combinazioni
+ -Griglia di feedback per ciascun tentativo
+ -Bottone di check del tentativo
+ -Bottone di Hint per l'avvio del Trivia
+ -Funzioni di restart e termina partita
+*)
 interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_] := DynamicModule[
 {
     (* Definisce una griglia di colori per ciascun disco in ogni riga della partita.
     Inizialmente tutti i dischi sono vuori; viene aggiornata quando l'utente seleziona un colore *)
 	gridItemsColors = Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}], 
-	(* Memorizza i feedback per ciascun tentativo. 
+	(* Memorizza lo storico dei feedback per ciascun tentativo. 
 	Ogni elemento \[EGrave] una lista di coppie {coloreScleto, feedback}.
 	Serve per vedere i pioli dei feedback *)
 	hintFeedbackHistory = ConstantArray[{}, numeroTentativi],
@@ -588,37 +584,6 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	- elemento Missing: se l'utente ha sbagliato *)
 	correct = {}
 },
-=======
-(* Funzione di generazione dell'interfaccia della griglia di gioco dinamica, prende in input il seed, il numero di colori che formano la combinazione segreta,
- il numero di tentativi e un flag per l'utilizzo di colori duplicati.
- Genera: 
- -Griglia di tentativi e relative combinazioni
- -Griglia di feedback per ciascun tentativo
- -Bottone di check del tentativo
- -Bottone di Hint per l'avvio del Trivia
- -Funzioni di restart e termina partita
-*)
-interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_] :=
-    DynamicModule[
-        {
-            gridItemsColors = Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}], (* Tabella per memorizzare i colori degli elementi, inizialmente tutta nera(opacit\[AGrave] a 0.2)*)
-            hintFeedbackHistory = ConstantArray[{}, numeroTentativi],(* Storico feedback*)
-            turn = 1, (*Numero del tentativo*)
-            colorsList = paletteColori, (*Lista di colori della palette di scelta*)
-            selectedItem = {1, 1}, (* Elemento selezionato riga,colonna*)
-            soluzioneList = generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates], (* Combinazione segreta *)
-            tentativoList = ConstantArray[None, lunghezzaCombinazione], (* Tentativo corrente *)
-            valutazioneTentativo = {},
-            questionCounter = 0,
-            correct = {}
-        },
-        
-        Framed[
-            Column[{
-                (* Content *)
-                Row[{
-                    Spacer[20],
->>>>>>> 7f4a9b31cbb911e9ed358f9c9e99dde494c96f00
 
 	Framed[
         Column[{
