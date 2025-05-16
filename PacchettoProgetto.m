@@ -4,9 +4,9 @@
 (* :Context:PacchettoProgetto`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
-(* :Package Version:1.0*)
+(* :Package Version:1.1*)
 (* :History:last modified 16/5/2025*)
-(* :Copyright:\[Copyright] 2025 Gruppo 10 - Trivia Mastermind*)
+(* :Copyright:\[Copyright] 2025 Gruppo 10 - Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi*)
 (* :License:MIT License*)
 
 BeginPackage["PacchettoProgetto`"];
@@ -42,18 +42,11 @@ Begin["`Private`"];
   testato aggiungendo un Print alla funzione di LoadQuestionsFromCSV
   Calcolando triviaData := LoadQuestions... nello stesso modo porta lo stesso problema, entrambi i casi portano a 
   perdite di prestazione, anche con cache automatiche per il risultato
-  
-  le parentesi chiuse non sono necessarie, ma lo trovo molto meno intuitivo scrivere:
-  triviaData := triviaData = LoadQuestionsFromCSV["trivia.csv"];
-  
-  le giuro per\[OGrave] che \[EGrave] l'unica volta che uso le parentesi, le ho tolte in tutte le altri parti
 
   erano presenti un paio di cose extra che pensavo fossero necessario per le variabili globali fatte cos\[IGrave] 
   ma aveva ragione che potevano essere tolte.
 *)
-triviaData := (
-    triviaData = LoadQuestionsFromCSV["trivia.csv"]
-);
+triviaData := triviaData = LoadQuestionsFromCSV["trivia.csv"];
 
 
 (* Lista dei colori usati da Mastermind *)
@@ -69,8 +62,8 @@ partitaInCorso=True
 labels=translations = <|
 	"titoloGioco"->"TRIVIA MASTERMIND",
 	"fattoDa"->"by Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi",
-	"inserisciSeed"->"Insert seed: ",
-	"placeholderSeed"->"Write a numeric seed...",
+	"inserisciSeed"->"Insert a seed: ",
+	"placeholderSeed"->"Write a positive integer...",
 	"play"->"\[FilledRightTriangle]",
 	"randomSeed"->"\:21bb",
 	"nTurni"->"Turns",
@@ -210,7 +203,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 		seed appena generato casualmente. Infine, il pulsante play a fine riga, se cliccato,
 		permette di iniziare una nuova partita *)
 		Row[{
-		    (* Pulsante che se premuto genera un seed casuale tra 1 e 9999999999 *)
+		    (* Pulsante che se premuto genera un seed casuale tra 0 e 9999 *)
 			ClickPane[
 				Framed[
 				(* Stile del tasto *)
@@ -222,36 +215,42 @@ avviaSchermataDiGioco[] := DynamicModule[
 				ImageSize->Automatic 
 				],
 			    Function[ (* Azione al click: viene generato e assegnato il seed *)
-			        seedInserito=RandomInteger[{1, 9999999999}]; 
+			        seedInserito=RandomInteger[{0, 9999}]; 
 			    ]
 			],
 			    
 		    Spacer[15],
 	        
 	        (* Campo di input per inserire o visualizzare il seed *)
-		    Item[
-			    Framed[
-				    InputField[
-					    Dynamic[seedInserito], (* Associa dinamicamente il campo al valore di seedInserito *)
-					    (* Sono amessi solo numeri interi *)
-					    (* Se l'utente tentasse di inserire da tastiera elementi diversi da quelli indicati, questi non sarebbero visualizzati *)
-					    Number,
-					    FieldHint->labels["placeholderSeed"], (* Suggerimento testuale se si lascia il campo vuoto *)
-					    FieldHintStyle->{Italic},
-					    ImageSize->{250, 21},
-					    Appearance->"Frameless",
-					    BaselinePosition->Center,
-					    ContinuousAction->True (* Aggiornamento continuo: serve per attirare e disattivare il tasto Play *)
-				    ],
-				(* Stie della barra di inserimento *) 
-			    Background->LightGray,
-			    FrameStyle->None,
-			    RoundingRadius->10,
-			    FrameMargins->{{10, 10}, {5, 5}},
-			    ImageSize->Automatic
-			    ],
-		    ItemSize->Automatic 
-		    ],
+			Item[
+				Framed[
+					InputField[
+						Dynamic[
+							seedInserito,
+							(* Setter personalizzato: accetta solo interi >= 0 *)
+							(If[IntegerQ[#] && # >= 0, seedInserito = #] &)
+							
+							(* Alternativa: permette la presenza di stringhe vuote, ma il punto decimale resetta il campo del seed 
+							Function[val,
+								If[IntegerQ[val] && val >= 0,
+									seedInserito = val,  (* Se \[EGrave] un intero positivo, mantienilo *)
+									seedInserito = Missing["NotAvailable"]  (* Se viene cancellato tutto o valore invalido -> reset *)
+								]
+							]*)
+						],
+						Number, (* Per propriet\[AGrave] di Number, la stringa vuota non \[EGrave] ammessa, ergo una vota iniziato a scrivere il seed, deve rimanere almeno una cifra (si pu\[OGrave] comunque cambiare selezionandola) *)
+						FieldHint -> labels["placeholderSeed"], FieldHintStyle -> {Italic},
+						ImageSize -> {250, 21}, Appearance -> "Frameless",
+						BaselinePosition -> Center, ContinuousAction -> True (* Azione continua *)
+					],
+					Background -> LightGray,
+					FrameStyle -> None,
+					RoundingRadius -> 10,
+					FrameMargins -> {{10, 10}, {5, 5}},
+					ImageSize -> Automatic
+				],
+				ItemSize -> Automatic
+			]
 	       
 		    Spacer[15],
 		    
@@ -260,7 +259,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 		    tasto appare disattivato e non \[EGrave] cliccabile; se invece il seed \[EGrave] corretto, il tasto si
 		    colora, consentendo l'avvio della partita *)
 		    Dynamic[
-			    If[IntegerQ[seedInserito] && seedInserito > 0,
+			    If[IntegerQ[seedInserito] && seedInserito >= 0,
 			    (* Caso seed valido -> tasto abilitato *)
 				    ClickPane[
 					    Framed[
@@ -281,10 +280,10 @@ avviaSchermataDiGioco[] := DynamicModule[
 					    ]
 				    ],
 			        
-				    (* Caso seed non valido - >tasto disabilitato  *)
+				    (* Caso seed non valido -> tasto disabilitato  *)
 				    Framed[
 					    Style[labels["play"], FontSize->18, FontColor->GrayLevel[0.8]],
-					    Background->RGBColor[0, 0.5, 0], (* Stesso sfondo verde, ma ingrigito per indicare la disattivazione *)
+					    Background->RGBColor[0,0.3,0], (* Sfondo verde, ma scurito per indicare la disattivazione *)
 					    FrameStyle->None,
 					    RoundingRadius->5,
 					    FrameMargins->{{10, 10}, {5, 5}},
