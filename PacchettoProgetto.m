@@ -4,8 +4,8 @@
 (* :Context:PacchettoProgetto`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
-(* :Package Version:0.9*)
-(* :History:last modified 9/5/2025*)
+(* :Package Version:1.0*)
+(* :History:last modified 16/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Trivia Mastermind*)
 (* :License:MIT License*)
 
