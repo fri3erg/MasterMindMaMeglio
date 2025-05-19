@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
 (* :Title:Trivia Mastermind*)
-(* :Context:PacchettoProgetto`*)
+(* :Context:PacchettoTriviaMastermind`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
 (* :Package Version:1.1*)
@@ -9,8 +9,8 @@
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi*)
 (* :License:MIT License*)
 
-BeginPackage["PacchettoProgetto`"];
-(*ClearAll["PacchettoProgetto`*"];*)
+BeginPackage["PacchettoTriviaMastermind`"];
+(*ClearAll["PacchettoTriviaMastermind`*"];*)
 
 (* USAGE DI FUNZIONI CHIAMATE ESPLICITAMENTE NEL NOTEBOOK *)
 avviaSchermataDiGioco::usage="Avvia l\[CloseCurlyQuote]interfaccia grafica principale, visualizzando una schermata iniziale da cui \[EGrave] possibile personalizzare i parametri del gioco e avviare una nuova partita.";
@@ -250,7 +250,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 					ImageSize -> Automatic
 				],
 				ItemSize -> Automatic
-			]
+			],
 	       
 		    Spacer[15],
 		    
@@ -899,7 +899,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 			                                ImageSize->Automatic
 		                                    ]
 	                                    ] (* fine which*)
-                                    ]] (* fine dynamic[module]*)
+                                    ]],   (* fine dynamic[module]*)
                                     
                                     Spacer[50],
                                         
