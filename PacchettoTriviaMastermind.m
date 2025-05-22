@@ -23,7 +23,7 @@ Begin["`Private`"];
 (*
   Spiegazione del funzionamento per 'triviaData':
   Questa definizione impiega una tecnica nota come "caricamento differito" (o "lazy loading") con "memoizzazione".
-  L'operatore ':=' fa s\[IGrave] che l'operazione specificata (in questo caso, LoadQuestionsFromCSV)
+  L'operatore ':=' fa s\[IGrave] che l'operazione specificata (in questo caso, CaricaTriviaDaCSV)
   non venga eseguita immediatamente, ma solo la prima volta che si fa effettivamente uso di 'triviaData'.
 
   Durante questo primo utilizzo, l'istruzione interna 'triviaData = ...' esegue due compiti:
@@ -39,14 +39,14 @@ Begin["`Private`"];
   (probabilmente per problemi di scoping tra notebook e pacchetto)
   
   Calcolando triviaData = LoadQuestions...  qui sotto come variabile globale porta alla ricalcolazione della variabile decine di volte,
-  testato aggiungendo un Print alla funzione di LoadQuestionsFromCSV
+  testato aggiungendo un Print alla funzione di CaricaTriviaDaCSV
   Calcolando triviaData := LoadQuestions... nello stesso modo porta lo stesso problema, entrambi i casi portano a 
   perdite di prestazione, anche con cache automatiche per il risultato
 
   erano presenti un paio di cose extra che pensavo fossero necessario per le variabili globali fatte cos\[IGrave] 
   ma aveva ragione che potevano essere tolte.
 *)
-triviaData := triviaData = LoadQuestionsFromCSV["trivia.csv"];
+triviaData := triviaData = CaricaTriviaDaCSV["trivia.csv"];
 
 
 (* Lista dei colori usati da Mastermind *)
@@ -418,6 +418,77 @@ avviaSchermataDiGioco[] := DynamicModule[
   
     mainWindow (* Restituisce la finestra appena creata e tutto il suo contenuto *)
 ]
+
+
+(* === Funzione per la creazione della schermata di gioco ===
+Costruisce l'interfaccia utente dinamica per il gioco Trivia Mastermind.
+Questa schermata viene visualizzata quando l'utente, dalla schermata iniziale, avvia una nuova
+partita cliccando sul pulsante verde con il seed selezionato o inserito manualmente.
+L'interfaccia mostra:
+- Un pulsante per tornare alla schermata principale,
+- Il seed scelto per la partita corrente (che consente di ricreare la stessa partita se usato con le stesse impostazioni,
+- La griglia di gioco, che si aggiorna dinamicamente in base alle azioni dell'utente e alle impostazioni selezionate.
+Parametri:
+- seed: seme utilizzato per generare la combinazione segreta e altri aspetti (come le domande del quiz Trivia presenti come suggerimenti),
+- tentativi: rappresenta il numero di tentativi massimo disponibile,
+- combinazione: la combinazione segreta da indovinare,
+- allowDuplicates: valore booleano che indica se nella combinazione sono ammessi colori ripetuti *)
+creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_] := DynamicModule[
+	{},
+	
+	Pane[
+		Column[{
+		    (* Barra superiore *)
+			Panel[
+				Row[{
+				    (* Pulsante per tornare la menu principale *)
+					ClickPane[
+						Framed[
+						    (* Stile del bottone *)
+							Style[labels["menu"], White, FontSize->20, FontFamily->"Consolas", Bold],
+							Background->Red,
+							FrameStyle->None,
+							RoundingRadius->5,
+							FrameMargins->{{6, 6}, {0, 0}}
+						],
+						Function[cambiaSchermata["menu"]] (* Cambio schermata al click, ritornando al menu principale *)
+					],
+					
+					Spacer[5],
+					
+					(* Visualizzazione del seed selezionato nella partita corrente *)
+					Framed[
+						Style[labels["seedSelezionato"] <> ToString[seed], FontSize->20, 
+						FontFamily->"Consolas", FontColor->Black, Bold],
+						FrameStyle->None,
+						FrameMargins->{{6, 6}, {0, 0}}
+					]
+				},
+				Alignment->Center (* Allineamento degli elementi al centro della schermata *)
+				],
+			Background->White 
+			],
+			
+			(* Area di gioco dinamica *)
+			Dynamic[
+				Pane[
+				    (* InterfacciaGriglia gestisce la griglia di gioco ed \[EGrave] inclusa nella schermata creata da
+				    creaSchermataGioco, sotto al testo che mostra il seed attuale.
+				    Qui l'utente effettua i tentativi per cercare di vincere la partita *)
+					interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates], 
+					{Automatic, Scaled[0.8]}, (* Griglia centrata e ridimensionata per una visualizzazione ottimale senza scorrimento o zoom *)
+					Scrollbars->False,
+					Alignment->Center 
+				]
+			]
+		},
+		Alignment->Center
+		],
+	Alignment->Center,
+	ImageSize->Scaled[1] (* Il contenuto occupa l'intera area disponibile della finestra *)
+	]
+];
+
 
 
 (* === Funzione per generare il codice segreto da indovinare ===
@@ -816,7 +887,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 					                                    
 						                                    partitaInCorso=False;
 						                                    
-						                                    DisplayEndGameDialog[True,
+						                                    MostraDialogFinePartita[True,
 							                                    Function[{},
 								                                    (* Reset delle variabili *)
 								                                    gridItemsColors=Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}];
@@ -839,7 +910,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 					                                    If[Length[valutazioneTentativo] > 0 && valutazioneTentativo[[1]] === mastermindSconfitta,
 						                                    partitaInCorso=False;
 						                                    
-						                                    DisplayEndGameDialog[False,
+						                                    MostraDialogFinePartita[False,
 							                                    Function[{},
 								                                    (* Reset delle variabili *)
 								                                    gridItemsColors=Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}];
@@ -904,16 +975,16 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                     risultato di un aiuto non ancora disponibile. *)
                                     emptyResultPlaceholder = Missing["NoResultSetYet"];
                                     Dynamic[
-									    generaUIHint[
-									        correct,         (* La variabile 'correct' del DynamicModule principale *)
+									    pulsanteSuggerimenti[
+									        correct,         
 									        x,               (* La 'x' corrente dalla Table (riga) *)
-									        turn,            (* La variabile 'turn' del DynamicModule principale *)
-									        emptyResultPlaceholder, (* La costante *)
-									        triviaData,      (* La variabile 'triviaData' *)
-									        partitaInCorso,  (* La variabile 'partitaInCorso' *)
+									        turn,            
+									        emptyResultPlaceholder, 
+									        triviaData,      
+									        partitaInCorso,  
 									        Function[        (* Questa \[EGrave] la funzione di callback per il ClickPane *)
 									            If[partitaInCorso,
-									                AppendTo[correct, DisplayTriviaQuestion[seed + questionCounter, CalcolaHintSemplice[hintFeedbackHistory, soluzioneList]]];
+									                AppendTo[correct, MostraDomandeTrivia[seed + questionCounter, DecidiSuggerimentoLogica[hintFeedbackHistory, soluzioneList]]];
 									                questionCounter++;
 									            ]
 									        ]
@@ -942,13 +1013,12 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 ]	
 
 
-(* Definisci questa funzione helper da qualche parte, ad esempio all'inizio del tuo pacchetto o del DynamicModule principale *)
-generaUIHint[
+pulsanteSuggerimenti[
     correct_List, (* Lista dei risultati dei tentativi di hint *)
     rigaCorrenteX_Integer, (* La riga (x) per cui stiamo generando questo UI *)
     turnoAttuale_Integer, (* Il turno di gioco corrente *)
     placeholderRisultatoVuoto_, (* Il tuo emptyResultPlaceholder *)
-    datiTrivia_, (* Il tuo triviaData *)
+    datiTrivia_, (* triviaData *)
     partitaInCorso_, (* Flag booleano *)
     callbackClickHint_Function (* Una funzione per gestire il click del bottone HINT *)
 ] := Module[
@@ -957,7 +1027,7 @@ generaUIHint[
         displayOutput
     },
 
-    (* Fase 1: Determina il valore attuale per la riga x... *)
+    (* Determina il valore attuale per la riga x *)
     currentValForRowX = If[
         ListQ[correct] && Length[correct] >= rigaCorrenteX && rigaCorrenteX >= 1 &&
         correct[[rigaCorrenteX]] =!= Null && correct[[rigaCorrenteX]] =!= {} && correct[[rigaCorrenteX]] =!= placeholderRisultatoVuoto,
@@ -965,7 +1035,7 @@ generaUIHint[
         placeholderRisultatoVuoto
     ];
 
-    (* Fase 2: Determina quale interfaccia utente visualizzare... *)
+    (* Determina quale interfaccia utente visualizzare*)
     displayOutput = Which[
         currentValForRowX === Missing["WrongAnswer"],
         Framed[
@@ -1013,83 +1083,12 @@ generaUIHint[
 ];
 
 
-(* === Funzione per la creazione della schermata di gioco ===
-Costruisce l'interfaccia utente dinamica per il gioco Trivia Mastermind.
-Questa schermata viene visualizzata quando l'utente, dalla schermata iniziale, avvia una nuova
-partita cliccando sul pulsante verde con il seed selezionato o inserito manualmente.
-L'interfaccia mostra:
-- Un pulsante per tornare alla schermata principale,
-- Il seed scelto per la partita corrente (che consente di ricreare la stessa partita se usato con le stesse impostazioni,
-- La griglia di gioco, che si aggiorna dinamicamente in base alle azioni dell'utente e alle impostazioni selezionate.
-Parametri:
-- seed: seme utilizzato per generare la combinazione segreta e altri aspetti (come le domande del quiz Trivia presenti come suggerimenti),
-- tentativi: rappresenta il numero di tentativi massimo disponibile,
-- combinazione: la combinazione segreta da indovinare,
-- allowDuplicates: valore booleano che indica se nella combinazione sono ammessi colori ripetuti *)
-creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_] := DynamicModule[
-	{},
-	
-	Pane[
-		Column[{
-		    (* Barra superiore *)
-			Panel[
-				Row[{
-				    (* Pulsante per tornare la menu principale *)
-					ClickPane[
-						Framed[
-						    (* Stile del bottone *)
-							Style[labels["menu"], White, FontSize->20, FontFamily->"Consolas", Bold],
-							Background->Red,
-							FrameStyle->None,
-							RoundingRadius->5,
-							FrameMargins->{{6, 6}, {0, 0}}
-						],
-						Function[cambiaSchermata["menu"]] (* Cambio schermata al click, ritornando al menu principale *)
-					],
-					
-					Spacer[5],
-					
-					(* Visualizzazione del seed selezionato nella partita corrente *)
-					Framed[
-						Style[labels["seedSelezionato"] <> ToString[seed], FontSize->20, 
-						FontFamily->"Consolas", FontColor->Black, Bold],
-						FrameStyle->None,
-						FrameMargins->{{6, 6}, {0, 0}}
-					]
-				},
-				Alignment->Center (* Allineamento degli elementi al centro della schermata *)
-				],
-			Background->White 
-			],
-			
-			(* Area di gioco dinamica *)
-			Dynamic[
-				Pane[
-				    (* InterfacciaGriglia gestisce la griglia di gioco ed \[EGrave] inclusa nella schermata creata da
-				    creaSchermataGioco, sotto al testo che mostra il seed attuale.
-				    Qui l'utente effettua i tentativi per cercare di vincere la partita *)
-					interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates], 
-					{Automatic, Scaled[0.8]}, (* Griglia centrata e ridimensionata per una visualizzazione ottimale senza scorrimento o zoom *)
-					Scrollbars->False,
-					Alignment->Center 
-				]
-			]
-		},
-		Alignment->Center
-		],
-	Alignment->Center,
-	ImageSize->Scaled[1] (* Il contenuto occupa l'intera area disponibile della finestra *)
-	]
-];
-
-
-
 (* === Funzione che visualizza un dialogo di fine partita ===
 In  aggiunta, si hanno opzioni per riavviare il gioco, tornare al menu e chiudere la finestra di dialogo.
 Parametri:
 - hasWon: True se il giocatore ha vinto, False altrimenti
 - onRestartFunc: funzione opzionale da eseguire se si sceglie Restart *)
-DisplayEndGameDialog[hasWon_, onRestartFunc_: Null] :=
+MostraDialogFinePartita[hasWon_, onRestartFunc_: Null] :=
     CreateDialog[
         DynamicModule[{}, (* Manteniamo questo DynamicModule per il contesto del Dialog *)
             Pane[
@@ -1169,14 +1168,13 @@ DisplayEndGameDialog[hasWon_, onRestartFunc_: Null] :=
 
 (* Mostra una finestra di dialogo (dialog) con una domanda trivia e opzioni a scelta multipla. *)
 (* Il dialogo \[EGrave] modale, quindi la funzione sospende l'esecuzione finch\[EAcute] il dialogo non viene chiuso. *)
-(* @param seed: Numero intero usato per selezionare e mescolare la domanda tramite PrepareQuestionData. *)
+(* @param seed: Numero intero usato per selezionare e mescolare la domanda tramite PreparaTriviaData. *)
 (* @param hintToGive: La struttura dell'indizio (solitamente {colore, posizione_o_codice_mancante}) che verr\[AGrave] mostrata se la risposta \[EGrave] corretta. Questa stessa struttura sar\[AGrave] il valore restituito dalla funzione in caso di risposta corretta. *)
 (* @return: La struttura 'hintToGive' se \[EGrave] stata selezionata la risposta corretta. *)
 (* Restituisce Missing["WrongAnswer"] se \[EGrave] stata selezionata una risposta errata o se il dialogo \[EGrave] stato chiuso prematuramente (es. tramite il pulsante di chiusura della finestra del sistema operativo). *)
 (* Restituisce $Failed se il dialogo \[EGrave] stato chiuso prima di qualsiasi interazione e il risultato non \[EGrave] stato impostato esplicitamente (raro, data la gestione con NotebookEventActions). *)
-DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
+MostraDomandeTrivia[seed_Integer, hintToGive_] := Module[
     {
-        (* --- Variabili del modulo esterno (DisplayTriviaQuestion) --- *)
         questionWindow,
         result = $Failed,
         dialogOpen = True,
@@ -1186,8 +1184,8 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
         displayStateForWindowClose = "question", (* Per l'evento 'X' della finestra *)
 
         (* --- Definizioni delle funzioni helper locali --- *)
-        internalPerformCloseLogic, (* Nuova helper per la logica di chiusura comune *)
-        onOsWindowCloseHandler     (* Nuova helper per l'evento WindowClose *)
+        internalPerformCloseLogic, (* helper per la logica di chiusura comune *)
+        onOsWindowCloseHandler     (* helper per l'evento WindowClose *)
     },
 
     (* Definisci la logica di chiusura una sola volta *)
@@ -1197,29 +1195,27 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
         NotebookClose[EvaluationNotebook[]];
     );
 
-    (* Definisci l'handler per la chiusura della finestra del SO *)
+    (* handler per la chiusura della finestra del SO *)
     onOsWindowCloseHandler = Function[{},
-        Print["onOsWindowCloseHandler called. displayStateForWindowClose: ", displayStateForWindowClose]; (* Debug *)
         internalPerformCloseLogic[
             If[displayStateForWindowClose == "correct_show_hint",
                 hintToGive,
                 Missing["WrongAnswer"]
             ]
         ];
-    , HoldAll]; (* HoldAll \[EGrave] importante qui *)
+    , HoldAll]; 
 
     (* Prepara i dati della domanda *)
-    {initialQuestionData, initialOptionsData, initialCorrectIndexData} = PrepareQuestionData[seed];
+    {initialQuestionData, initialOptionsData, initialCorrectIndexData} = PreparaTriviaData[seed];
 
     questionWindow = CreateDialog[
-        CreateTriviaDialogUI[
+        CreaDialogTriviaUI[
             initialQuestionData,
             initialOptionsData,
             initialCorrectIndexData,
             hintToGive,
-            internalPerformCloseLogic, (* Passa la funzione helper nominata *)
-            Function[newState, (* Questa callback anonima per aggiornare lo stato esterno va bene *)
-                Print["Updating displayStateForWindowClose to: ", newState]; (* Debug *)
+            internalPerformCloseLogic, 
+            Function[newState, (* callback anonima per aggiornare lo stato esterno *)
                 displayStateForWindowClose = newState;
             ]
         ],
@@ -1231,22 +1227,21 @@ DisplayTriviaQuestion[seed_Integer, hintToGive_] := Module[
         WindowFrame -> "ModalDialog",
         Background -> White,
         NotebookEventActions -> {
-            "WindowClose" :> onOsWindowCloseHandler[] (* Usa la funzione helper nominata *)
+            "WindowClose" :> onOsWindowCloseHandler[] 
         }
     ]; 
   
     While[dialogOpen, Pause[0.1]];
   
-    Print["DisplayTriviaQuestion returning: ", result]; (* Debug *)
     result
 ];
 
 
-CreateTriviaDialogUI[
+CreaDialogTriviaUI[
     initialQuestionData_, 
     initialOptionsData_, 
     initialCorrectIndexData_,
-    hintToGiveOuter_, (* Rinominato per evitare conflitto con hintToGive in DisplayTriviaQuestion se questa fosse interna *)
+    hintToGiveOuter_, 
     performCloseCallback_, (* Callback per l'azione di chiusura dei bottoni interni *)
     updateOuterDisplayStateCallback_ (* Callback per aggiornare lo stato esterno per WindowClose *)
 ] := DynamicModule[
@@ -1261,7 +1256,7 @@ CreateTriviaDialogUI[
     Dynamic@Refresh[
         Switch[displayStateInternal,
             "question",
-            CreateQuestionDisplayUI[
+            DomandeTriviaUI[
                 localQuestion,
                 localOptions,
                 localCorrectIndex,
@@ -1273,10 +1268,10 @@ CreateTriviaDialogUI[
             ],
             
             "correct_show_hint",
-            CreateCorrectHintDisplay[hintToGiveOuter, performCloseCallback],
+            TriviaCorrettoUI[hintToGiveOuter, performCloseCallback],
             
             "incorrect_show_message",
-            CreateIncorrectAnswerDisplay[localOptions, localCorrectIndex, performCloseCallback],
+            TriviaIncorrettoUI[localOptions, localCorrectIndex, performCloseCallback],
             
             _, 
             Style["Error: Dialog content issue.", Red, Bold]
@@ -1286,11 +1281,11 @@ CreateTriviaDialogUI[
 ]
 
 
-CreateQuestionDisplayUI[
-    questionData_, (* Es. localQuestion che contiene questionData["Question"] *)
-    optionsList_, (* Es. localOptions *)
-    correctOptionIndex_, (* Es. localCorrectIndex *)
-    updateDisplayStateCallback_ (* Funzione per cambiare displayState, es. (displayState = #)& *)
+DomandeTriviaUI[
+    questionData_, (* contiene questionData["Question"] *)
+    optionsList_, 
+    correctOptionIndex_, 
+    updateDisplayStateCallback_ (* Funzione per cambiare displayState*)
 ] :=
 Column[
     {
@@ -1303,9 +1298,8 @@ Column[
     Grid[
         Partition[
             MapIndexed[
-                Function[{optionText, optionIdx}, (* optionIdx \[EGrave] una lista, es. {1}, {2} *)
-                    (* Questo DynamicModule interno per ogni bottone \[EGrave] buono,
-                       mantiene lo stato 'clicked' e 'isCorrect' locale al bottone. *)
+                Function[{optionText, optionIdx}, 
+                    (* Questo DynamicModule mantiene lo stato 'clicked' e 'isCorrect' locale al bottone. *)
                     DynamicModule[
                         {
                             clicked = False, 
@@ -1321,7 +1315,6 @@ Column[
                                 updateDisplayStateCallback["correct_show_hint"],
                                 updateDisplayStateCallback["incorrect_show_message"]
                             ];,
-                            (* Aspetto del bottone *)
                             Background -> Dynamic[If[clicked, If[isCorrect, Green, Red], White]],
                             ImageSize -> {200, 80},
                             BaseStyle -> {FontColor -> Black, FontWeight -> Bold, FontFamily -> "Arial", FontSize -> 14},
@@ -1340,8 +1333,8 @@ Column[
 ]
 
 
-CreateCorrectHintDisplay[hintToGiveLocal_List, closeActionCallback_] :=
-    With[{theCol = hintToGiveLocal[[1]], posVal = hintToGiveLocal[[2]]}, (* Destructure hintToGiveLocal *)
+TriviaCorrettoUI[hintToGiveLocal_List, closeActionCallback_] :=
+    With[{theCol = hintToGiveLocal[[1]], posVal = hintToGiveLocal[[2]]}, 
         Column[
             {
             (* Titolo "Correct!" *)
@@ -1370,7 +1363,7 @@ CreateCorrectHintDisplay[hintToGiveLocal_List, closeActionCallback_] :=
                         Style[ToString[posVal], Medium, Bold, FontFamily -> "Arial", FontSize -> 24]
                         }, Alignment -> Center]
                 ],
-                ImageSize -> {500, Automatic}, (* ImageSize era {500, Automatic} nel codice originale per il Pane *)
+                ImageSize -> {500, Automatic}, 
                 Alignment -> Center
             ],
 
@@ -1386,17 +1379,16 @@ CreateCorrectHintDisplay[hintToGiveLocal_List, closeActionCallback_] :=
     ];
 
 
-CreateIncorrectAnswerDisplay[optionsList_List, correctOptionIndex_Integer, closeActionCallback_] :=
+TriviaIncorrettoUI[optionsList_List, correctOptionIndex_Integer, closeActionCallback_] :=
     Column[
         {
         (* Titolo "Incorrect!" *)
         Pane[
             Style["Incorrect!", 36, Bold, Red, FontFamily -> "Arial", TextAlignment -> Center],
-            ImageSize -> {500, Automatic}, (* Manteniamo ImageSize specificato *)
+            ImageSize -> {500, Automatic}, 
             Alignment -> Center
         ],
 
-        (* Messaggio "The correct answer is:" *)
         Pane[
             Style["The correct answer is: ", Medium, FontFamily -> "Arial", FontSize -> 18],
             ImageSize -> {500, Automatic},
@@ -1428,7 +1420,7 @@ Valore di ritorno:
 - Un Dataset Mathematica in cui ogni riga \[EGrave] un'associazione (nome_colonna -> valore_dato),
 oppure $Failed se si verifica un errore durante il caricamento del file o
 l'interpretazione del suo contenuto come dati CSV *)
-LoadQuestionsFromCSV[path_String] := Module[
+CaricaTriviaDaCSV[path_String] := Module[
 	{csvText, data, headers, rows, dataset},
 	
 	(* Fase 1: Importa il contenuto grezzo del file CSV come testo. *)
@@ -1457,7 +1449,7 @@ LoadQuestionsFromCSV[path_String] := Module[
 (* Prepara i dati di una domanda: seleziona la domanda in base al seed, estrae le opzioni di risposta e l'indice della risposta corretta.
 @param seed: Intero usato per la selezione (pseudo)casuale della domanda.
 @return: Lista contenente {domandaSelezionata, opzioniDisponibili, indiceRispostaCorretta} *)
-PrepareQuestionData[seed_Integer] := Module[
+PreparaTriviaData[seed_Integer] := Module[
 	{questionIndex, options, rawCorrectIndex, selectedQuestion, optionKeys, correctIndex},
 	  
 	SeedRandom[seed];
@@ -1492,7 +1484,7 @@ Priorit\[AGrave] degli Indizi (la funzione restituisce il primo indizio applicab
 - {colore, Missing["PositionNotApplicable"]}: Indizio senza posizione specifica.
 - {colore, posizione_Integer}: Indizio con posizione.
 - {colore_placeholder, Missing["NoSimpleHintAvailable"]}: Indizio di fallback. *)
-CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := Catch[
+DecidiSuggerimentoLogica[hintFeedbackHistoryInput_List, soluzioneListInput_List] := Catch[
     Module[
         {
             soluzione = soluzioneListInput,
@@ -1513,11 +1505,10 @@ CalcolaHintSemplice[hintFeedbackHistoryInput_List, soluzioneListInput_List] := C
         GestisciHintNessunTentativo[soluzione, tentativiEffettuati]; (* Pu\[OGrave] fare Throw *)
 
         (* --- Priorit\[AGrave] 2: Cerca colori della soluzione non ancora "confermati" --- *)
-        (* Assumiamo che feedbackEsatto e feedbackParziale siano definiti globalmente/nel contesto *)
         GestisciHintColoreNonConfermato[soluzione, tentativiEffettuati, feedbackEsatto, feedbackParziale]; (* Pu\[OGrave] fare Throw *)
         
         (* --- Priorit\[AGrave] 3: Indizio per un colore con 'feedbackParziale' ma mai 'feedbackEsatto' --- *)
-        GestisciHintParzialePosizionato[soluzione, tentativiEffettuati, n, feedbackEsatto, feedbackParziale]; (* Pu\[OGrave] fare Throw *)
+        GestisciHintConPosizione[soluzione, tentativiEffettuati, n, feedbackEsatto, feedbackParziale]; (* Pu\[OGrave] fare Throw *)
 
         (* --- Priorit\[AGrave] 4: Indizio di Fallback --- *)
         (* Se nessun altro indizio specifico \[EGrave] stato generato, fornisce un indizio generico. *)
@@ -1541,129 +1532,120 @@ GestisciHintNessunTentativo[soluzione_List, tentativiEffettuati_List] :=
 Identifica i colori nella soluzione che non hanno mai ricevuto feedback (n\[EAcute] esatto n\[EAcute] parziale)
 e, se ne trova uno, lancia un indizio con quel colore.
 @param soluzione_List: La lista dei colori della soluzione segreta.
-@param tentativiEffettuati_List: La lista dei tentativi che contengono dati.
+@param tentativiEffettuati_List: La lista dei tentativi che contengono dati (non vuoti). 
+                                Ogni tentativo \[EGrave] una lista di {coloreTentato, simboloFeedback}.
 @param feedbackEsattoSimbolo_: Il simbolo che rappresenta un feedback esatto.
 @param feedbackParzialeSimbolo_: Il simbolo che rappresenta un feedback parziale.
 @effect: Pu\[OGrave] lanciare (Throw) un indizio se trova un colore non confermato. *)
 GestisciHintColoreNonConfermato[soluzione_List, tentativiEffettuati_List, feedbackEsattoSimbolo_, feedbackParzialeSimbolo_] :=
     Module[
-        {coloriUniciSoluzione, coloriConfermati, coloreAttuale, datiPiolo, coloreTentato, simboloFeedback},
+        {
+            coloriUniciSoluzione, 
+            coloriConfermati, 
+            coloreTentato, simboloFeedback (* Variabili per chiarezza dentro il Do *)
+        },
 
         coloriUniciSoluzione = DeleteDuplicates[soluzione];
         coloriConfermati = Association[# -> False & /@ coloriUniciSoluzione];
 
         (* Itera su tutti i pioli di tutti i tentativi effettuati per marcare i colori confermati *)
         Do[
-            datiPiolo = piolo;
-            coloreTentato = datiPiolo[[1]];
-            simboloFeedback = datiPiolo[[2]];
+            coloreTentato = piolo[[1]];
+            simboloFeedback = piolo[[2]];
             
             If[simboloFeedback === feedbackEsattoSimbolo || simboloFeedback === feedbackParzialeSimbolo,
                 If[KeyExistsQ[coloriConfermati, coloreTentato],
                     coloriConfermati[coloreTentato] = True;
                 ]
             ];
-            , 
-            {turno in tentativiEffettuati}, {piolo in turno}
+            ,
+            {turno, tentativiEffettuati}, (* itera su ogni 'turno' nella lista 'tentativiEffettuati' *)
+            {piolo, turno}              (* per ogni 'turno', itera su ogni 'piolo' in quel 'turno' *)
         ];
 
         (* Controlla se c'\[EGrave] un colore della soluzione non ancora confermato *)
         Do[
-            coloreAttuale = colore;
-            If[Not[coloriConfermati[coloreAttuale]], (* Se il colore NON \[EGrave] confermato *)
-                Throw[{coloreAttuale, Missing["PositionNotApplicable"]}]
+            If[Not[coloriConfermati[colore]], (* Se il colore NON \[EGrave] confermato *)
+                Throw[{colore, Missing["PositionNotApplicable"]}]
             ];
             ,
-            {colore in coloriUniciSoluzione}
+            {colore, coloriUniciSoluzione} 
         ];
-    ]
-
+    ];
 (* === Helper per Priorit\[AGrave] 3: Trova un indizio per un colore con feedback parziale ma mai esatto ===
-Se tutti i colori della soluzione sono stati "confermati" (secondo la logica di Priorit\[AGrave] 2),
-questa funzione cerca un colore che abbia ricevuto 'feedbackParziale' ma mai 'feedbackEsatto'
-e ne suggerisce la posizione corretta nella soluzione.
+   Questa versione replica pi\[UGrave] da vicino la logica originale con cicli For.
+   Se tutti i colori della soluzione sono stati "confermati" (secondo la logica di Priorit\[AGrave] 2),
+   questa funzione cerca un colore che abbia ricevuto 'feedbackParziale' ma mai 'feedbackEsatto'
+   e ne suggerisce la posizione corretta nella soluzione.
+
 @param soluzione_List: La lista dei colori della soluzione segreta.
-@param tentativiEffettuati_List: La lista dei tentativi che contengono dati (non vuoti).
-@param nPioli_Integer: La lunghezza della combinazione (numero di pioli).
+@param tentativiEffettuati_List: La lista dei tentativi che contengono dati (non vuoti). 
+                                Ogni tentativo \[EGrave] una lista di {coloreTentato, simboloFeedback}.
+@param nPioli_Integer: La lunghezza della combinazione (numero di pioli per tentativo).
 @param feedbackEsattoSimbolo_: Il simbolo che rappresenta un feedback esatto.
 @param feedbackParzialeSimbolo_: Il simbolo che rappresenta un feedback parziale.
-@effect: Pu\[OGrave] lanciare (Throw) un indizio se trova un colore corrispondente ai criteri. *)
-GestisciHintParzialePosizionato[soluzione_List, tentativiEffettuati_List, nPioli_Integer, feedbackEsattoSimbolo_, feedbackParzialeSimbolo_] :=
-    Module[
-        {
-            (* Lista che accumula i colori con feedbackParziale, come nell'originale *)
-            colorListCandidati = {}, 
-            coloriConFeedbackEsattoUnici,
-            targetHintColor,
-            i, j, (* Indici per i cicli For *)
-            turnoCorrente, pioloCorrente, coloreTentato, simboloFeedback (* Variabili di iterazione *)
-        },
+@effect: Pu\[OGrave] lanciare (Throw) un indizio {colore, posizione} se trova un candidato valido. *)
 
-        (* --- Logica originale 3a: Raccogli tutti i colori che hanno ricevuto 'feedbackParziale' --- *)
-        (* Itera su ogni piolo di ogni tentativo *)
-        For[i = 1, i <= Length[tentativiEffettuati], i++,
-            turnoCorrente = tentativiEffettuati[[i]];
-            For[j = 1, j <= nPioli, j++, (* Assumiamo che ogni turnoCorrente abbia nPioli *)
-                pioloCorrente = turnoCorrente[[j]];
-                coloreTentato = pioloCorrente[[1]];
-                simboloFeedback = pioloCorrente[[2]];
-                If[simboloFeedback === feedbackParzialeSimbolo,
-                    AppendTo[colorListCandidati, coloreTentato];
-                ];
+GestisciHintConPosizione[
+    soluzione_List, 
+    tentativiEffettuati_List, 
+    nPioli_Integer, 
+    feedbackEsattoSimbolo_, 
+    feedbackParzialeSimbolo_
+] := Module[
+    {
+        (* Lista che accumula i colori con feedbackParziale*)
+        colorListCandidati = {}, 
+        coloriConFeedbackEsattoUnici,
+        targetHintColor,
+        i, j, (* Indici per i cicli For *)
+        turnoCorrente, pioloCorrente, coloreTentato, simboloFeedback (* Variabili di iterazione *)
+    },
+
+    (* --- Logica 3a: Raccogli tutti i colori che hanno ricevuto 'feedbackParziale'  *)
+    (* Itera su ogni piolo di ogni tentativo *)
+    For[i = 1, i <= Length[tentativiEffettuati], i++,
+        turnoCorrente = tentativiEffettuati[[i]];
+        For[j = 1, j <= nPioli, j++, (* Usa nPioli, che corrisponde a 'n' originale *)
+            pioloCorrente = turnoCorrente[[j]];
+            coloreTentato = pioloCorrente[[1]];
+            simboloFeedback = pioloCorrente[[2]];
+            If[simboloFeedback === feedbackParzialeSimbolo,
+                AppendTo[colorListCandidati, coloreTentato];
             ];
         ];
+    ];
 
-        (* --- Logica originale 3b: Dalla lista appena creata, rimuovi i colori che hanno ricevuto anche solo una volta 'feedbackEsatto' --- *)
-        (* Prima, identifica quali colori unici hanno ricevuto feedbackEsatto *)
-        coloriConFeedbackEsattoUnici = {};
-        For[i = 1, i <= Length[tentativiEffettuati], i++,
-            turnoCorrente = tentativiEffettuati[[i]];
-            For[j = 1, j <= nPioli, j++,
-                pioloCorrente = turnoCorrente[[j]];
-                coloreTentato = pioloCorrente[[1]];
-                simboloFeedback = pioloCorrente[[2]];
-                If[simboloFeedback === feedbackEsattoSimbolo,
-                    AppendTo[coloriConFeedbackEsattoUnici, coloreTentato];
-                ];
+    (* --- Logica 3b: Dalla lista appena creata, rimuovi i colori che hanno ricevuto anche solo una volta 'feedbackEsatto'  *)
+    (* Prima, identifica quali colori unici hanno ricevuto feedbackEsatto *)
+    coloriConFeedbackEsattoUnici = {};
+    For[i = 1, i <= Length[tentativiEffettuati], i++,
+        turnoCorrente = tentativiEffettuati[[i]];
+        For[j = 1, j <= nPioli, j++,
+            pioloCorrente = turnoCorrente[[j]];
+            coloreTentato = pioloCorrente[[1]];
+            simboloFeedback = pioloCorrente[[2]];
+            If[simboloFeedback === feedbackEsattoSimbolo,
+                AppendTo[coloriConFeedbackEsattoUnici, coloreTentato];
             ];
         ];
-        coloriConFeedbackEsattoUnici = DeleteDuplicates[coloriConFeedbackEsattoUnici];
+    ];
+    coloriConFeedbackEsattoUnici = DeleteDuplicates[coloriConFeedbackEsattoUnici];
 
-        (* Ora rimuovi questi colori da colorListCandidati *)
-        For[i = 1, i <= Length[coloriConFeedbackEsattoUnici], i++,
-            colorListCandidati = DeleteCases[colorListCandidati, coloriConFeedbackEsattoUnici[[i]]];
-        ];
-        
-        (* --- Logica originale 3c: Se ci sono colori candidati, prendi il primo, verifica e lancia --- *)
-        If[Length[colorListCandidati] > 0,
-            targetHintColor = First[colorListCandidati]; (* Prende il primo colore secondo l'ordine originale di accumulazione e filtraggio *)
-            
-            (* Il loop di "riverifica" dell'originale: trova un'istanza di targetHintColor 
-               con feedbackParziale (che dovrebbe esistere per come \[EGrave] costruito targetHintColor) 
-               e lancia la sua posizione nella soluzione. *)
-            For[i = 1, i <= Length[tentativiEffettuati], i++,
-                turnoCorrente = tentativiEffettuati[[i]];
-                For[j = 1, j <= nPioli, j++,
-                    pioloCorrente = turnoCorrente[[j]];
-                    coloreTentato = pioloCorrente[[1]];
-                    simboloFeedback = pioloCorrente[[2]];
-                    If[simboloFeedback === feedbackParzialeSimbolo && coloreTentato == targetHintColor,
-                        Module[{posizioniTrovate},
-                            (* Trova la prima occorrenza di targetHintColor nella soluzione *)
-                            posizioniTrovate = Position[soluzione, targetHintColor, {1}, 1]; 
-                            If[Length[posizioniTrovate] > 0,
-                                Throw[{targetHintColor, First@First@posizioniTrovate}]
-                            ];
-                            (* Se targetHintColor non fosse in soluzione (improbabile se la logica \[EGrave] corretta),
-                               non si fa Throw e si continua, eventualmente uscendo dal loop e dalla funzione
-                               senza lanciare, permettendo al fallback di intervenire. *)
-                        ];
-                    ];
-                ];
-            ];
-        ];
-        (* Se nessun Throw \[EGrave] avvenuto, la funzione termina e il controllo passa alla Priorit\[AGrave] 4 in CalcolaHintSemplice *)
-    ]
+    (* Ora rimuovi questi colori da colorListCandidati *)
+    For[i = 1, i <= Length[coloriConFeedbackEsattoUnici], i++,
+        colorListCandidati = DeleteCases[colorListCandidati, coloriConFeedbackEsattoUnici[[i]]];
+    ];
+    (* --- Logica 3c: Se ci sono colori candidati, prendi il primo, verifica e lancia *)
+	If[Length[colorListCandidati] > 0,
+	    targetHintColor = First[colorListCandidati];
+	    posizioniTrovate = Position[soluzione, targetHintColor, {1}, 1]; 
+	    If[Length[posizioniTrovate] > 0,
+	        Throw[{targetHintColor, First@First@posizioniTrovate}]
+	    ]
+	]
+	(* Se nessun Throw \[EGrave] avvenuto, la funzione termina e il controllo passa alla Priorit\[AGrave] 4 in CalcolaHintSemplice *)
+];
 
 
 (* === Codice usato per il bottone di avvio nel notebook ===
