@@ -346,7 +346,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 		    }]
 	    }],
 	
-	    Spacer[{0, 125}],
+	    Spacer[{0, 50}],
 	    
 	    (* Individua il tasto per uscire dal gioco, riportando l'utente al notebook *)
 	    ClickPane[
@@ -393,30 +393,31 @@ avviaSchermataDiGioco[] := DynamicModule[
     Contiene e visualizza dinamicamente l'interfaccia utente del gioco, passando tra la schermata
     del menu iniziale e quella di gioco, in base allo stato corrente.
     La finestra si chiude premendo il tasto QUIT *)
-	mainWindow=CreateDocument[
-	{
-        Cell[
-            BoxData @ ToBoxes @ content, (* Converte "content" sopra creato in box per essere visualizzato dall'utente *)
-            "Output",                    (* Specifica che \[EGrave] una cella di output *)
-            ShowCellBracket->False,
-            CellMargins->{{0, 0}, {0, 0}}
-        ]
-    },  
-        (* Propriet\[AGrave] della finestra *)
-        WindowSize->Full,
-        WindowFrame->"Frameless",
-        WindowElements->{},
-        Background->White,
-        Editable->False, (* Impedisce modifiche manuali al contenuto della finestra da parte dell'utente *)
-        Deployed->True,  (* Disabilita interazinoi non previste, come la selezione di oggetti sulla schermata *)
-        WindowMargins->{{0, 0}, {0, 0}},
-        NotebookEventActions->{
-            {"KeyDown", "Escape"} :> NotebookClose[EvaluationNotebook[]] (* Se l'utente preme QUIT, chiude la finestra *)
-        }
-    ];  
-  
-  
-    mainWindow (* Restituisce la finestra appena creata e tutto il suo contenuto *)
+	mainWindow = CreateDocument[
+	    {
+	        Cell[
+	            BoxData @ ToBoxes @ content,
+	            "Output",
+	            ShowCellBracket -> False,
+	            CellMargins -> {{0, 0}, {0, 0}}
+	        ]
+	    },
+	    WindowSize -> Automatic,
+	    WindowFrame -> "ModelessDialog", (* Cornice standard di Windows *)
+	    WindowElements -> {},     (* Rimuove elementi dell'interfaccia di Mathematica *)
+	    WindowTitle -> "Trivia Mastermind", (* Titolo della finestra *)
+	    Background -> White,
+	    Editable -> False,
+	    Deployed -> True,
+	    WindowMargins -> {{0, 0}, {0, 0}},
+	    NotebookEventActions -> {
+	        {"KeyDown", "Escape"} :> NotebookClose[EvaluationNotebook[]]
+	    }
+	];
+	
+	mainWindow
+
+
 ]
 
 
