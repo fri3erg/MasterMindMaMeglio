@@ -78,6 +78,22 @@ labels=translations = <|
 |>;
 
 
+    (* Calcola una dimensione proporzionale alla risoluzione dello schermo, ottenuta tramite i valori di width e height.
+    Il valore restituito \[EGrave] usato per scalare i titoli della schermata inziale.  
+	La funzione non viene richiamata nella schermata successiva perch\[EGrave] l\[IGrave] le dimensioni degli elementi grafici sono fisse.
+	Tuttavia, il risultato visivo finale anche in questa schermata rimane ben proporzionato.
+	La risoluzione dello schermo viene ottenuta tramite il FrontEnd.
+	In caso di errore, usa un valore di default (1920x1080) *)
+	aggiornaDimensioniSchermo[] := Module[{w, h, scale},
+	  Quiet@Check[
+	    {w, h} = FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
+	    {w, h} = {1920, 1080}
+	  ];
+	  scale = Min[w, h]/15;
+	  {w, h, scale}
+	];
+
+
 (* === Menu di avvio ===
 Questa funzione attiva l'interfaccia grafica principale del gioco Trivia Mastermind.
 Utilizza una DynamicModule che consente una gestione dinamica e interattiva della finestra di gioco.
@@ -111,38 +127,12 @@ avviaSchermataDiGioco[] := DynamicModule[
     content,                  (* Contenuto mostrato nella finestra *)
     mainWindow                (* Finestra di visualizzazione *)
 },
-
-	
-    (* Calcola una dimensione proporzionale alla risoluzione dello schermo, ottenuta tramite i valori di width e height.
-    Il valore restituito \[EGrave] usato per scalare i titoli della schermata inziale.  
-	La funzione non viene richiamata nella schermata successiva perch\[EGrave] l\[IGrave] le dimensioni degli elementi grafici sono fisse.
-	Tuttavia, il risultato visivo finale anche in questa schermata rimane ben proporzionato.
-	La risoluzione dello schermo viene ottenuta tramite il FrontEnd.
-	In caso di errore, usa un valore di default (1920x1080) *)
-    aggiornaDimensioniSchermo[] := ( 
-        Quiet @ Check[ (* Quiet permette che eventuali messaggi di errore non siano visualizzati dall'utente *)
-	        {screenWidth, screenHeight} = FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
-			{screenWidth, screenHeight} = {1920, 1080}
-		];
-		(* Restituisce una dimensione proporzionale al lato pi\[UGrave] corto *)
-        titleFontScale=Min[screenWidth, screenHeight]/15; (* Il divisore 15 \[EGrave] stato definito sperimentalmente *)
-    );
+    
     
     
     (* All'inizio del gioco, quando la schermata viene aperta per la prima volta, vengono
     calcolate le dimensioni di altezza e larghezza necessarie per visualizzare correttamente i titoli *)
-    aggiornaDimensioniSchermo[];
-    
-    
-    (* Funzione che aggiorna la variabile currentScreen, per modificare la schermata visualizzata dall'utente. 
-    Il parametro passato in input newScreen pu\[OGrave] assumere i valori: "menu" e "gioco" *)
-    cambiaSchermata[newScreen_] := ( 
-        (* Utile nel caso in cui la nuova schermata sia "menu": ricalcola le dimensioni della
-        finestra per addattarsi correttamente alla schermata che si sta per visualizzare *)
-        aggiornaDimensioniSchermo[]; 
-	    currentScreen=newScreen;
-    );
-
+    {screenWidth, screenHeight, titleFontScale} = aggiornaDimensioniSchermo[];
 
     (* Funzione per creare la homepage del gioco.
     E' la schermata che si apre all'inizio della partita e permette all'utente di impostare le sue 
@@ -276,7 +266,8 @@ avviaSchermataDiGioco[] := DynamicModule[
 						    viene salvato su customSeed per essere passato alle funzioni di apertura del gioco *)
 						    customSeed=seedInserito; 
 						    seedInserito="";
-						    cambiaSchermata["gioco"];
+						    currentScreen = "gioco";
+						    aggiornaDimensioniSchermo[]
 					    ]
 				    ],
 			        
@@ -379,7 +370,7 @@ avviaSchermataDiGioco[] := DynamicModule[
             Switch[currentScreen,
                 "menu", creaHomepage[],      (* Se currentScreen \[EGrave] "menu", chiama creaHomePage per la schermata inziale *)
                 "gioco", creaSchermataGioco[ (* Se currentScreen \[EGrave] "gioco", chiama creaSchermataGioco con i parametri del gioco *)
-                customSeed, customTurni, customLunghezzaCodice, allowDuplicates]
+                customSeed, customTurni, customLunghezzaCodice, allowDuplicates,(currentScreen = #)&]
             ],
             TrackedSymbols:>{currentScreen, customTurni, customLunghezzaCodice} (* Vengono monitorate le variabili che influenzano l'interfaccia dimamica *)
         ],
@@ -434,7 +425,7 @@ Parametri:
 - tentativi: rappresenta il numero di tentativi massimo disponibile,
 - combinazione: la combinazione segreta da indovinare,
 - allowDuplicates: valore booleano che indica se nella combinazione sono ammessi colori ripetuti *)
-creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_] := DynamicModule[
+creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, setScreen_] := DynamicModule[
 	{},
 	
 	Pane[
@@ -452,7 +443,10 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_] := Dynami
 							RoundingRadius->5,
 							FrameMargins->{{6, 6}, {0, 0}}
 						],
-						Function[cambiaSchermata["menu"]] (* Cambio schermata al click, ritornando al menu principale *)
+						Function[
+						setScreen["menu"];
+						aggiornaDimensioniSchermo[] 
+					]
 					],
 					
 					Spacer[5],
@@ -476,7 +470,7 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_] := Dynami
 				    (* InterfacciaGriglia gestisce la griglia di gioco ed \[EGrave] inclusa nella schermata creata da
 				    creaSchermataGioco, sotto al testo che mostra il seed attuale.
 				    Qui l'utente effettua i tentativi per cercare di vincere la partita *)
-					interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates], 
+					interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates, setScreen], 
 					{Automatic, Scaled[0.8]}, (* Griglia centrata e ridimensionata per una visualizzazione ottimale senza scorrimento o zoom *)
 					Scrollbars->False,
 					Alignment->Center 
@@ -619,7 +613,7 @@ Genera:
  -Bottone di Hint per l'avvio del Trivia
  -Funzioni di restart e termina partita
 *)
-interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_] := DynamicModule[
+interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_, setScreen_] := DynamicModule[
 {
     (* Definisce una griglia di colori per ciascun disco in ogni riga della partita.
     Inizialmente tutti i dischi sono vuori; viene aggiornata quando l'utente seleziona un colore *)
@@ -902,7 +896,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 								                                    partitaInCorso=True;
 								                                    questionCounter=0;
 								                                    correct={};
-							                                    ]
+							                                    ],
+							                                    setScreen
 						                                    ];
 					                                    ];
 					                                    
@@ -925,7 +920,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 								                                    partitaInCorso=True;
 								                                    questionCounter=0;
 								                                    correct={};
-							                                    ]
+							                                    ],
+							                                    setScreen
 						                                    ];
 					                                    ];
 					                                    
@@ -1089,7 +1085,7 @@ In  aggiunta, si hanno opzioni per riavviare il gioco, tornare al menu e chiuder
 Parametri:
 - hasWon: True se il giocatore ha vinto, False altrimenti
 - onRestartFunc: funzione opzionale da eseguire se si sceglie Restart *)
-MostraDialogFinePartita[hasWon_, onRestartFunc_: Null] :=
+MostraDialogFinePartita[hasWon_, onRestartFunc_: Null, setScreen_] :=
     CreateDialog[
         DynamicModule[{}, (* Manteniamo questo DynamicModule per il contesto del Dialog *)
             Pane[
@@ -1129,8 +1125,9 @@ MostraDialogFinePartita[hasWon_, onRestartFunc_: Null] :=
                                     FrameMargins -> {{15, 15}, {5, 5}}, ImageSize -> {Automatic, Automatic}
                                 ],
                                 Function[
-                                    cambiaSchermata["menu"];
+                                    setScreen["menu"];
                                     NotebookClose[EvaluationNotebook[]];
+                                    aggiornaDimensioniSchermo[]
                                 ]
                             ],
 
