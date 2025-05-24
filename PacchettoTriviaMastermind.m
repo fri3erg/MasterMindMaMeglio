@@ -55,7 +55,17 @@ paletteColori={RGBColor[0.9,0,0], Green, Yellow, Blue, Orange, Brown, Purple, Cy
 
 
 (* Stato della partita *)
-partitaInCorso=True
+partitaInCorso=True;
+screenWidth = 0;
+screenHeight = 0;
+titleFontScale = 0;
+
+seedInserito = "";
+customSeed =.;
+customTurni = 8;
+customLunghezzaCodice = 4;
+allowDuplicates = True;
+currentScreen = "menu";
 
 
 (* Libreria di etichette *)
@@ -114,19 +124,7 @@ mentre la scgermata di giocoAl contrario, la funzione creaSchermataGioco, che ge
 separatamente, vicino alla funzione interfacciaGriglia, poich\[EGrave] quest'ultima si occupa della logica e della visualizzazione
 degli elementi interattivi della partita *)
 avviaSchermataDiGioco[] := DynamicModule[
-{
-    screenWidth,              (* Larghezza del display *)
-    screenHeight,             (* Altezza del display *)
-    titleFontScale,           (* Dimensione del testo nella schermata di menu, proporzionale allo schermo *)
-    seedInserito="",          (* Variabile per la meomrizzazione temporanea del seed di gioco *)
-    customSeed,               (* Variabile in cui \[EGrave] memorizzato il seed della partita *)
-    customTurni=8,            (* Numero di tentativi scelti per indovinare il codice *)
-    customLunghezzaCodice=4,  (* Lunghezza del codice segreto *)
-    allowDuplicates=True,     (* Flag per la presenza di colori ripetuti nella combinazione *)
-    currentScreen="menu",     (* Schermata attiva *)
-    content,                  (* Contenuto mostrato nella finestra *)
-    mainWindow                (* Finestra di visualizzazione *)
-},
+ {mainWindow, content},
     
     
     
@@ -134,10 +132,63 @@ avviaSchermataDiGioco[] := DynamicModule[
     calcolate le dimensioni di altezza e larghezza necessarie per visualizzare correttamente i titoli *)
     {screenWidth, screenHeight, titleFontScale} = aggiornaDimensioniSchermo[];
 
-    (* Funzione per creare la homepage del gioco.
+	(* La variabile Content serve come contenitore dinamico per l'interfaccia utente.
+	In altre parole, \[EGrave] l'elemento che contiene il contenuto visivo che viene visualizzato nella finestra,
+	e questo contenuto cambia in modo dinamico a seconda dello stato del gioco.
+	Content \[EGrave] visualizzato all'interno dell finestra principale mainWindow *)
+	content=Pane[
+	    Dynamic @ Refresh[
+	        (* Viene valutato il valore di currentScreen per selezionare quale schermata mostrare *)
+            Switch[currentScreen,
+                "menu", creaHomepage[],      (* Se currentScreen \[EGrave] "menu", chiama creaHomePage per la schermata inziale *)
+                "gioco", creaSchermataGioco[ (* Se currentScreen \[EGrave] "gioco", chiama creaSchermataGioco con i parametri del gioco *)
+                customSeed, customTurni, customLunghezzaCodice, allowDuplicates,(currentScreen = #)&]
+            ],
+            TrackedSymbols:>{currentScreen, customTurni, customLunghezzaCodice} (* Vengono monitorate le variabili che influenzano l'interfaccia dimamica *)
+        ],
+        (* Propriet\[AGrave] relative al posizionamento del content all'interno della finestra visualizzata *)
+        Full, 
+        Alignment->{Center, Top}
+    ];
+  
+      
+    (* MainWindow rappresenta la finestra principale di Trivia Mastermind.
+    Contiene e visualizza dinamicamente l'interfaccia utente del gioco, passando tra la schermata
+    del menu iniziale e quella di gioco, in base allo stato corrente.
+    La finestra si chiude premendo il tasto QUIT *)
+	mainWindow = CreateDocument[
+	    {
+	        Cell[
+	            BoxData @ ToBoxes @ content,
+	            "Output",
+	            ShowCellBracket -> False,
+	            CellMargins -> {{0, 0}, {0, 0}}
+	        ]
+	    },
+	    WindowSize -> Automatic,
+	    WindowFrame -> "ModelessDialog", (* Cornice standard di Windows *)
+	    WindowElements -> {},     (* Rimuove elementi dell'interfaccia di Mathematica *)
+	    WindowTitle -> "Trivia Mastermind", (* Titolo della finestra *)
+	    Background -> White,
+	    Editable -> False,
+	    Deployed -> True,
+	    WindowMargins -> {{0, 0}, {0, 0}},
+	    NotebookEventActions -> {
+	        {"KeyDown", "Escape"} :> NotebookClose[EvaluationNotebook[]]
+	    }
+	];
+	
+	mainWindow
+
+
+]
+
+
+     (* Funzione per creare la homepage del gioco.
     E' la schermata che si apre all'inizio della partita e permette all'utente di impostare le sue 
     preferenze di gioco prima di visualizzare la griglia di Trivia Mastermind *)
-    creaHomepage[] := Column[{
+
+ creaHomepage[] := Column[{
         
         Spacer[{0, 50}],
         
@@ -357,59 +408,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 		]
 	},
 	Alignment->Center
-    ];
-
-
-	(* La variabile Content serve come contenitore dinamico per l'interfaccia utente.
-	In altre parole, \[EGrave] l'elemento che contiene il contenuto visivo che viene visualizzato nella finestra,
-	e questo contenuto cambia in modo dinamico a seconda dello stato del gioco.
-	Content \[EGrave] visualizzato all'interno dell finestra principale mainWindow *)
-	content=Pane[
-	    Dynamic @ Refresh[
-	        (* Viene valutato il valore di currentScreen per selezionare quale schermata mostrare *)
-            Switch[currentScreen,
-                "menu", creaHomepage[],      (* Se currentScreen \[EGrave] "menu", chiama creaHomePage per la schermata inziale *)
-                "gioco", creaSchermataGioco[ (* Se currentScreen \[EGrave] "gioco", chiama creaSchermataGioco con i parametri del gioco *)
-                customSeed, customTurni, customLunghezzaCodice, allowDuplicates,(currentScreen = #)&]
-            ],
-            TrackedSymbols:>{currentScreen, customTurni, customLunghezzaCodice} (* Vengono monitorate le variabili che influenzano l'interfaccia dimamica *)
-        ],
-        (* Propriet\[AGrave] relative al posizionamento del content all'interno della finestra visualizzata *)
-        Full, 
-        Alignment->{Center, Top}
-    ];
-  
-      
-    (* MainWindow rappresenta la finestra principale di Trivia Mastermind.
-    Contiene e visualizza dinamicamente l'interfaccia utente del gioco, passando tra la schermata
-    del menu iniziale e quella di gioco, in base allo stato corrente.
-    La finestra si chiude premendo il tasto QUIT *)
-	mainWindow = CreateDocument[
-	    {
-	        Cell[
-	            BoxData @ ToBoxes @ content,
-	            "Output",
-	            ShowCellBracket -> False,
-	            CellMargins -> {{0, 0}, {0, 0}}
-	        ]
-	    },
-	    WindowSize -> Automatic,
-	    WindowFrame -> "ModelessDialog", (* Cornice standard di Windows *)
-	    WindowElements -> {},     (* Rimuove elementi dell'interfaccia di Mathematica *)
-	    WindowTitle -> "Trivia Mastermind", (* Titolo della finestra *)
-	    Background -> White,
-	    Editable -> False,
-	    Deployed -> True,
-	    WindowMargins -> {{0, 0}, {0, 0}},
-	    NotebookEventActions -> {
-	        {"KeyDown", "Escape"} :> NotebookClose[EvaluationNotebook[]]
-	    }
-	];
-	
-	mainWindow
-
-
-]
+    ]
 
 
 (* === Funzione per la creazione della schermata di gioco ===
