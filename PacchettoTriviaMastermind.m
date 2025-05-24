@@ -312,13 +312,7 @@ avviaSchermataDiGioco[] := DynamicModule[
 						    ImageSize->Automatic
 					    ],
 					    Function[
-						    partitaInCorso=True;
-						    (* Il seed memorizzato su seedInserito, generato causalmente o inserito manualmente,
-						    viene salvato su customSeed per essere passato alle funzioni di apertura del gioco *)
-						    customSeed=seedInserito; 
-						    seedInserito="";
-						    currentScreen = "gioco";
-						    aggiornaDimensioniSchermo[]
+					        avviaPartita[]
 					    ]
 				    ],
 			        
@@ -402,13 +396,26 @@ avviaSchermataDiGioco[] := DynamicModule[
 				ImageSize->Automatic
 			],  
 			Function[
-				seedInserito=Null;
-				NotebookClose[EvaluationNotebook[]] (* Chiude la finestra del gioco *)
+				chiudiPartita[]
 			]
 		]
 	},
 	Alignment->Center
     ]
+
+
+avviaPartita[] := (
+    partitaInCorso = True;
+    customSeed = seedInserito; 
+    seedInserito = "";
+    currentScreen = "gioco";
+    aggiornaDimensioniSchermo[]
+)
+
+chiudiPartita[] := (
+	seedInserito=Null;
+	NotebookClose[EvaluationNotebook[]] (* Chiude la finestra del gioco *)
+)
 
 
 (* === Funzione per la creazione della schermata di gioco ===
