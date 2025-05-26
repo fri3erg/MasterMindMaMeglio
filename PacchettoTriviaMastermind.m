@@ -5,7 +5,7 @@
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
 (* :Package Version:1.1*)
-(* :History:last modified 16/5/2025*)
+(* :History:last modified 26/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi*)
 (* :License:MIT License*)
 
@@ -781,55 +781,10 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	                            Row[{
                                     Spacer[20],
                                     
-                                    (* Viene generata una griglia di feedback colorati, usata nel gioco originale
-                                    di Mastermind per indicare quanto \[EGrave] corretto un tentattivo rispetto alla
-                                    combinazione segreta. Si avranno tanti pallini di feedback quanto \[EGrave] lunga la
-                                    combinazione da indovinare per la partita iniziata. 
-                                    Si hanno due tipi di feedback: 
-                                     *)
-                                    Dynamic @ Module[ (* Si usa una Dynamic per consentire un aggiornamento automatico dell'interfaccia *)
-                                    {
-	                                    feedbackSymbolsForDisplay,
-	                                    feedbackColors
-                                    },
-                                        (* Recupera i simboli di feedback per la riga x:
-                                        - Se esistono dati, (!= {}), viene estratto il secondo elemento di 
-                                        ciascuna coppia nella lista (feedbackEsatto o feedbackParziale)
-                                        - Altrimenti (ad esempio per un turno non ancora giocato)), genera
-                                        un array con solo feedbackAssente, cio\[EGrave] simboli vuoti
-                                        (nessun feedback ancora disponibile) *)
-	                                    feedbackSymbolsForDisplay = If[hintFeedbackHistory[[x]] =!= {},
-		                                    hintFeedbackHistory[[x]][[All, 2]], 
-		                                    ConstantArray[feedbackAssente, lunghezzaCombinazione] 
-	                                    ];
-										
-									   (* Sostituisce i simboli di feedback con colori:
-									   - feedbackEsatto: verde chiaro
-									   - feedbackParziale: giallo
-									   - feedbackAssente: nessun colore (il piolo rimane trasparente) *)
-	                                    feedbackColors = feedbackSymbolsForDisplay /. {
-		                                    feedbackEsatto -> RGBColor[0.57, 1, 0.05],
-		                                    feedbackParziale -> RGBColor[1, 0.85, 0],
-		                                    feedbackAssente -> None 
-	                                    };
-	                                    
-	                                    (* Costruisce una griglia centrata contenente i pioli di feedback: 
-	                                    ogni disco \[EGrave] disegnato con un bordo griglio e un riempimento determinato 
-	                                    da feedbackColors, definito sopra, in base alla valutazione del tentativo *)
-	                                    Style[
-		                                    Grid[{
-			                                    Table[
-				                                    Graphics[{EdgeForm[Gray], FaceForm[hint], Disk[{0, 0}, 1]}, ImageSize->15],
-				                                    {hint, feedbackColors}
-			                                    ]
-		                                    },
-		                                    Alignment->Center
-		                                    ],
-		                                (* Non \[EGrave] possibile la selezione o la modifica dell'interfaccia da parte dell'utente *)
-		                                Selectable->False,
-		                                Editable->False
-	                                    ]
-                                    ],
+                                    (* Viene generata la griglia di feedback colorati.
+                                    Si avranno tanti pallini di feedback quanto \[EGrave] lunga la
+                                    combinazione da indovinare per la partita iniziata. *)
+                                    Dynamic[renderFeedbackRow[x, hintFeedbackHistory, lunghezzaCombinazione]],
 
                                     Spacer[50],
                                     
@@ -1013,7 +968,50 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
     FrameMargins->{{15, 15}, {5, 5}},
     ImageSize->Automatic
 	] (* Fine Framed *)
-]	
+]
+
+renderFeedbackRow[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
+	{feedbackSymbols, feedbackColors},
+	
+	(* Estrae i simboli di feedback dalla cronologia per la riga x.
+	   Se ci sono dati salvati in hintFeedbackHistory[[x]], estrae la seconda colonna (il tipo di feedback),
+	   altrimenti restituisce una lista di 'feedbackAssente' lunga quanto la combinazione. *)
+	feedbackSymbols = 
+		If[hintFeedbackHistory[[x]] =!= {},
+			hintFeedbackHistory[[x]][[All, 2]],
+			ConstantArray[feedbackAssente, lunghezzaCombinazione]
+		];
+	
+	(* Converte i simboli di feedback in colori:
+	   - feedbackEsatto: verde chiaro
+	   - feedbackParziale: giallo dorato
+	   - feedbackAssente: nessun colore *)
+	feedbackColors = feedbackSymbols /. {
+		feedbackEsatto -> RGBColor[0.57, 1, 0.05],
+		feedbackParziale -> RGBColor[1, 0.85, 0],
+		feedbackAssente -> None
+	};
+	
+	(* Genera una griglia di dischi (pioli di feedback), uno per ciascun colore di feedback.
+	   Ogni disco ha un bordo grigio ed \[EGrave] riempito con il colore corrispondente. *)
+	Style[
+		Grid[{
+			Table[
+				Graphics[
+					{EdgeForm[Gray], FaceForm[c], Disk[{0, 0}, 1]},
+					ImageSize -> 15
+				],
+				{c, feedbackColors}
+			]
+		},
+		Alignment -> Center],
+		
+		(* Impedisce selezione o modifica dell\[CloseCurlyQuote]interfaccia da parte dell\[CloseCurlyQuote]utente *)
+		Selectable -> False,
+		Editable -> False
+	]
+];
+
 
 
 pulsanteSuggerimenti[
