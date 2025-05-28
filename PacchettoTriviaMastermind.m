@@ -5,7 +5,7 @@
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
 (* :Package Version:1.1*)
-(* :History:last modified 26/5/2025*)
+(* :History:last modified 28/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi*)
 (* :License:MIT License*)
 
@@ -77,7 +77,7 @@ labels=translations = <|
 	"play"->"\[FilledRightTriangle]",
 	"randomSeed"->"\:21bb",
 	"nTurni"->"Turns",
-	"nCombinazione"->"Code length",
+	"nCombinazione"->"Combination length",
 	"allowDuplicates"->"Allow duplicate colors",
 	"esci"->"QUIT",
 	"seedSelezionato"->"GAME STARTED WITH SEED: ",
@@ -88,20 +88,20 @@ labels=translations = <|
 |>;
 
 
-    (* Calcola una dimensione proporzionale alla risoluzione dello schermo, ottenuta tramite i valori di width e height.
-    Il valore restituito \[EGrave] usato per scalare i titoli della schermata inziale.  
-	La funzione non viene richiamata nella schermata successiva perch\[EGrave] l\[IGrave] le dimensioni degli elementi grafici sono fisse.
-	Tuttavia, il risultato visivo finale anche in questa schermata rimane ben proporzionato.
-	La risoluzione dello schermo viene ottenuta tramite il FrontEnd.
-	In caso di errore, usa un valore di default (1920x1080) *)
-	aggiornaDimensioniSchermo[] := Module[{w, h, scale},
-	  Quiet@Check[
-	    {w, h} = FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
+(* Calcola una dimensione proporzionale alla risoluzione dello schermo, ottenuta tramite i valori di width e height.
+Il valore restituito \[EGrave] usato per scalare i titoli della schermata inziale.  
+La funzione non viene richiamata nella schermata successiva perch\[EGrave] l\[IGrave] le dimensioni degli elementi grafici sono fisse.
+Tuttavia, il risultato visivo finale anche in questa schermata rimane ben proporzionato.
+La risoluzione dello schermo viene ottenuta tramite il FrontEnd.
+In caso di errore, usa un valore di default (1920x1080) *)
+aggiornaDimensioniSchermo[] := Module[{w, h, scale},
+	Quiet@Check[
+		{w, h} = FrontEndExecute @ FrontEnd`Value[FE`getScreenSize[]],
 	    {w, h} = {1920, 1080}
 	  ];
 	  scale = Min[w, h]/15;
 	  {w, h, scale}
-	];
+];
 
 
 (* === Menu di avvio ===
@@ -125,8 +125,6 @@ separatamente, vicino alla funzione interfacciaGriglia, poich\[EGrave] quest'ult
 degli elementi interattivi della partita *)
 avviaSchermataDiGioco[] := DynamicModule[
  {mainWindow, content},
-    
-    
     
     (* All'inizio del gioco, quando la schermata viene aperta per la prima volta, vengono
     calcolate le dimensioni di altezza e larghezza necessarie per visualizzare correttamente i titoli *)
@@ -179,231 +177,295 @@ avviaSchermataDiGioco[] := DynamicModule[
 	];
 	
 	mainWindow
-
-
 ]
 
 
-     (* Funzione per creare la homepage del gioco.
-    E' la schermata che si apre all'inizio della partita e permette all'utente di impostare le sue 
-    preferenze di gioco prima di visualizzare la griglia di Trivia Mastermind *)
+(* Funzione per creare la homepage del gioco.
+E' la schermata che si apre all'inizio della partita e permette all'utente di impostare le sue 
+preferenze di gioco prima di visualizzare la griglia di Trivia Mastermind *)
 
- creaHomepage[] := Column[{
+creaHomepage[] := Column[{
         
-        Spacer[{0, 50}],
+	Spacer[{0, 50}],
         
-        (* Titolo del gioco con effetti di colore casuali per ogni carattere.
-        L'intento \[EGrave] di aggiungere un tocco giocoso e visivamente gradevole alla schermata, che ha uno sfondo bianco. 
-        Il colore dei caratteri cambia ad ogni riapertura della homepage, anche senza dover uscire dal gioco *)
-        With[
-	        {stringa=labels["titoloGioco"]},  (* Prende il titolo del gioco dalle etichette labels *)
-	        Style[
-		        Row @ Table[
-			        With[
-			        {
-			            char=StringTake[stringa, {i}], (* Estrae ogni singolo carattere dalla stringa del titolo *)
-			            color=RandomColor[] (* Memorizza nella variabile un colore casuale *)
-			        },
-			            Style[char, FontColor->color] (* Applica il colore casuale al carattere *)
-			        ],
-			        {i, StringLength[stringa]} (* Itera su ogni carattere della stringa del titolo *)
-			    ],
-			(* Propriet\[AGrave] relative al titolo del gioco *)
-			FontSize->titleFontScale, (* La dimensione del testo \[EGrave] definita dalla variabile titleFontScale prima calcolata *)
-			FontWeight->Bold,
-		    FontFamily->"Consolas",
-		    TextAlignment->Center (* Il testo \[EGrave] allineato al centro *)
-	        ]
-        ],
+    showGameTitle[],
         
-	    Spacer[{0, 20}],
+	Spacer[{0, 20}],
 	    
-	    (* Sono indicate le persone che hanno contribuito al progetto. 
-	    Il testo \[EGrave] suddiviso in tre elementi, allineati sulla stessa riga, perch\[EGrave] il carattere speciale
-	    a forma di cuore \[EGrave] stato colorato in rosso, tra caratteri precedenti e successivi invece di colore grigio *)    
-	    Dynamic @ Row[
-	    {
-		    Style["Made with ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray],
-		    Style["\:2665 ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Red],
-		    Style[labels["fattoDa"], FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray]
-	    },
-	    Alignment->Center
-	    ],
-	        
-	    Spacer[{0, 50}],
-	    
-	    (* Etichetta che indica la necessit\[AGrave] da parte dell'utente di dover inserire
-	    un seed per iniziare una nuova partita *)
-	    Style[labels["inserisciSeed"], FontSize->18, FontFamily->"Consolas"],
-		
-		Spacer[{0, 25}],
-		
-		(* Riga composta da tre elementi principali, allineati orizzontalmente.
-		Vi \[EGrave] il pulsante per la generazione del seed, un campo di input numerico dove 
-		l'utente pu\[OGrave] inserire manualmente un seed personalizzato, oppure visualizzare il
-		seed appena generato casualmente. Infine, il pulsante play a fine riga, se cliccato,
-		permette di iniziare una nuova partita *)
-		Row[{
-		    (* Pulsante che se premuto genera un seed casuale tra 0 e 9999 *)
-			ClickPane[
-				Framed[
-				(* Stile del tasto *)
-				Style[labels["randomSeed"], FontSize->18, FontColor->White],
-				Background->Darker[Blue], 
-				FrameStyle->None, 
-				RoundingRadius->5,
-				FrameMargins->{{10, 10}, {5, 5}}, 
-				ImageSize->Automatic 
-				],
-			    Function[ (* Azione al click: viene generato e assegnato il seed *)
-			        seedInserito=RandomInteger[{0, 9999}]; 
-			    ]
-			],
-			    
-		    Spacer[15],
-	        
-	        (* Campo di input per inserire o visualizzare il seed *)
-			Item[
-				Framed[
-					InputField[
-						Dynamic[
-							seedInserito,
-							(* Setter personalizzato: accetta solo interi >= 0 *)
-							(If[IntegerQ[#] && # >= 0, seedInserito = #] &)
-							
-							(* Alternativa: permette la presenza di stringhe vuote, ma il punto decimale resetta il campo del seed 
-							Function[val,
-								If[IntegerQ[val] && val >= 0,
-									seedInserito = val,  (* Se \[EGrave] un intero positivo, mantienilo *)
-									seedInserito = Missing["NotAvailable"]  (* Se viene cancellato tutto o valore invalido -> reset *)
-								]
-							]*)
-						],
-						Number, (* Per propriet\[AGrave] di Number, la stringa vuota non \[EGrave] ammessa, ergo una vota iniziato a scrivere il seed, deve rimanere almeno una cifra (si pu\[OGrave] comunque cambiare selezionandola) *)
-						FieldHint -> labels["placeholderSeed"], FieldHintStyle -> {Italic},
-						ImageSize -> {250, 21}, Appearance -> "Frameless",
-						BaselinePosition -> Center, ContinuousAction -> True (* Azione continua *)
-					],
-					Background -> LightGray,
-					FrameStyle -> None,
-					RoundingRadius -> 10,
-					FrameMargins -> {{10, 10}, {5, 5}},
-					ImageSize -> Automatic
-				],
-				ItemSize -> Automatic
-			],
-	       
-		    Spacer[15],
-		    
-		    (* Pulsante play, attivo solo se il seed inserito \[EGrave] valido (numero intero positivo).
-		    L'aspetto del tasto varia visivamente in base al suo stato: se il seed non \[EGrave] valido, il 
-		    tasto appare disattivato e non \[EGrave] cliccabile; se invece il seed \[EGrave] corretto, il tasto si
-		    colora, consentendo l'avvio della partita *)
-		    Dynamic[
-			    If[IntegerQ[seedInserito] && seedInserito >= 0,
-			    (* Caso seed valido -> tasto abilitato *)
-				    ClickPane[
-					    Framed[
-						    Style[labels["play"], FontSize->18, FontColor->White],
-						    Background->RGBColor[0, 0.5, 0],
-						    FrameStyle->None,
-						    RoundingRadius->5,
-						    FrameMargins->{{10, 10}, {5, 5}},
-						    ImageSize->Automatic
-					    ],
-					    Function[
-					        avviaPartita[]
-					    ]
-				    ],
-			        
-				    (* Caso seed non valido -> tasto disabilitato  *)
-				    Framed[
-					    Style[labels["play"], FontSize->18, FontColor->GrayLevel[0.8]],
-					    Background->RGBColor[0,0.3,0], (* Sfondo verde, ma scurito per indicare la disattivazione *)
-					    FrameStyle->None,
-					    RoundingRadius->5,
-					    FrameMargins->{{10, 10}, {5, 5}},
-					    ImageSize->Automatic
-				    ]
-			    ]
-		    ]
-	    },
-	    Alignment->Center
-	    ],
-	    
-	    Spacer[{0, 25}],
-	    
-	    (* Sezione dedicata alla personalizzazione della partita, dove l'utente pu\[OGrave] scegliere
-	    le impostazioni inziali prima di avviare un nuovo gioco.
-	    Al primo avvio, i valori predefiniti corrispondono alle variabili locali della funzione
-	    avviaSchermataDiGioco: customTurni, customLunghezzaCodice, allowDuplicates.
-	    La opzioni proposte riflettono le configurazioni classiche del gioco Mastermind originale *)
-	    Column[{
-		    Row[{
-		        (* Viene scelto il numero di tentativi a disposizione per indovinare la combinazione segreta.
-		        Un valore pi\[UGrave] alto rende il gioco pi\[UGrave] semplice, offrendo maggiori possibilit\[AGrave] di vittoria *)
-			    Style[labels["nTurni"], FontSize->14, FontFamily->"Consolas", Bold],
-			        
-			    Spacer[110],
-			   
-				SetterBar[
-					Dynamic[customTurni],
-					Table[
-						i->Style[ToString[i], FontFamily->"Consolas", Bold],
-						{i, 6, 12} (* E' possibile scegliere tra un minimo di 6 e un massimo di 12 turni *)
-					],
-					Appearance->"Horizontal"
-				]  
-		    }],
-	        
-		    Row[{
-		        (* L'utente indica la lunghezza della combinazinoe segreta *)
-			    Style[labels["nCombinazione"], FontSize->14, FontFamily->"Consolas", Bold],
-		                
-		        Spacer[114],
-		                
-			    SetterBar[
-				    Dynamic[customLunghezzaCodice],
-				    Table[
-					    j->Style[ToString[j], FontFamily->"Consolas", Bold],
-					    {j, 3, 7} (* Lunghezza della combinazione segreta selezionabile tra 3 a 7 *)
-				    ],
-				    Appearance->"Horizontal"
-			    ]
-		    }],
-		    
-		    Row[{
-		        (* Questa parte gestisce la ripetizione di colori nella combinazione che si andr\[AGrave] a creare *)
-			    Style[labels["allowDuplicates"], FontSize->14, FontFamily->"Consolas", Bold],
-			                
-			    Spacer[93],
-			                
-			    Checkbox[Dynamic[allowDuplicates]] (* Se la casella \[EGrave] deselezionata, la combinazione segreta non presenter\[AGrave] ripetizioni di colori *)
-		    }]
-	    }],
-	
-	    Spacer[{0, 50}],
-	    
-	    (* Individua il tasto per uscire dal gioco, riportando l'utente al notebook *)
-	    ClickPane[
-			Framed[
-			    (* Stile del pulsante QUIT *)
-				Style[labels["esci"], White, FontFamily->"Consolas", FontSize->24, Bold],
-				Background->Red,
-				FrameStyle->None,
-				RoundingRadius->10,
-				FrameMargins->{{15, 15}, {5, 5}},
-				ImageSize->Automatic
-			],  
-			Function[
-				chiudiPartita[]
-			]
-		]
+	(* Sono indicate le persone che hanno contribuito al progetto.
+	Il testo \[EGrave] suddiviso in tre elementi, allineati sulla stessa riga, perch\[EGrave] il carattere speciale
+	a forma di cuore \[EGrave] stato colorato in rosso, tra caratteri precedenti e successivi invece di colore grigio *)    
+	Row[
+	{
+		Style["Made with ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray],
+		Style["\:2665 ", FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Red],
+		Style[labels["fattoDa"], FontSize->titleFontScale/5, FontFamily->"Consolas", FontColor->Gray]
 	},
 	Alignment->Center
-    ]
+	],
+        
+	Spacer[{0, 50}],
+	    
+	(* Etichetta che indica la necessit\[AGrave] da parte dell'utente di dover inserire
+	un seed per iniziare una nuova partita *)
+	Style[labels["inserisciSeed"], FontSize->18, FontFamily->"Consolas"],
+		
+	Spacer[{0, 25}],
+		
+	(* Riga composta da tre elementi principali, allineati orizzontalmente.
+	Vi \[EGrave] il pulsante per la generazione del seed, un campo di input numerico dove 
+	l'utente pu\[OGrave] inserire manualmente un seed personalizzato, oppure visualizzare il
+	seed appena generato casualmente. Infine, il pulsante play a fine riga, se cliccato,
+	permette di iniziare una nuova partita *)
+	Row[{
+		buttonGenerateRandomSeed[],
+			    
+		Spacer[15],
+	        
+	    viewGameSeed[],
+	    
+		Spacer[15],
+		    
+		buttonGamePlay[]	
+	},
+	Alignment->Center
+	],
+	    
+	Spacer[{0, 25}],
+	    
+	(* Sezione dedicata alla personalizzazione della partita, dove l'utente pu\[OGrave] scegliere
+	le impostazioni inziali prima di avviare un nuovo gioco.
+	Al primo avvio, i valori predefiniti corrispondono ai valori (le opzioni proposte
+	riflettono le configurazioni classiche del gioco Mastermind originale):
+	customTurni, customLunghezzaCodice, allowDuplicates.
+	Sono dati dei box in cui selezionare a piacimento:
+	- Il numero di tentativi dati all'utente per poter indovinare la combinazione
+	- La lunghezza della combinazione segreta che bisogna indovinare
+	- Se volere che i colori nella combinazione possano ripetersi o no
+	*)
+	Column[{
+		chooseNumAttemps[],
+	    
+	    chooseCombinationLen[],
+		     
+		chooseIfDuplicates[]
+	}],
+	
+	Spacer[{0, 50}],
+	    
+	(* Individua il tasto per uscire dal gioco, riportando l'utente al notebook *)
+	buttonQuitGame[]
+},
+Alignment->Center
+]
 
 
+(* Titolo del gioco con effetti di colore casuali per ogni carattere.
+L'intento \[EGrave] di aggiungere un tocco giocoso e visivamente gradevole alla schermata, che ha uno sfondo bianco. 
+Il colore dei caratteri cambia ad ogni riapertura della homepage, anche senza dover uscire dal gioco *)
+showGameTitle[] := Module[
+	{stringa, colorato},
+	
+	stringa = labels["titoloGioco"]; (* Prende il titolo del gioco dalle etichette labels *)
+	colorato = Table[
+		Style[ (* Applica il colore casuale al carattere *)
+			StringTake[stringa, {i}], (* Estrae ogni singolo carattere dalla stringa del titolo *)
+			FontColor->RandomColor[] (* Memorizza nella variabile un colore casuale *)
+		],
+		{i, StringLength[stringa]} (* Itera su ogni carattere della stringa del titolo *)
+	]; 
+	
+	Style[
+		Row[colorato],
+			
+		(* Propriet\[AGrave] relative al titolo del gioco *)
+		FontSize->titleFontScale, (* La dimensione del testo \[EGrave] definita dalla variabile titleFontScale prima calcolata *)
+		FontWeight->Bold,
+		FontFamily->"Consolas",
+		TextAlignment->Center (* Il testo \[EGrave] allineato al centro *)
+	]
+];
+
+
+(* Pulsante all'interno della schermata principale che permette, se premuto,
+la generazione di un seed casuale tra 0 e 9999 per iniziare la partita *)
+buttonGenerateRandomSeed[] := ClickPane[
+	Framed[
+		(* Stile del tasto *)
+		Style[labels["randomSeed"], FontSize->18, FontColor->White],
+		Background->Darker[Blue], 
+		FrameStyle->None, 
+		RoundingRadius->5,
+		FrameMargins->{{10, 10}, {5, 5}}, 
+		ImageSize->Automatic 
+	],
+	Function[ (* Azione al click: viene generato e assegnato il seed *)
+		seedInserito=RandomInteger[{0, 9999}]; 
+	]
+];
+
+
+(* Campo di input per inserire o visualizzare il seed.
+Il seed pu\[OGrave] essere solo un numero naturale (intero positivo). 
+Non si possono iniziare partite con seed con valore a virgola mobile o negativo.
+L'intervallo di valori causali permette di ricordare facilmente il seed di gioco, 
+cos\[IGrave] da poter facilmente riprovare la partita corrispondente *)
+viewGameSeed[] := Item[
+	Framed[
+		InputField[
+			Dynamic[
+				seedInserito,
+				(* Setter personalizzato: accetta solo interi >= 0 *)
+				(If[IntegerQ[#] && # >= 0, seedInserito = #] &)
+							
+				(* Alternativa: permette la presenza di stringhe vuote, ma il punto decimale resetta il campo del seed 
+				Function[val,
+				If[IntegerQ[val] && val >= 0,
+					seedInserito = val,  (* Se \[EGrave] un intero positivo, mantienilo *)
+					seedInserito = Missing["NotAvailable"]  (* Se viene cancellato tutto o valore invalido -> reset *)
+				]
+				]*)
+			],
+	
+		Number, (* Per propriet\[AGrave] di Number, la stringa vuota non \[EGrave] ammessa, ergo una vota iniziato a scrivere il seed, deve rimanere almeno una cifra (si pu\[OGrave] comunque cambiare selezionandola) *)
+		FieldHint -> labels["placeholderSeed"], FieldHintStyle -> {Italic},
+		ImageSize -> {250, 21}, Appearance -> "Frameless",
+		BaselinePosition -> Center, ContinuousAction -> True (* Azione continua *)
+		],
+	
+	(* Stile del contenitore Framed *)
+	Background -> LightGray,
+	FrameStyle -> None,
+	RoundingRadius -> 10,
+	FrameMargins -> {{10, 10}, {5, 5}},
+	ImageSize -> Automatic
+	],
+	
+ItemSize -> Automatic
+];
+
+
+(* Pulsante play, attivo solo se il seed inserito \[EGrave] valido (numero intero positivo).
+Pulsante che si trova nella schermata principale e che permette di passare alla
+schermata successiva di gioco, una volta scelto il seed per la generazione del
+L'aspetto del tasto varia visivamente in base al suo stato: se il seed non \[EGrave] valido, il 
+tasto appare disattivato e non \[EGrave] cliccabile; se invece il seed \[EGrave] corretto, il tasto si
+colora, consentendo l'avvio della partita *)
+buttonGamePlay[] := Dynamic[
+	If[IntegerQ[seedInserito] && seedInserito >= 0,
+	(* Caso seed valido -> tasto abilitato *)
+		ClickPane[
+			Framed[
+				Style[labels["play"], FontSize->18, FontColor->White],
+				Background->RGBColor[0, 0.5, 0],
+				FrameStyle->None,
+				RoundingRadius->5,
+				FrameMargins->{{10, 10}, {5, 5}},
+				ImageSize->Automatic
+			],
+			(* Azione al corretto inserimento del seed di gioco:
+			apertura della schermata di partita con la griglia di Mastermind *)
+			Function[
+				avviaPartita[]
+			]
+		],
+			        
+		(* Caso seed non valido -> tasto disabilitato  *)
+		(* Lo stile mantiene le stesse caratteristiche, ma non c'\[EGrave] 
+		azione al click del bottone (perch\[EGrave] la partita non ha tutti i 
+		parametri di gioco inseriti correttamente) e il colore del bottone
+		\[EGrave] leggermente oscurato per renderlo intuitivamente "Non disponibile" *)
+		Framed[
+			Style[labels["play"], FontSize->18, FontColor->GrayLevel[0.8]],
+			Background->RGBColor[0,0.3,0], (* Sfondo verde, ma scurito per indicare la disattivazione *)
+			FrameStyle->None,
+			RoundingRadius->5,
+			FrameMargins->{{10, 10}, {5, 5}},
+			ImageSize->Automatic
+		]
+	]
+];
+
+
+(* Viene scelto il numero di tentativi a disposizione per indovinare la combinazione segreta.
+Un valore pi\[UGrave] alto rende il gioco pi\[UGrave] semplice, offrendo maggiori possibilit\[AGrave] di vittoria *)
+chooseNumAttemps[] := Row[{
+	
+	Style[labels["nTurni"], FontSize->14, FontFamily->"Consolas", Bold],
+			        
+	Spacer[130],
+	
+	(* Griglia con le possibili scelte *)   
+	SetterBar[
+		(* la scelta \[EGrave] memorizzata nella variabile customTurni, usata
+		successivamente per la creazione della griglia di gioco alla pagina
+		successiva *)
+		Dynamic[customTurni],
+		Table[
+			i->Style[ToString[i], FontFamily->"Consolas", Bold],
+			{i, 6, 12} (* E' possibile scegliere tra un minimo di 6 e un massimo di 12 turni *)
+		],
+	Appearance->"Horizontal"
+	]  
+}];
+
+
+(* L'utente indica la lunghezza della combinazinoe segreta *)
+chooseCombinationLen[] := Row[{
+
+	Style[labels["nCombinazione"], FontSize->14, FontFamily->"Consolas", Bold],
+		                
+	Spacer[81],
+	
+	(* Griglia con possibili scelte *)
+	SetterBar[
+	    (* la scelta \[EGrave] memorizzata nella variabile customLunghezzaCodice, usata
+		successivamente come numero di elementi per la creazione della combinazione segreta *)
+		Dynamic[customLunghezzaCodice],
+		Table[
+			j->Style[ToString[j], FontFamily->"Consolas", Bold],
+			{j, 3, 7} (* Lunghezza della combinazione segreta selezionabile tra 3 a 7 *)
+		],
+	Appearance->"Horizontal"
+	]
+}];
+
+
+(* Questa parte gestisce la ripetizione di colori nella combinazione che si andr\[AGrave] a creare *)
+chooseIfDuplicates[] := Row[{
+		        
+	Style[labels["allowDuplicates"], FontSize->14, FontFamily->"Consolas", Bold],
+			                
+	Spacer[114],
+	
+	(* Se la casella \[EGrave] deselezionata, la combinazione
+	segreta non presenter\[AGrave] ripetizioni di colori *) 
+	Checkbox[Dynamic[allowDuplicates]] 
+}];
+
+
+(* Pulsante di chiusura della partita di Trivia Mastermind.
+E' qui definito lo stile del pulsante "QUIT", con indicazione dell'azione
+richiamata al click del pulsante: chiudiPartita[].
+La funzione porta l'utente alla chiusura completa della schermata di gioco, 
+con il ritorno al notebook ProgettoTriviaMastermind *)
+buttonQuitGame[] := ClickPane[
+	Framed[
+		(* Stile del pulsante QUIT *)
+		Style[labels["esci"], White, FontFamily->"Consolas", FontSize->24, Bold],
+		Background->Red,
+		FrameStyle->None,
+		RoundingRadius->10,
+		FrameMargins->{{15, 15}, {5, 5}},
+		ImageSize->Automatic
+	],  
+	Function[
+		chiudiPartita[]
+	]
+];
+
+
+(* Reset dei parametri al momento di avvio di una nuova partita *)
 avviaPartita[] := (
     partitaInCorso = True;
     customSeed = seedInserito; 
@@ -412,6 +474,7 @@ avviaPartita[] := (
     aggiornaDimensioniSchermo[]
 )
 
+(* Impostazioni di chisura del gioco *)
 chiudiPartita[] := (
 	seedInserito=Null;
 	NotebookClose[EvaluationNotebook[]] (* Chiude la finestra del gioco *)
@@ -436,24 +499,11 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, setScreen
 	
 	Pane[
 		Column[{
-		    (* Barra superiore *)
+		    
+		    (* Barra superiore in cui \[EGrave] visualizzabile un bottone per tornare alla pagina iniziale e il seed della partita *)
 			Panel[
 				Row[{
-				    (* Pulsante per tornare la menu principale *)
-					ClickPane[
-						Framed[
-						    (* Stile del bottone *)
-							Style[labels["menu"], White, FontSize->20, FontFamily->"Consolas", Bold],
-							Background->Red,
-							FrameStyle->None,
-							RoundingRadius->5,
-							FrameMargins->{{6, 6}, {0, 0}}
-						],
-						Function[
-						setScreen["menu"];
-						aggiornaDimensioniSchermo[] 
-					]
-					],
+				    buttonBackToMenu[setScreen],
 					
 					Spacer[5],
 					
@@ -471,12 +521,12 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, setScreen
 			],
 			
 			(* Area di gioco dinamica *)
+			(* InterfacciaGriglia gestisce la griglia di gioco ed \[EGrave] inclusa nella schermata creata da
+			creaSchermataGioco, sotto al testo che mostra il seed attuale.
+			Qui l'utente effettua i tentativi per cercare di vincere la partita *)
 			Dynamic[
 				Pane[
-				    (* InterfacciaGriglia gestisce la griglia di gioco ed \[EGrave] inclusa nella schermata creata da
-				    creaSchermataGioco, sotto al testo che mostra il seed attuale.
-				    Qui l'utente effettua i tentativi per cercare di vincere la partita *)
-					interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates, setScreen], 
+				    interfacciaGriglia[seed, combinazione, tentativi, allowDuplicates, setScreen], 
 					{Automatic, Scaled[0.8]}, (* Griglia centrata e ridimensionata per una visualizzazione ottimale senza scorrimento o zoom *)
 					Scrollbars->False,
 					Alignment->Center 
@@ -490,6 +540,24 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, setScreen
 	]
 ];
 
+
+(* Pulsante presente nella schermata di gioco, sopra la griglia di Mastermind,
+che permette di tornare al menu principale, nel caso in cui si vogliano modificare dei 
+parametri di gioco. Cliccandolo, la partita gi\[AGrave] cominiciata viene interrotta e non salvata *)
+buttonBackToMenu[setScreen_] := ClickPane[
+	Framed[
+		(* Stile del bottone *)
+		Style[labels["menu"], White, FontSize->20, FontFamily->"Consolas", Bold],
+		Background->Red,
+		FrameStyle->None,
+		RoundingRadius->5,
+		FrameMargins->{{6, 6}, {0, 0}}
+	],
+	Function[
+		setScreen["menu"];
+		aggiornaDimensioniSchermo[] 
+	]
+];
 
 
 (* === Funzione per generare il codice segreto da indovinare ===
@@ -784,19 +852,20 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                     (* Viene generata la griglia di feedback colorati.
                                     Si avranno tanti pallini di feedback quanto \[EGrave] lunga la
                                     combinazione da indovinare per la partita iniziata. *)
-                                    Dynamic[renderFeedbackRow[x, hintFeedbackHistory, lunghezzaCombinazione]],
+                                    Dynamic[caricaRigaFeedback[x, hintFeedbackHistory, lunghezzaCombinazione]],
 
                                     Spacer[50],
                                     
-                                    (* Definito il comportamento dinamico del pulsante di check, cio\[EGrave]
+                                    (* Definizione del comportamento del pulsante di check, cio\[EGrave]
                                     il bottone per confermare il tentativo corrente nel gioco. Il bottone 
                                     appare e si comporta diversamente a seconda di:
-                                    - Se \[EGrave] il turno attuale,
-                                    - Se il tentativo \[EGrave] stato completato (tutti i dischi hanno un colore selezionato),
-                                    - Se la partit\[AGrave] \[EGrave] ancora in corso.
+                                    - Se \[EGrave] nella riga del turno attuale,
+                                    - Se il tentativo attuale \[EGrave] 'pieno' (tutti i dischi hanno un colore selezionato),
+                                    - Se la partit\[AGrave] \[EGrave] ancora in corso o meno.
                                      *)
-                                    Dynamic[Module[
-                                        {tentativoCompletoQ},
+                                    Dynamic[
+                                        (* Determina se tutti gli slot del tentativo corrente hanno un colore assegnato *)
+                                        tentativoCompletoQ = AllTrue[tentativoList, # =!= None &];
                                         
                                         (* Verifica che tutti gli slot dei tentativi siano pieni, cio\[EGrave] 
                                         che l'utente abbia scleto tutti i colori per la combinazione *)
@@ -814,84 +883,81 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 					                                    Style["\|01f3ae", FontSize->10],
 					                                    Style[labels["vai"], White, FontFamily->"Consolas", FontSize->12, Bold]
 				                                    }}],
-				                                Background->Orange, (* Viene mostrato un tasto arancione con scritto check *)
+				                                Background->Orange, (* Tasto arancio *)
 				                                FrameStyle->None,
 				                                RoundingRadius->10,
 				                                FrameMargins->{{10, 10}, {10, 10}},
 				                                ImageSize->Automatic
 			                                    ],
-			                                    
+			                                    (* Tasto cliccabile, che esegue questa funzione anonima*)
+			                                    (* Considerando la sua lunghezza, sono stati effettuati molti tentativi di modularizzazione
+			                                       per facilitarne la lettura, ma senza successo *)
 			                                    Function[
 				                                    If[partitaInCorso,
-					                                    (* Prima di processare il tentativo, assicuriamoci che esista una entry per l'eventuale aiuto in questa riga. *)
-					                                    (* Questo serve per mantenere l'allineamento della griglia degli aiuti, anche se l'aiuto non viene usato. *)
-					                                    If[Length[correct] < x,
-					                                        (* Se la lunghezza della lista correct \[EGrave] minore di x, viene aggiunto un elemento vuoto *)
-					                                        AppendTo[correct, {}];
-					                                    ];
-					                                    (* Viene valutato il tentativo attuale *)
-					                                    valutazioneTentativo=valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
-					                                        (* Il risultato della valutazione (feedback) viene salvato nella variabile hintFeedbackHistory *)
-					                                    hintFeedbackHistory[[turn]]=Table[{tentativoList[[i]], valutazioneTentativo[[2]][[i]]}, {i, Length[tentativoList]}];
-					                                    
-					                                    If[valutazioneTentativo[[1]] === mastermindProsegui, turn++];
-					                                    
-					                                    (* Se il feedback indica vittoria: si ferma la partita, si mostra un dialog
-					                                    di vittoria e tutte le variabili principali vengono resettate per preparare
-					                                    una nuova partita *)
-					                                    If[Length[valutazioneTentativo] > 0 && valutazioneTentativo[[1]] === mastermindVittoria,
-					                                    
-						                                    partitaInCorso=False;
-						                                    
-						                                    MostraDialogFinePartita[True,
-							                                    Function[{},
-								                                    (* Reset delle variabili *)
-								                                    gridItemsColors=Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}];
-								                                    hintFeedbackHistory=ConstantArray[{}, numeroTentativi];
-								                                    turn=1;
-								                                    colorsList=paletteColori;
-								                                    selectedItem={1, 1};
-								                                    soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates];
-								                                    tentativoList=ConstantArray[None, lunghezzaCombinazione];
-								                                    valutazioneTentativo={};
-								                                    partitaInCorso=True;
-								                                    questionCounter=0;
-								                                    correct={};
-							                                    ],
-							                                    setScreen
-						                                    ];
-					                                    ];
-					                                    
-                                                        (* Se il feedback indica sconfitta: si ferma la partita, si mostra il dialog
-                                                        di sconfitta e, anche qui, tutto viene resettato *)
-					                                    If[Length[valutazioneTentativo] > 0 && valutazioneTentativo[[1]] === mastermindSconfitta,
-						                                    partitaInCorso=False;
-						                                    
-						                                    MostraDialogFinePartita[False,
-							                                    Function[{},
-								                                    (* Reset delle variabili *)
-								                                    gridItemsColors=Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}];
-								                                    hintFeedbackHistory=ConstantArray[{}, numeroTentativi];
-								                                    turn=1;
-								                                    colorsList=paletteColori;
-								                                    selectedItem={1, 1};
-								                                    soluzioneList=generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates];
-								                                    tentativoList=ConstantArray[None, lunghezzaCombinazione];
-								                                    valutazioneTentativo={};
-								                                    partitaInCorso=True;
-								                                    questionCounter=0;
-								                                    correct={};
-							                                    ],
-							                                    setScreen
-						                                    ];
-					                                    ];
-					                                    
-					                                    (* Al termine, il turn viene incrementato (se la partita continua)
-					                                    e tentativoList azzerato per la nuova riga *)
-					                                    selectedItem={turn, 1};
-					                                    tentativoList=ConstantArray[None, lunghezzaCombinazione];
-				                                    ]
-			                                    ]   
+														(* Garantisce che correct[[x]] esista *)
+														If[Length[correct] < x, AppendTo[correct, {}]];
+														
+														(* Valuta il tentativo attuale *)
+														valutazioneTentativo = valutaTentativo[soluzioneList, tentativoList, numeroTentativi, turn];
+														
+														(* Salva il feedback per la riga corrente *)
+														hintFeedbackHistory[[turn]] = Table[
+															{tentativoList[[i]], valutazioneTentativo[[2]][[i]]},
+															{i, Length[tentativoList]}
+														];
+														
+														(* Gestione avanzamento del turno o fine partita *)
+														Switch[valutazioneTentativo[[1]],
+															
+															mastermindProsegui, (* Caso standard, si va avanti coi turni *)
+															turn++,
+															
+															mastermindVittoria, (* Caso in cui si vince la partita *)
+															partitaInCorso = False;
+															MostraDialogFinePartita[True,
+																Function[
+																	(* Reset variabili *)
+																	gridItemsColors     = Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}];
+																	hintFeedbackHistory = ConstantArray[{}, numeroTentativi];
+																	turn                = 1;
+																	colorsList          = paletteColori;
+																	selectedItem        = {1, 1};
+																	soluzioneList       = generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates];
+																	tentativoList       = ConstantArray[None, lunghezzaCombinazione];
+																	valutazioneTentativo= {};
+																	partitaInCorso      = True;
+																	questionCounter     = 0;
+																	correct             = {};
+																],
+																setScreen
+															],
+															
+															mastermindSconfitta, (* Caso in cui si perde la partita *)
+															partitaInCorso = False;
+															MostraDialogFinePartita[False,
+																Function[
+																	(* Reset variabili *)
+																	gridItemsColors     = Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}];
+																	hintFeedbackHistory = ConstantArray[{}, numeroTentativi];
+																	turn                = 1;
+																	colorsList          = paletteColori;
+																	selectedItem        = {1, 1};
+																	soluzioneList       = generaCodiceSegreto[seed, lunghezzaCombinazione, allowDuplicates];
+																	tentativoList       = ConstantArray[None, lunghezzaCombinazione];
+																	valutazioneTentativo= {};
+																	partitaInCorso      = True;
+																	questionCounter     = 0;
+																	correct             = {};
+																],
+																setScreen
+															]
+														];
+														
+														(* Prepara per il prossimo turno *)
+														selectedItem  = {turn, 1};
+														tentativoList = ConstantArray[None, lunghezzaCombinazione];
+													]
+												]
 		                                    ],
 		                                    
 		                                    (* Caso 2: turno corrente ma tentativo incompleto.
@@ -925,7 +991,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 			                                ImageSize->Automatic
 		                                    ]
 	                                    ] (* fine which*)
-                                    ]],   (* fine dynamic[module]*)
+                                    ],   (* fine dynamic*)
                                     
                                     Spacer[50],
                                         
@@ -937,8 +1003,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 									        correct,         
 									        x,               (* La 'x' corrente dalla Table (riga) *)
 									        turn,            
-									        emptyResultPlaceholder, 
-									        triviaData,      
+									        emptyResultPlaceholder,   
 									        partitaInCorso,  
 									        Function[        (* Questa \[EGrave] la funzione di callback per il ClickPane *)
 									            If[partitaInCorso,
@@ -970,7 +1035,8 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	] (* Fine Framed *)
 ]
 
-renderFeedbackRow[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
+(* === Funzione di rendering per i dischi di feedback === *)
+caricaRigaFeedback[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
 	{feedbackSymbols, feedbackColors},
 	
 	(* Estrae i simboli di feedback dalla cronologia per la riga x.
@@ -982,17 +1048,14 @@ renderFeedbackRow[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
 			ConstantArray[feedbackAssente, lunghezzaCombinazione]
 		];
 	
-	(* Converte i simboli di feedback in colori:
-	   - feedbackEsatto: verde chiaro
-	   - feedbackParziale: giallo dorato
-	   - feedbackAssente: nessun colore *)
+	(* Converte i simboli di feedback in colori *)
 	feedbackColors = feedbackSymbols /. {
-		feedbackEsatto -> RGBColor[0.57, 1, 0.05],
-		feedbackParziale -> RGBColor[1, 0.85, 0],
-		feedbackAssente -> None
+		feedbackEsatto -> RGBColor[0.57, 1, 0.05], (* Verde chiaro *)
+		feedbackParziale -> RGBColor[1, 0.85, 0],  (* Giallo dorato *)
+		feedbackAssente -> None                    (* Vuoto *)
 	};
 	
-	(* Genera una griglia di dischi (pioli di feedback), uno per ciascun colore di feedback.
+	(* Genera una griglia di dischi, uno per ciascun colore di feedback.
 	   Ogni disco ha un bordo grigio ed \[EGrave] riempito con il colore corrispondente. *)
 	Style[
 		Grid[{
@@ -1005,7 +1068,6 @@ renderFeedbackRow[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
 			]
 		},
 		Alignment -> Center],
-		
 		(* Impedisce selezione o modifica dell\[CloseCurlyQuote]interfaccia da parte dell\[CloseCurlyQuote]utente *)
 		Selectable -> False,
 		Editable -> False
@@ -1013,13 +1075,11 @@ renderFeedbackRow[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
 ];
 
 
-
 pulsanteSuggerimenti[
     correct_List, (* Lista dei risultati dei tentativi di hint *)
     rigaCorrenteX_Integer, (* La riga (x) per cui stiamo generando questo UI *)
     turnoAttuale_Integer, (* Il turno di gioco corrente *)
     placeholderRisultatoVuoto_, (* Il tuo emptyResultPlaceholder *)
-    datiTrivia_, (* triviaData *)
     partitaInCorso_, (* Flag booleano *)
     callbackClickHint_Function (* Una funzione per gestire il click del bottone HINT *)
 ] := Module[
@@ -1063,7 +1123,7 @@ pulsanteSuggerimenti[
         ],
 
         True, (* Caso di default: mostra il pulsante HINT o un placeholder *)
-        If[rigaCorrenteX === turnoAttuale && datiTrivia =!= $Failed,
+        If[rigaCorrenteX === turnoAttuale && triviaData =!= $Failed,
             ClickPane[
                 Framed[ (* Aspetto del pulsante HINT attivo *)
                     Grid[{{Style["\|01f4a1", FontSize -> 10], Style["HINT", White, FontFamily -> "Consolas", FontSize -> 12, Bold]}}],
