@@ -5,7 +5,7 @@
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
 (* :Package Version:1.1*)
-(* :History:last modified 28/5/2025*)
+(* :History:last modified 29/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi*)
 (* :License:MIT License*)
 
@@ -116,13 +116,9 @@ Il contenuto di mainWindow \[EGrave] controllato dalla variabile content, che si
 Le schermate visualizzabili sono:
 - menu, che mostra il menu principale,
 - gioco, per l'interfaccia di gioco.
-Il passaggio da una schermata all'altra \[EGrave] gestita dalla funzione cambiaSchermata, che, oltre a modificare
-currentScreen, ricalcola automaticamente la risoluzione dello schermo (altezza e larghezza) per adattare proporzionalmente
-la dimensione del titolo, garantendo una visualizzazione ottimale per qualsiasi dispositivo.
-La schermata iniziale \[EGrave] generata dalla funzione creaHomepage, definita all'interno di avviaSchermataDiGioco.
-mentre la scgermata di giocoAl contrario, la funzione creaSchermataGioco, che gestisce l'interfaccia di gioco vera e propria, \[EGrave] definita
-separatamente, vicino alla funzione interfacciaGriglia, poich\[EGrave] quest'ultima si occupa della logica e della visualizzazione
-degli elementi interattivi della partita *)
+La schermata iniziale \[EGrave] generata dalla funzione creaHomepage, mentre la schermata di gioco dalla funzione creaSchermataGioco.
+Questa gestisce l'interfaccia di gioco vera e propria; il suo contenuto \[EGrave] principalmente definito dalla funzione interfacciaGriglia,
+che si occupa della logica e della visualizzazione degli elementi interattivi della partita *)
 avviaSchermataDiGioco[] := DynamicModule[
  {mainWindow, content},
     
@@ -130,7 +126,7 @@ avviaSchermataDiGioco[] := DynamicModule[
     calcolate le dimensioni di altezza e larghezza necessarie per visualizzare correttamente i titoli *)
     {screenWidth, screenHeight, titleFontScale} = aggiornaDimensioniSchermo[];
 
-	(* La variabile Content serve come contenitore dinamico per l'interfaccia utente.
+	(* La variabile content serve come contenitore dinamico per l'interfaccia utente.
 	In altre parole, \[EGrave] l'elemento che contiene il contenuto visivo che viene visualizzato nella finestra,
 	e questo contenuto cambia in modo dinamico a seconda dello stato del gioco.
 	Content \[EGrave] visualizzato all'interno dell finestra principale mainWindow *)
@@ -150,7 +146,7 @@ avviaSchermataDiGioco[] := DynamicModule[
     ];
   
       
-    (* MainWindow rappresenta la finestra principale di Trivia Mastermind.
+    (* mainWindow rappresenta la finestra principale di Trivia Mastermind.
     Contiene e visualizza dinamicamente l'interfaccia utente del gioco, passando tra la schermata
     del menu iniziale e quella di gioco, in base allo stato corrente.
     La finestra si chiude premendo il tasto QUIT *)
@@ -183,11 +179,12 @@ avviaSchermataDiGioco[] := DynamicModule[
 (* Funzione per creare la homepage del gioco.
 E' la schermata che si apre all'inizio della partita e permette all'utente di impostare le sue 
 preferenze di gioco prima di visualizzare la griglia di Trivia Mastermind *)
-
 creaHomepage[] := Column[{
         
 	Spacer[{0, 50}],
-        
+    
+    (* Funzione che gestisce la creazione del titolo, che non \[EGrave] una semplice stampa di caratteri,
+    ma una generazione casuale di colori per i singoli caratteri testuali *)
     showGameTitle[],
         
 	Spacer[{0, 20}],
@@ -213,19 +210,23 @@ creaHomepage[] := Column[{
 	Spacer[{0, 25}],
 		
 	(* Riga composta da tre elementi principali, allineati orizzontalmente.
+	Rappresenta ci\[OGrave] che riguarda il seed per iniziare il gioco, che definisce la ripetitivit\[AGrave] delle partite.
 	Vi \[EGrave] il pulsante per la generazione del seed, un campo di input numerico dove 
 	l'utente pu\[OGrave] inserire manualmente un seed personalizzato, oppure visualizzare il
 	seed appena generato casualmente. Infine, il pulsante play a fine riga, se cliccato,
 	permette di iniziare una nuova partita *)
 	Row[{
+		(* Se si vuole geneare seed causale *)
 		buttonGenerateRandomSeed[],
 			    
 		Spacer[15],
 	        
+	    (* Visualizzo il seed generato o inserisco a mano il seed *)
 	    viewGameSeed[],
 	    
 		Spacer[15],
-		    
+		
+		(* Tasto per cominciare a giocare *)
 		buttonGamePlay[]	
 	},
 	Alignment->Center
@@ -235,19 +236,22 @@ creaHomepage[] := Column[{
 	    
 	(* Sezione dedicata alla personalizzazione della partita, dove l'utente pu\[OGrave] scegliere
 	le impostazioni inziali prima di avviare un nuovo gioco.
-	Al primo avvio, i valori predefiniti corrispondono ai valori (le opzioni proposte
-	riflettono le configurazioni classiche del gioco Mastermind originale):
-	customTurni, customLunghezzaCodice, allowDuplicates.
+	Al primo avvio, sono mostrati i valori predefiniti per:
+	customTurni, customLunghezzaCodice, allowDuplicates
+	(le opzioni proposte riflettono le configurazioni classiche del gioco Mastermind originale).
 	Sono dati dei box in cui selezionare a piacimento:
 	- Il numero di tentativi dati all'utente per poter indovinare la combinazione
 	- La lunghezza della combinazione segreta che bisogna indovinare
 	- Se volere che i colori nella combinazione possano ripetersi o no
 	*)
 	Column[{
+		(* Quanti tentativi vuoi avere? *)
 		chooseNumAttemps[],
 	    
+	    (* Quanto lunga vuoi che sia la combinazione da indovinare? *)
 	    chooseCombinationLen[],
 		     
+		(* Vuoi che la combinazione possa contenere colori duplicati? *)
 		chooseIfDuplicates[]
 	}],
 	
@@ -262,7 +266,7 @@ Alignment->Center
 
 (* Titolo del gioco con effetti di colore casuali per ogni carattere.
 L'intento \[EGrave] di aggiungere un tocco giocoso e visivamente gradevole alla schermata, che ha uno sfondo bianco. 
-Il colore dei caratteri cambia ad ogni riapertura della homepage, anche senza dover uscire dal gioco *)
+Il colore dei caratteri cambia ad ogni riapertura del menu, anche senza dover uscire dal gioco *)
 showGameTitle[] := Module[
 	{stringa, colorato},
 	
@@ -287,8 +291,10 @@ showGameTitle[] := Module[
 ];
 
 
-(* Pulsante all'interno della schermata principale che permette, se premuto,
-la generazione di un seed casuale tra 0 e 9999 per iniziare la partita *)
+(* Pulsante all'interno della schermata principale che, se premuto, permette
+la generazione di un seed casuale tra 0 e 9999 per iniziare la partita.
+L'intervallo di valori causali scelto permette di ricordare facilmente il seed di gioco, 
+che ha massimo 4 cifre, cos\[IGrave] da poter facilmente ricordare e riproporlo per una successiva partita *)
 buttonGenerateRandomSeed[] := ClickPane[
 	Framed[
 		(* Stile del tasto *)
@@ -307,9 +313,7 @@ buttonGenerateRandomSeed[] := ClickPane[
 
 (* Campo di input per inserire o visualizzare il seed.
 Il seed pu\[OGrave] essere solo un numero naturale (intero positivo). 
-Non si possono iniziare partite con seed con valore a virgola mobile o negativo.
-L'intervallo di valori causali permette di ricordare facilmente il seed di gioco, 
-cos\[IGrave] da poter facilmente riprovare la partita corrispondente *)
+Non si possono iniziare partite con seed con valore a virgola mobile o negativo *)
 viewGameSeed[] := Item[
 	Framed[
 		InputField[
@@ -327,7 +331,9 @@ viewGameSeed[] := Item[
 				]*)
 			],
 	
-		Number, (* Per propriet\[AGrave] di Number, la stringa vuota non \[EGrave] ammessa, ergo una vota iniziato a scrivere il seed, deve rimanere almeno una cifra (si pu\[OGrave] comunque cambiare selezionandola) *)
+		(* Per propriet\[AGrave] di Number, la stringa vuota non \[EGrave] ammessa, ergo una vota iniziato a
+		scrivere il seed, deve rimanere almeno una cifra (si pu\[OGrave] comunque cambiare selezionandola) *)
+		Number,
 		FieldHint -> labels["placeholderSeed"], FieldHintStyle -> {Italic},
 		ImageSize -> {250, 21}, Appearance -> "Frameless",
 		BaselinePosition -> Center, ContinuousAction -> True (* Azione continua *)
@@ -346,8 +352,7 @@ ItemSize -> Automatic
 
 
 (* Pulsante play, attivo solo se il seed inserito \[EGrave] valido (numero intero positivo).
-Pulsante che si trova nella schermata principale e che permette di passare alla
-schermata successiva di gioco, una volta scelto il seed per la generazione del
+Si trova nella schermata principale e permette di passare alla schermata successiva di gioco.
 L'aspetto del tasto varia visivamente in base al suo stato: se il seed non \[EGrave] valido, il 
 tasto appare disattivato e non \[EGrave] cliccabile; se invece il seed \[EGrave] corretto, il tasto si
 colora, consentendo l'avvio della partita *)
@@ -397,9 +402,8 @@ chooseNumAttemps[] := Row[{
 	
 	(* Griglia con le possibili scelte *)   
 	SetterBar[
-		(* la scelta \[EGrave] memorizzata nella variabile customTurni, usata
-		successivamente per la creazione della griglia di gioco alla pagina
-		successiva *)
+		(* La scelta \[EGrave] memorizzata nella variabile customTurni, usata
+		per la creazione della griglia di gioco alla pagina successiva *)
 		Dynamic[customTurni],
 		Table[
 			i->Style[ToString[i], FontFamily->"Consolas", Bold],
@@ -410,7 +414,7 @@ chooseNumAttemps[] := Row[{
 }];
 
 
-(* L'utente indica la lunghezza della combinazinoe segreta *)
+(* L'utente indica la lunghezza della combinazione segreta *)
 chooseCombinationLen[] := Row[{
 
 	Style[labels["nCombinazione"], FontSize->14, FontFamily->"Consolas", Bold],
@@ -419,7 +423,7 @@ chooseCombinationLen[] := Row[{
 	
 	(* Griglia con possibili scelte *)
 	SetterBar[
-	    (* la scelta \[EGrave] memorizzata nella variabile customLunghezzaCodice, usata
+	    (* La scelta \[EGrave] memorizzata nella variabile customLunghezzaCodice, usata
 		successivamente come numero di elementi per la creazione della combinazione segreta *)
 		Dynamic[customLunghezzaCodice],
 		Table[
@@ -431,7 +435,9 @@ chooseCombinationLen[] := Row[{
 }];
 
 
-(* Questa parte gestisce la ripetizione di colori nella combinazione che si andr\[AGrave] a creare *)
+(* Questa parte gestisce la ripetizione di colori nella combinazione che si andr\[AGrave] a creare.
+La funzione generaCodiceSegreto si occuper\[AGrave] effettivamente della generazione della combinazione segreta,
+considerando la preferenza dell'utente di volere colori duplicati nel codice *)
 chooseIfDuplicates[] := Row[{
 		        
 	Style[labels["allowDuplicates"], FontSize->14, FontFamily->"Consolas", Bold],
@@ -493,7 +499,8 @@ Parametri:
 - seed: seme utilizzato per generare la combinazione segreta e altri aspetti (come le domande del quiz Trivia presenti come suggerimenti),
 - tentativi: rappresenta il numero di tentativi massimo disponibile,
 - combinazione: la combinazione segreta da indovinare,
-- allowDuplicates: valore booleano che indica se nella combinazione sono ammessi colori ripetuti *)
+- allowDuplicates: valore booleano che indica se nella combinazione sono ammessi colori ripetuti,
+- setScreen: funzione che aggiorna currentScreen *)
 creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, setScreen_] := DynamicModule[
 	{},
 	
@@ -520,9 +527,8 @@ creaSchermataGioco[seed_, tentativi_, combinazione_, allowDuplicates_, setScreen
 			Background->White 
 			],
 			
-			(* Area di gioco dinamica *)
-			(* InterfacciaGriglia gestisce la griglia di gioco ed \[EGrave] inclusa nella schermata creata da
-			creaSchermataGioco, sotto al testo che mostra il seed attuale.
+			(* Area di gioco dinamica: interfacciaGriglia gestisce la griglia di gioco ed \[EGrave] inclusa
+			nella schermata creata da creaSchermataGioco, sotto al testo che mostra il seed attuale.
 			Qui l'utente effettua i tentativi per cercare di vincere la partita *)
 			Dynamic[
 				Pane[
@@ -554,6 +560,8 @@ buttonBackToMenu[setScreen_] := ClickPane[
 		FrameMargins->{{6, 6}, {0, 0}}
 	],
 	Function[
+		(* setScreen permette l'aggiornamento della variabile currentScreen, che cambia
+		la schermata visualizzata dall'utente in Trivia Mastermind *)
 		setScreen["menu"];
 		aggiornaDimensioniSchermo[] 
 	]
@@ -648,8 +656,8 @@ valutaTentativo[soluzione_List, tentativo_List, maxTentativi_:8, tentativoCorren
 ];
 
 
-(* === Funzione che seleziona automaticamente il prossimo piolo con cui interagire === 
-Prende in input il piolo selezionato corrente, la lista dei tentativi e la lunghezza massima del tentativo, e ritorna il nuovo piolo selezionato.
+(* === Funzione che seleziona automaticamente il prossimo elemento del tentativo con cui interagire === 
+Prende in input l'elemento selezionato corrente, la lista dei tentativi e la lunghezza massima del tentativo, e ritorna il nuovo elemento selezionato.
 Normalmente, passa sempre al successivo. Se sono stati rimossi dei colori e il successivo \[EGrave] gi\[AGrave] colorato, passa al primo vuoto successivo.
 In caso non ci siano successivi, non fa nulla. *)
 vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_] := Module[
@@ -678,23 +686,26 @@ vaiAlProssimoPallinoVuoto[selectedItem_, tentativoList_, lunghezzaCombinazione_]
 ]
 
 
-(* Funzione di generazione dell'interfaccia della griglia di gioco dinamica, prende in input il seed,
-il numero di colori che formano la combinazione segreta, il numero di tentativi e un flag per l'utilizzo di colori duplicati.
+(* === Funzione di generazione dell'interfaccia della griglia di gioco dinamica ===
+Prende in input il seed, il numero di colori che formano la combinazione segreta, il numero di tentativi
+massimi che l'utente ha per vincere il gioco, una flag per l'utilizzo di colori duplicati e la funzione ausiliaria
+setScreen che permette di aggiornare la variabile currentScreen che gestisce la schermata visualizzata nel gioco.
 Genera: 
- -Griglia di tentativi e relative combinazioni
- -Griglia di feedback per ciascun tentativo
- -Bottone di check del tentativo
- -Bottone di Hint per l'avvio del Trivia
- -Funzioni di restart e termina partita
+- Griglia di tentativi e relative combinazioni
+- Griglia di feedback per ciascun tentativo
+- Bottone di check del tentativo
+- Bottone di Hint per l'avvio del Trivia
+- Funzioni di restart, termina partita e di chiusura
+della finestra di dialogo a fine gioco per visualizzare la partita appena giocata
 *)
 interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplicates_, setScreen_] := DynamicModule[
 {
     (* Definisce una griglia di colori per ciascun disco in ogni riga della partita.
-    Inizialmente tutti i dischi sono vuori; viene aggiornata quando l'utente seleziona un colore *)
+    Inizialmente tutti i dischi sono vuoti; viene aggiornata quando l'utente seleziona un colore *)
 	gridItemsColors = Table[Opacity[0.2, Black], {numeroTentativi}, {lunghezzaCombinazione}], 
 	(* Memorizza lo storico dei feedback per ciascun tentativo. 
 	Ogni elemento \[EGrave] una lista di coppie {coloreScleto, feedback}.
-	Serve per vedere i pioli dei feedback *)
+	Serve per vedere i pallini dei feedback *)
 	hintFeedbackHistory = ConstantArray[{}, numeroTentativi],
 	(* Numero del tentativo attuale, ovvero quale riga l'utente sta riempendo *)
 	turn = 1, 
@@ -718,7 +729,7 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	Aumenta ogni volta che l'utente clicca sul pulsante hint *)
 	questionCounter = 0,
 	(* Tiene traccia degli aiuti trivia usati. Ogni voce pu\[OGrave] essere:
-	- {colore, infromazione}: se la domanda \[EGrave] stata risposta correttamente,
+	- {colore, informazione}: se la domanda \[EGrave] stata risposta correttamente,
 	- {}: se il giocare non ha richiesto un aiuto,
 	- elemento Missing: se l'utente ha sbagliato *)
 	correct = {}
@@ -730,56 +741,30 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
             Row[{
                 Spacer[20],
 
-                (* Il blocco crea una griglia interattiva di colori, che rappresenta i possibili
-                colori utilizzati per formare una combinazione segreta.
+                (* La funzione gestisce la creazione di una griglia interattiva di colori,
+                che rappresenta i possibili colori utilizzati per formare una combinazione segreta.
                 Ogni colore \[EGrave] rappresentato da un disco colorato, organizzato in una girglia a due colonne.
                 L'utente pu\[OGrave] cliccare su uno di questi dischi per selezionarlo: il colore scelto verr\[AGrave]
                 applicato alla posizione impostata sulla griglia di gioco, a condizione che la partita 
                 sia ancora in corso *)
-                Grid[
-                    Partition[
-                        Table[
-                            (* ColorsCol \[EGrave] la lista dei colori disponibili. Si definisce la variabile
-                            locale col che cattura il valore corrente per permette una sicura interazione
-                            con l'utente *)
-                            With[{col = colorsCol}, 
-	                            EventHandler[ 
-					                Dynamic @ Graphics[ (* Creazione dei dischi colorati*)
-					                {
-						                EdgeForm[Black],
-						                (* Colora il disco utilizzando il colore attualmente assegnato a col *)
-						                FaceForm[col], 
-						                Disk[{0, 0}, 1]
-					                },
-					                    ImageSize->35 (* Dimensione del disco *)
-					                ],
-				                    {
-						                "MouseClicked" :> ( 
-						                    (* Il click \[EGrave] controllato da partitaInCorso, ovvero il pulsante \[EGrave] abilitato solo se la
-						                    partita \[EGrave] ancora in corso. Questo permette di evitare modifiche dopo la fine del gioco.
-						                    In questo modo, i tentativi effettuati e i colori selezionati rimangono visibili e invariati a fine partita. *)
-							                If[partitaInCorso,                            
-								                gridItemsColors[[Sequence @@ selectedItem]] = col; (* Aggiorna il colore visualizzato nella griglia di gioco *)
-								                tentativoList[[selectedItem[[2]]]] = col; (* Tiene traccia delle scelte dell\[CloseCurlyQuote]utente nel tentativo corrente *)
-								                
-								                (* Dopo aver assegnato il colore selezionato, viene evidenziata
-								                automaticamente la selezione sul prossimo "pallino grigio"
-								                disponibile. Se tutti i pallini sono gi\[AGrave] stati colorati, la
-								                selezione resta sulla posizione corrente *)	                
-								                selectedItem = vaiAlProssimoPallinoVuoto[selectedItem, tentativoList, lunghezzaCombinazione];                                 
-							                ]
-						                )
-					                }
-				                ]
-                            ],
-                        (* Ogni elemento colorsCol prende i valori dalla lista colorsList,
-                        in cui era stata memorizzara paletteColori *)
-                        {colorsCol, colorsList} 
-                        ],
-                    2 (* visualizzati su due colonne, per rendere la palette pi\[UGrave] compatta *)
-                    ],
-                Spacings -> {1, 1},
-                Alignment -> Center
+                createGameColorsPalette[
+                    colorsList, (* Lista dei nomi dei colori nella palette *)
+                    (* Funzione richiamata al click del colore *)
+                    Function[col,
+                        (* Il click \[EGrave] controllato da partitaInCorso, ovvero il pulsante \[EGrave] abilitato solo se la
+                        partita \[EGrave] ancora in corso. Questo permette di evitare modifiche dopo la fine del gioco.
+						In questo modo, i tentativi effettuati e i colori selezionati rimangono visibili e invariati a fine partita. *)
+                        If[partitaInCorso,
+                            gridItemsColors[[Sequence @@ selectedItem]] = col; (* Aggiorna il colore visualizzato nella griglia di gioco *)
+                            tentativoList[[selectedItem[[2]]]] = col; (* Tiene traccia delle scelte dell\[CloseCurlyQuote]utente nel tentativo corrente *)
+                            
+                            (* Dopo aver assegnato il colore selezionato, viene evidenziata
+                            automaticamente la selezione sul prossimo "pallino grigio"
+							disponibile. Se tutti i pallini sono gi\[AGrave] stati colorati, la
+							selezione resta sulla posizione corrente *)
+                            selectedItem = vaiAlProssimoPallinoVuoto[selectedItem, tentativoList, lunghezzaCombinazione];
+                        ]
+                    ]
                 ],
 
                 Spacer[80],
@@ -791,9 +776,9 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                         With[{x=row},
                             Append[
                                 (* Questo blocco crea una riga di dischi interattivi, che rappresentanto i 
-                                tentativi del giocare all'interno della griglia del gioco Trivia Mastermind.
-                                Ogni disco pu\[OGrave] essere colorato selezionando un colore dalla palette definita 
-                                nel blocco precedente. La colorazione avviene dinamicamente al click su un colore,
+                                tentativi del gioco all'interno della griglia di Trivia Mastermind.
+                                Ogni disco pu\[OGrave] essere colorato selezionando un elemento dalla palette definita 
+                                dalla funzione precedente. La colorazione avviene dinamicamente al click su un colore,
                                 e viene visualizzata in tempo reale sulla griglia.
                                 Viene gestita:
                                 - La selezione del disco corrente da colorare,
@@ -801,50 +786,34 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
                                 - La visualizzazione dinamica della riga corrispondente al turno attivo.
                                 Il numero di dischi per riga corrisponde alla lunghezza della combinazione segreta,
                                 e il numero totale di righe \[EGrave] pari al numero massimo di tentativi scelto inizialmente *)
-	                            Table[
-	                                (* Viene calcolato un id univoco per ogni cella *)
-		                            With[{y=col, id=lunghezzaCombinazione*(row-1)+col},
-			                            EventHandler[ (* Gestisce gli elementi mouse per ogni cerchio *)
-				                            Dynamic @ Graphics[
-				                            {
-					                            EdgeForm[ (* Bordo evidenziato se il pallino \[EGrave] quello selezionato *)
-						                            If[{x, y} === selectedItem,
-						                            Directive[Black, AbsoluteThickness[1]], (* Bordo sottile nero se l'elemento \[EGrave] selezionato *)
-						                            None]
-					                            ],
-					                            (* Vengono colorate le righe fino al turno corrente. A livello visivo appaiono "abilitate",
-					                            nonostante la colorazione di riempimento grigia e il contorno lievemente pi\[UGrave] scuro.
-					                            Si riconosce la differenza rispetto alle righe non ancora accedibili *)
-					                            If[x <= turn, gridItemsColors[[x, y]], Opacity[0.1, Black]],
-					                            Disk[{0, 0}, 1]
-				                            },
-				                                ImageSize->{35, 35} (* Dimensione dei cerchi *)
-				                            ],
-				                            {
-					                            "MouseClicked" :> ( 
-					                                (* Consente l'interazione solo durante la partita e solo sulla riga corrente.
-					                                Controlla la selezione dei pallini: se il pallino \[EGrave] gi\[AGrave] stato colorato, permette la 
-					                                decolorazione per una nuova scelta da parte dell'utente *)
-						                            If[partitaInCorso && x === turn,
-							                            If[tentativoList[[y]] =!= None, 
-								                            selectedItem={x, y};
-								                            tentativoList[[y]]=None;
-								                            gridItemsColors[[x, y]]=Opacity[0.2, Black]; (* Si riporta il pallino allo stato iniziale, di colore grigio *)
-								                            ,
-								                            (* Se invece \[EGrave] vuoto, viene semplicemente selezionato *)
-								                            selectedItem={x, y};
-							                            ]
-						                            ]
-					                            )
-				                            }
-			                            ]
-		                            ],
-		                        (* Viene iterata la variabile col (indice corrente del
-		                        ciclo, in questo caso la colonna della griglia) da 1 a
-		                        lunghezzaCombinazione, con un passo di 1 *)
-	                            {col, 1, lunghezzaCombinazione} 
+	                            createGridRowElements[
+	                                row, (* Tiene conto della riga corrente, del tentativo attivo *)
+	                                lunghezzaCombinazione, (* Per capire quanti elementi nel tentativo vi sono *)
+	                                
+	                                (* Funzione che evidenzia il bordo del pallino selezionato *)
+	                                Function[{pos}, If[pos === selectedItem, EdgeForm[Directive[Black, AbsoluteThickness[1]]], Nothing]],
+	                                
+	                                (* Vengono colorate le righe fino al turno corrente. A livello visivo appaiono "abilitate",
+					                nonostante la colorazione di riempimento grigia e il contorno lievemente pi\[UGrave] scuro.
+					                Si riconosce la differenza rispetto alle righe non ancora accedibili *)
+	                                Function[{pos}, If[pos[[1]] <= turn, gridItemsColors[[Sequence @@ pos]], Opacity[0.1, Black]]],
+	                                
+	                                (* Consente l'interazione solo durante la partita e solo sulla riga corrente.
+					                Controlla la selezione dei pallini: se il pallino \[EGrave] gi\[AGrave] stato colorato, permette la 
+					                decolorazione per una nuova scelta da parte dell'utente *)
+	                                Function[{pos},
+	                                    If[partitaInCorso && pos[[1]] === turn,
+	                                        If[tentativoList[[pos[[2]]]] =!= None,
+	                                            selectedItem = pos;
+	                                            tentativoList[[pos[[2]]]] = None;
+	                                            gridItemsColors[[Sequence @@ pos]] = Opacity[0.2, Black]; (* Si riporta il pallino allo stato iniziale, di colore grigio *)
+	                                            ,
+	                                            selectedItem = pos; (* Se invece \[EGrave] vuoto, viene semplicemente selezionato *)
+	                                        ]
+	                                    ]    
+	                                ]
 	                            ],
-								
+	                            								
 								(* La griglia di feedback e i tasti di azione sono posizionati sulla stessa riga *)
 	                            Row[{
                                     Spacer[20],
@@ -878,17 +847,9 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 		                                    (* Caso 1: turno corrente e tentativo completo *)
 		                                    x === turn && tentativoCompletoQ,
 		                                    ClickPane[
-			                                    Framed[
-				                                    Grid[{{
-					                                    Style["\|01f3ae", FontSize->10],
-					                                    Style[labels["vai"], White, FontFamily->"Consolas", FontSize->12, Bold]
-				                                    }}],
-				                                Background->Orange, (* Tasto arancio *)
-				                                FrameStyle->None,
-				                                RoundingRadius->10,
-				                                FrameMargins->{{10, 10}, {10, 10}},
-				                                ImageSize->Automatic
-			                                    ],
+		                                        (* Stile del bottone per la casistica 1 *)
+		                                        buttonTurnCurrAttempCom[],
+		                                        
 			                                    (* Tasto cliccabile, che esegue questa funzione anonima*)
 			                                    (* Considerando la sua lunghezza, sono stati effettuati molti tentativi di modularizzazione
 			                                       per facilitarne la lettura, ma senza successo *)
@@ -958,38 +919,19 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 														tentativoList = ConstantArray[None, lunghezzaCombinazione];
 													]
 												]
-		                                    ],
+		                                    ], (* Fine ClickPane, contenitore casistica 1 *)
 		                                    
 		                                    (* Caso 2: turno corrente ma tentativo incompleto.
 		                                    Indica che \[EGrave] il proprio turno, ma non si pu\[OGrave] ancora inviare il tentativo *)
 		                                    x === turn && !tentativoCompletoQ,
-		                                    Framed[
-			                                    Grid[{{
-			                                        Style["\|01f3ae", FontSize->10, FontColor->Gray],
-			                                        Style[labels["vai"], FontFamily->"Consolas", FontSize->12, FontColor->Gray, Bold]
-			                                    }}],
-			                                Background->GrayLevel[0.8],  (* Mostra un pulsante grigio disattivato *)
-			                                FrameStyle->None,
-			                                RoundingRadius->10,
-			                                FrameMargins->{{10, 10}, {10, 10}},
-			                                ImageSize->Automatic
-		                                    ],
-		                                    
+		                                    (* Stile del bottone per la casistica 2 *)
+		                                    buttonTurnCorrAttempInc[],
+		                                    		                                    		                                    		                                    		                                    
 		                                    (* Caso 3 (default): non \[EGrave] il turno corrente *)
 		                                    True,
-		                                    Framed[
-			                                    Grid[{{
-				                                    Style["\|01f3ae", FontSize->10, FontColor->Directive[GrayLevel[0.9], Opacity[0]]],
-				                                    Style[labels["vai"], FontFamily->"Consolas", FontSize->12, FontColor->Directive[GrayLevel[0.9], Opacity[0]], Bold]
-			                                    }}],  
-			                                (* Mostra un pulsante invisibile per mantenere l'allineamento della griglia.
-			                                Il pulsante ha stile e testo trasparenti *)
-			                                Background->GrayLevel[0.9], 
-			                                FrameStyle->None,
-			                                RoundingRadius->10,
-			                                FrameMargins->{{10, 10}, {10, 10}},
-			                                ImageSize->Automatic
-		                                    ]
+		                                    (* Stile del bottone per la casistica 3 *)
+		                                    buttonTurnNotCurr[]  
+		                                    
 	                                    ] (* fine which*)
                                     ],   (* fine dynamic*)
                                     
@@ -1035,6 +977,78 @@ interfacciaGriglia[seed_, lunghezzaCombinazione_, numeroTentativi_, allowDuplica
 	] (* Fine Framed *)
 ]
 
+
+(* Funzione che crea l\[CloseCurlyQuote]interfaccia dei colori selezionabili nel gioco.
+Mostra visivamente i colori tra cui l\[CloseCurlyQuote]utente pu\[OGrave] scegliere per comporre una combinazione *)
+createGameColorsPalette[colorsList_, handler_] := Grid[
+	Partition[
+        Table[
+            (* ColorsCol \[EGrave] la lista dei colori disponibili. Si definisce la variabile locale
+            col che cattura il valore corrente per permette una sicura interazione con l'utente *)
+            With[{col = colorsCol}, 
+	            EventHandler[ 
+				    Dynamic @ Graphics[ (* Creazione dei dischi colorati*)
+					{
+						EdgeForm[Black],
+						(* Colora il disco utilizzando il colore attualmente assegnato a col *)
+						FaceForm[col], 
+						Disk[{0, 0}, 1]
+					},
+						ImageSize->35 (* Dimensione del disco *)
+					],
+				    {
+				        (*handler \[EGrave] la funzione che gestisce il click su uno dei colori della palette.
+				        Assegna il colore selezionato alla posizione attualmente selezionata nella griglia,
+				        aggiorna la lista dei tentativi e sposta automaticamente la selezione al prossimo slot disponibile *)
+				        "MouseClicked" :> handler[col]
+					}
+				]
+            ],
+        (* Ogni elemento colorsCol prende i valori dalla lista colorsList,
+        in cui era stata memorizzara paletteColori *)
+        {colorsCol, colorsList} 
+    ],
+    2 (* visualizzati su due colonne, per rendere la palette pi\[UGrave] compatta *)
+   ],
+   Spacings -> {1, 1},
+   Alignment -> Center
+ ];
+
+
+(* Funzione che gestisce una riga della griglia di gioco.
+Genera una lista di pallini per una riga della griglia in cui ogni disco \[EGrave] interattivo.
+Sono fornite tre funzioni esterne definite come:
+- edgeHnadler: stile del pallino selezionato esattamente nella riga (ne definisce lo stile dei bordi).
+- fillHandler: stile di riempimento dei pallini nella riga.
+- clickHandler: comportamento al click di un pallino nella riga corrente *)
+createGridRowElements[row_, lunghezzaCombinazione_, edgeHandler_, fillHandler_, clickHandler_] := Table[
+
+	(* Viene calcolato un id univoco per ogni cella *)
+	With[{x=row, y=col},
+		EventHandler[ (* Gestisce gli elementi mouse per ogni cerchio *)
+			Dynamic @ Graphics[
+			{
+				(* Caratteristiche per il pallino selezionato *)
+				edgeHandler[{x, y}],
+				(* Come appare il riempimento dei dischi nella riga *)
+				fillHandler[{x, y}],
+				Disk[{0, 0}, 1] (* Dischi mostrati nella riga *)
+			},	
+				ImageSize->{35, 35} (* Dimensione dei cerchi *)
+			],
+			{
+				(* Come si comporta l'interfaccia al click di uno dei dischi nella riga *)
+				"MouseClicked" :> clickHandler[{x, y}]
+			}
+		]
+	],
+	(* Viene iterata la variabile col (indice corrente del
+	ciclo, in questo caso la colonna della griglia) da 1 a
+	lunghezzaCombinazione, con un passo di 1 *)
+	{col, 1, lunghezzaCombinazione} 
+];
+
+
 (* === Funzione di rendering per i dischi di feedback === *)
 caricaRigaFeedback[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
 	{feedbackSymbols, feedbackColors},
@@ -1075,72 +1089,21 @@ caricaRigaFeedback[x_, hintFeedbackHistory_, lunghezzaCombinazione_] := Module[
 ];
 
 
-pulsanteSuggerimenti[
-    correct_List, (* Lista dei risultati dei tentativi di hint *)
-    rigaCorrenteX_Integer, (* La riga (x) per cui stiamo generando questo UI *)
-    turnoAttuale_Integer, (* Il turno di gioco corrente *)
-    placeholderRisultatoVuoto_, (* Il tuo emptyResultPlaceholder *)
-    partitaInCorso_, (* Flag booleano *)
-    callbackClickHint_Function (* Una funzione per gestire il click del bottone HINT *)
-] := Module[
-    {
-        currentValForRowX, 
-        displayOutput
-    },
-
-    (* Determina il valore attuale per la riga x *)
-    currentValForRowX = If[
-        ListQ[correct] && Length[correct] >= rigaCorrenteX && rigaCorrenteX >= 1 &&
-        correct[[rigaCorrenteX]] =!= Null && correct[[rigaCorrenteX]] =!= {} && correct[[rigaCorrenteX]] =!= placeholderRisultatoVuoto,
-        correct[[rigaCorrenteX]],
-        placeholderRisultatoVuoto
-    ];
-
-    (* Determina quale interfaccia utente visualizzare*)
-    displayOutput = Which[
-        currentValForRowX === Missing["WrongAnswer"],
-        Framed[
-            Style["\:274c", FontSize -> 18],
-            Background -> GrayLevel[0.95], FrameStyle -> Red, RoundingRadius -> 10,
-            FrameMargins -> {{10, 10}, {0, 0}}, ImageSize -> {80, 35}, Alignment -> Center
-        ],
-
-        MatchQ[currentValForRowX, {_?ColorQ, _}],
-        With[
-            {
-                resultColor = First[currentValForRowX],
-                resultValue = Last[currentValForRowX]
-            },
-            Framed[
-                If[resultValue =!= Missing["NoSimpleHintAvailable"], 
-                    If[resultValue =!= Missing["PositionNotApplicable"], 
-                        Row[{Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}], Spacer[5], Column[{Style[ToString[resultValue], 16, Bold, FontFamily -> "Arial"]}, Spacings -> 0]}], 
-                        Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}]], 
-                    ""], 
-                Background -> GrayLevel[0.95], FrameStyle -> Darker[Green], RoundingRadius -> 10, 
-                FrameMargins -> {{30, 10}, {6, 6}}, ImageSize -> {80, 35}
-            ]
-        ],
-
-        True, (* Caso di default: mostra il pulsante HINT o un placeholder *)
-        If[rigaCorrenteX === turnoAttuale && triviaData =!= $Failed,
-            ClickPane[
-                Framed[ (* Aspetto del pulsante HINT attivo *)
-                    Grid[{{Style["\|01f4a1", FontSize -> 10], Style["HINT", White, FontFamily -> "Consolas", FontSize -> 12, Bold]}}],
-                    Background -> Blue, FrameStyle -> None, RoundingRadius -> 10,
-                    FrameMargins -> {{10, 10}, {10, 10}}, ImageSize -> {80, 35}
-                ],
-                callbackClickHint, (* Usa la funzione di callback passata come argomento *)
-                Method -> "Queued"
-            ],
-            Framed[ (* Pulsante HINT inattivo/placeholder *)
-                Grid[{{Style["\|01f4a1", FontSize -> 10, FontColor -> Directive[GrayLevel[0.7], Opacity[0]]], Style["HINT", FontFamily -> "Consolas", FontSize -> 12, FontColor -> Directive[GrayLevel[0.7], Opacity[0]], Bold]}}],
-                Background -> GrayLevel[0.9], FrameStyle -> None, RoundingRadius -> 10,
-                FrameMargins -> {{10, 10}, {10, 10}}, ImageSize -> {80, 35}
-            ]
-        ]
-    ];
-    displayOutput
+(* Stile del bottone di check del tentativo quando \[EGrave] abilitato.
+Le condizioni che permettono all'utente di avere un feedback sul suo tentativo sono
+relative all'aver inserito un colore per ogni elemento della combinazione e che il turno
+sia corrente. Il bottone risulter\[AGrave] colorato di arancione *)
+buttonTurnCurrAttempCom[] := Framed[
+	Grid[{{
+		Style["\|01f3ae", FontSize->10],
+		Style[labels["vai"], White, FontFamily->"Consolas", FontSize->12, Bold]
+	}}],
+	
+	Background->Orange, (* Tasto arancio *)
+	FrameStyle->None,
+	RoundingRadius->10,
+	FrameMargins->{{10, 10}, {10, 10}},
+	ImageSize->Automatic
 ];
 
 
@@ -1225,7 +1188,111 @@ mostraDialogFinePartita[hasWon_, onRestartFunc_: Null, setScreen_] :=
         Modal -> True,
         WindowElements -> {}, (* Utile per controllare esattamente cosa appare *)
         WindowFrame -> "ModalDialog"
+];
+
+
+(* Stile del bottone di check del tentativo quando la riga corrispondente \[EGrave] 
+quella corrente, ma non sono stati ancora inseriti tutti i colori nella combinazione.
+Il bottone risulter\[AGrave] visibile, ma con colore di riempimento grigio, a segnalare la sua disabilitazione *)
+buttonTurnCorrAttempInc[] := Framed[
+	Grid[{{
+		Style["\|01f3ae", FontSize->10, FontColor->Gray],
+		Style[labels["vai"], FontFamily->"Consolas", FontSize->12, FontColor->Gray, Bold]
+	}}],
+	
+	Background->GrayLevel[0.8],  (* Mostra un pulsante grigio disattivato *)
+	FrameStyle->None,
+	RoundingRadius->10,
+	FrameMargins->{{10, 10}, {10, 10}},
+	ImageSize->Automatic
+];
+
+
+(* Stile del bottone quando il turno non \[EGrave] quello corrente.
+In questo caso, l'utente ha gi\[AGrave] completato la riga oppure non pu\[OGrave] ancora accedervi.
+Viene mostrato un pulsante invisibile, utile solo per mantenere l\[CloseCurlyQuote]allineamento visivo della griglia *)
+buttonTurnNotCurr[] := Framed[
+	Grid[{{
+		Style["\|01f3ae", FontSize->10, FontColor->Directive[GrayLevel[0.9], Opacity[0]]],
+		Style[labels["vai"], FontFamily->"Consolas", FontSize->12, FontColor->Directive[GrayLevel[0.9], Opacity[0]], Bold]
+	}}],  
+	
+	(* Il pulsante ha stile e testo trasparenti *)
+	Background->GrayLevel[0.9], 
+	FrameStyle->None,
+	RoundingRadius->10,
+	FrameMargins->{{10, 10}, {10, 10}},
+	ImageSize->Automatic
+];
+
+
+pulsanteSuggerimenti[
+    correct_List, (* Lista dei risultati dei tentativi di hint *)
+    rigaCorrenteX_Integer, (* La riga (x) per cui stiamo generando questo UI *)
+    turnoAttuale_Integer, (* Il turno di gioco corrente *)
+    placeholderRisultatoVuoto_, (* Il tuo emptyResultPlaceholder *)
+    partitaInCorso_, (* Flag booleano *)
+    callbackClickHint_Function (* Una funzione per gestire il click del bottone HINT *)
+] := Module[
+    {
+        currentValForRowX, 
+        displayOutput
+    },
+
+    (* Determina il valore attuale per la riga x *)
+    currentValForRowX = If[
+        ListQ[correct] && Length[correct] >= rigaCorrenteX && rigaCorrenteX >= 1 &&
+        correct[[rigaCorrenteX]] =!= Null && correct[[rigaCorrenteX]] =!= {} && correct[[rigaCorrenteX]] =!= placeholderRisultatoVuoto,
+        correct[[rigaCorrenteX]],
+        placeholderRisultatoVuoto
     ];
+
+    (* Determina quale interfaccia utente visualizzare*)
+    displayOutput = Which[
+        currentValForRowX === Missing["WrongAnswer"],
+        Framed[
+            Style["\:274c", FontSize -> 18],
+            Background -> GrayLevel[0.95], FrameStyle -> Red, RoundingRadius -> 10,
+            FrameMargins -> {{10, 10}, {0, 0}}, ImageSize -> {80, 35}, Alignment -> Center
+        ],
+
+        MatchQ[currentValForRowX, {_?ColorQ, _}],
+        With[
+            {
+                resultColor = First[currentValForRowX],
+                resultValue = Last[currentValForRowX]
+            },
+            Framed[
+                If[resultValue =!= Missing["NoSimpleHintAvailable"], 
+                    If[resultValue =!= Missing["PositionNotApplicable"], 
+                        Row[{Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}], Spacer[5], Column[{Style[ToString[resultValue], 16, Bold, FontFamily -> "Arial"]}, Spacings -> 0]}], 
+                        Graphics[{EdgeForm[Gray], resultColor, Disk[]}, ImageSize -> {20, 20}]], 
+                    ""], 
+                Background -> GrayLevel[0.95], FrameStyle -> Darker[Green], RoundingRadius -> 10, 
+                FrameMargins -> {{30, 10}, {6, 6}}, ImageSize -> {80, 35}
+            ]
+        ],
+
+        True, (* Caso di default: mostra il pulsante HINT o un placeholder *)
+        If[rigaCorrenteX === turnoAttuale && triviaData =!= $Failed,
+            ClickPane[
+                Framed[ (* Aspetto del pulsante HINT attivo *)
+                    Grid[{{Style["\|01f4a1", FontSize -> 10], Style["HINT", White, FontFamily -> "Consolas", FontSize -> 12, Bold]}}],
+                    Background -> Blue, FrameStyle -> None, RoundingRadius -> 10,
+                    FrameMargins -> {{10, 10}, {10, 10}}, ImageSize -> {80, 35}
+                ],
+                callbackClickHint, (* Usa la funzione di callback passata come argomento *)
+                Method -> "Queued"
+            ],
+            Framed[ (* Pulsante HINT inattivo/placeholder *)
+                Grid[{{Style["\|01f4a1", FontSize -> 10, FontColor -> Directive[GrayLevel[0.7], Opacity[0]]], Style["HINT", FontFamily -> "Consolas", FontSize -> 12, FontColor -> Directive[GrayLevel[0.7], Opacity[0]], Bold]}}],
+                Background -> GrayLevel[0.9], FrameStyle -> None, RoundingRadius -> 10,
+                FrameMargins -> {{10, 10}, {10, 10}}, ImageSize -> {80, 35}
+            ]
+        ]
+    ];
+    displayOutput
+];
 
 
 (* Mostra una finestra di dialogo (dialog) con una domanda trivia e opzioni a scelta multipla. *)
