@@ -22,7 +22,7 @@ Begin["`Private`"];
 
 (*
   Spiegazione del funzionamento per 'triviaData':
-  Questa definizione impiega una tecnica nota come "caricamento differito" (o "lazy loading") con "memoizzazione".
+  Questa definizione impiega una tecnica nota come "caricamento differito" (o "lazy loading") con "memorizzazione".
   L'operatore ':=' fa s\[IGrave] che l'operazione specificata (in questo caso, caricaTriviaDaCSV)
   non venga eseguita immediatamente, ma solo la prima volta che si fa effettivamente uso di 'triviaData'.
 
