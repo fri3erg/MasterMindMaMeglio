@@ -4,8 +4,8 @@
 (* :Context:PacchettoTriviaMastermind`*)
 (* :Author:Gruppo 10 - I Ludopatici*)
 (* :Summary:Package per "Trivia Mastermind", progetto di MC Unibo anno 24/25*)
-(* :Package Version:1.1*)
-(* :History:last modified 29/5/2025*)
+(* :Package Version:1.2*)
+(* :History:last modified 30/5/2025*)
 (* :Copyright:\[Copyright] 2025 Gruppo 10 - Alessandro Modelli, Angelo Greco, Elia Friberg, Francesca Mazzetti, Gianpiero Tovo, Matteo Raggi*)
 (* :License:MIT License*)
 
